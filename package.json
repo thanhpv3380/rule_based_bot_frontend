@@ -1,5 +1,5 @@
 {
-  "name": "react-boilerplate",
+  "name": "rule_based_bot_frontend",
   "version": "1.0.0",
   "scripts": {
     "start": "react-app-rewired start",
