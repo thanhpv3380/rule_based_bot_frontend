@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import './index.css';
+import 'antd/dist/antd.css';
 import * as serviceWorker from './serviceWorker';
 import './languages';
 import Router from './router';

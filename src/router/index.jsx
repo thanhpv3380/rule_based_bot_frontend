@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import Layout from '../components/Layout';
 
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
@@ -31,13 +32,15 @@ export default () => (
             );
           }
           return (
-            <PrivateRoute
-              key={path}
-              exact={exact}
-              path={path}
-              component={Component}
-              {...rest}
-            />
+            <Layout>
+              <PrivateRoute
+                key={path}
+                exact={exact}
+                path={path}
+                component={Component}
+                {...rest}
+              />
+            </Layout>
           );
         },
       )}

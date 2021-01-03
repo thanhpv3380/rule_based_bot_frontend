@@ -9,6 +9,8 @@
     "deploy": "cross-env NODE_ENV=production node server"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.3.0",
+    "antd": "^4.9.4",
     "axios": "^0.19.2",
     "camelcase-keys": "^6.2.2",
     "cross-env": "^7.0.2",
