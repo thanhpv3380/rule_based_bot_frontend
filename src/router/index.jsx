@@ -9,42 +9,36 @@ import routes from '../constants/route';
 
 import appRoutes from './appRoutes';
 
-export default () => (
-  <BrowserRouter>
-    <Switch>
-      {appRoutes.map(
-        ({
-          path,
-          exact = true,
-          component: Component,
-          isPrivate = false,
-          ...rest
-        }) => {
-          if (!isPrivate) {
-            return (
-              <PublicRoute
-                key={path}
-                exact={exact}
-                path={path}
-                component={Component}
-                {...rest}
-              />
-            );
-          }
-          return (
-            <Layout>
+export default () => {
+  const publicRoutes = appRoutes.filter((route) => !route.isPrivate);
+
+  const privateRoutes = appRoutes.filter((route) => route.isPrivate);
+
+  return (
+    <BrowserRouter>
+      <Switch>
+        {publicRoutes.map((el) => (
+          <PublicRoute
+            key={el.path}
+            exact={el.exact}
+            path={el.path}
+            component={el.component}
+          />
+        ))}
+        <Layout>
+          <Switch>
+            {privateRoutes.map((el) => (
               <PrivateRoute
-                key={path}
-                exact={exact}
-                path={path}
-                component={Component}
-                {...rest}
+                key={el.path}
+                exact={el.exact}
+                component={el.component}
+                path={el.path}
               />
-            </Layout>
-          );
-        },
-      )}
-      <Redirect to={routes.HOME} />
-    </Switch>
-  </BrowserRouter>
-);
+            ))}
+            <Redirect to={routes.HOME} />
+          </Switch>
+        </Layout>
+      </Switch>
+    </BrowserRouter>
+  );
+};

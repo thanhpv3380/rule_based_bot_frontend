@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import {
   HomeOutlined,
@@ -73,26 +74,21 @@ const pages = [
 ];
 
 const Sidebar = () => {
-  const [openKey, setOpenKey] = useState('sub1');
-  const [activeKey, setActiveKey] = useState('menu101');
+  const history = useHistory();
   const [collapsed, setCollapsed] = useState(false);
-  const [mode, setMode] = useState('inline');
-
-  // const toggle = () => {
-  //   setCollapsed(!collapsed);
-  //   setMode(!collapsed ? 'vertical' : 'inline');
-  // };
-
+  const handleClickSidebar = (to) => {
+    history.push(to);
+  };
   return (
     <StyleSideBar>
       <Sider
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
         breakpoint="lg"
         collapsedWidth="0"
         onBreakpoint={(broken) => {
           console.log(broken);
+        }}
+        onCollapse={(collapsed, type) => {
+          console.log(collapsed, type);
         }}
         style={{
           overflow: 'auto',
@@ -106,7 +102,11 @@ const Sidebar = () => {
           {pages.map((page) => (
             <SubMenu key={page.title} icon={page.icon} title={page.title}>
               {page.children.map((el) => (
-                <Menu.Item key={el.title} icon={el.icon}>
+                <Menu.Item
+                  key={el.title}
+                  icon={el.icon}
+                  onClick={() => handleClickSidebar(el.href)}
+                >
                   {el.title}
                 </Menu.Item>
               ))}
