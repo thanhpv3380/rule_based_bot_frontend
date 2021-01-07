@@ -8,10 +8,11 @@ export default styled.div`
   }
 
   .site-layout-sub-header-background {
-    background: #fff;
   }
 
   .site-layout-background {
-    background: #fff;
+  }
+  .site-content {
+    margin: 24px 16px 0;
   }
 `;
