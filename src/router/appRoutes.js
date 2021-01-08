@@ -1,6 +1,7 @@
 import Login from '../pages/Login';
 import Home from '../pages/Home';
 import Action from '../pages/Action';
+import Dictionary from '../pages/Dictionary';
 
 import routes from '../constants/route';
 
@@ -22,6 +23,13 @@ export default [
   {
     path: routes.ACTION,
     component: Action,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+  },
+  {
+    path: routes.DICTIONARY,
+    component: Dictionary,
     exact: true,
     restricted: false,
     isPrivate: true,

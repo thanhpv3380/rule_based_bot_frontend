@@ -28,7 +28,7 @@ const MainLayout = ({ children }) => {
             className="site-layout-sub-header-background"
             style={{ padding: 0 }}
           />
-          <Content style={{ margin: '24px 16px 0' }}>
+          <Content className="site-content">
             <div
               className="site-layout-background"
               style={{ padding: 24, minHeight: 360 }}
