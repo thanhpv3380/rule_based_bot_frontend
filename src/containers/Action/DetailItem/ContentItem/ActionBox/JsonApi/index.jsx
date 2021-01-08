@@ -1,6 +1,19 @@
 import React from 'react';
-import { Typography, Row, Col, Select, Input, Space } from 'antd';
-import { GlobalOutlined } from '@ant-design/icons';
+import {
+  Typography,
+  Row,
+  Col,
+  Select,
+  Input,
+  Space,
+  Divider,
+  Button,
+} from 'antd';
+import {
+  GlobalOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import StyledApp from './index.style';
 
 const { Text } = Typography;
@@ -9,8 +22,15 @@ const JsonApiBox = () => {
   return (
     <StyledApp>
       <div className="container-title">
-        <GlobalOutlined style={{ fontSize: '20px' }} />
-        <div className="title">JSON API</div>
+        <Space>
+          <Space>
+            <GlobalOutlined />
+            <div className="title">JSON API</div>
+          </Space>
+          <div class="icon-delete">
+            <DeleteOutlined />
+          </div>
+        </Space>
       </div>
 
       <Text type="secondary">
@@ -25,10 +45,54 @@ const JsonApiBox = () => {
       </Space>
       <br />
       <br />
-      <Space direction="vertical">
-        <Input placeholder="Enter image file URL" size="large" />
-        <Input placeholder="Enter Description of image" size="large" />
-      </Space>
+      <Divider orientation="left">API Headers</Divider>
+      <Row gutter={[16, 16]}>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          Title
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          Value
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}></Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          <Input size="large" />
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          <Input size="large" />
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          <div class="icon-delete">
+            <DeleteOutlined />
+          </div>
+        </Col>
+      </Row>
+      <Button block>
+        <PlusOutlined /> ADD HEADER
+      </Button>
+      <Divider orientation="left">API Body</Divider>
+      <Row gutter={[16, 16]}>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          Title
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          Value
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}></Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          <Input size="large" />
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          <Input size="large" />
+        </Col>
+        <Col xs={8} sm={8} md={8} lg={8} xl={8}>
+          <div class="icon-delete">
+            <DeleteOutlined />
+          </div>
+        </Col>
+      </Row>
+      <Button block>
+        <PlusOutlined /> ADD PARAMETER
+      </Button>
     </StyledApp>
   );
 };

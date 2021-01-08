@@ -22,8 +22,15 @@ const TextBox = () => {
   return (
     <StyledApp>
       <div className="container-title">
-        <FormOutlined style={{ fontSize: '20px' }} />
-        <div className="title">Text</div>
+        <Space>
+          <Space>
+            <FormOutlined />
+            <div className="title">Text</div>
+          </Space>
+          <div class="icon-delete">
+            <DeleteOutlined />
+          </div>
+        </Space>
       </div>
       <div className="container-items">
         {text.map((el) => (

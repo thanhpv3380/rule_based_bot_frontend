@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Row, Col, Upload, Input, Space } from 'antd';
 import {
   FileImageOutlined,
-  LoadingOutlined,
+  DeleteOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import StyledApp from './index.style';
@@ -13,8 +13,15 @@ const ImageBox = () => {
   return (
     <StyledApp>
       <div className="container-title">
-        <FileImageOutlined style={{ fontSize: '20px' }} />
-        <div className="title">Image</div>
+        <Space>
+          <Space>
+            <FileImageOutlined />
+            <div className="title">Image</div>
+          </Space>
+          <div class="icon-delete">
+            <DeleteOutlined />
+          </div>
+        </Space>
       </div>
       <Row gutter={[16, 16]}>
         <Col xs={4} sm={4} md={4} lg={4} xl={4}>
@@ -28,7 +35,7 @@ const ImageBox = () => {
           >
             <div>
               <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
+              <div className="mt-8">Upload</div>
             </div>
           </Upload>
         </Col>

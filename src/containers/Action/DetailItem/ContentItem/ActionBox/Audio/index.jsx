@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography, Row, Col, Upload, Input, Space } from 'antd';
-import { SoundOutlined, PlusOutlined } from '@ant-design/icons';
+import { Typography, Input, Space } from 'antd';
+import { SoundOutlined, DeleteOutlined } from '@ant-design/icons';
 import StyledApp from './index.style';
 
 const { Text } = Typography;
@@ -9,8 +9,15 @@ const AudioBox = () => {
   return (
     <StyledApp>
       <div className="container-title">
-        <SoundOutlined style={{ fontSize: '20px' }} />
-        <div className="title">Audio</div>
+        <Space>
+          <Space>
+            <SoundOutlined />
+            <div className="title">Audio</div>
+          </Space>
+          <div class="icon-delete">
+            <DeleteOutlined />
+          </div>
+        </Space>
       </div>
 
       <Space direction="vertical" size="medium">
