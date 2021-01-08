@@ -20,7 +20,7 @@ export async function createAction(action) {
   const response = await api({
     method: 'POST',
     url: '/actions',
-    data: aAction,
+    data: action,
   });
   return response;
 }
