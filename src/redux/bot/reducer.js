@@ -6,10 +6,11 @@ export const initialState = {
 
 export default function botReducer(state = initialState, action) {
   switch (action.type) {
-    case actionTypes.BOT:
+    case actionTypes.CHANGE_BOT:
       const { bot } = action;
       return { ...state, bot };
-
+    case actionTypes.GET_BOT:
+      return state;
     default:
       return state;
   }

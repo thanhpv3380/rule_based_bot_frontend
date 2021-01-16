@@ -1,10 +1,17 @@
 export const actionTypes = {
-  ADD_BOT: 'ADD_BOT',
+  CHANGE_BOT: 'CHANGE_BOT',
+  GET_BOT: 'GET_BOT',
 };
 
-export function addBot(bot) {
+export function changeBot(bot) {
   return {
-    type: actionTypes.LOGIN,
+    type: actionTypes.CHANGE_BOT,
     bot,
+  };
+}
+
+export function getBot() {
+  return {
+    type: actionTypes.GET_BOT,
   };
 }
