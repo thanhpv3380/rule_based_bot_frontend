@@ -1,16 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Input, Tooltip, Space, Select, Button } from 'antd';
+import { Input, Tooltip, Select, Button } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import StyledApp from './index.style';
 
-import ContentItem from './ContentItem';
-import { useTheme } from 'styled-components';
-
 const { Option } = Select;
-
-const DetailItem = () => {
-  const { t } = useTranslation();
+const InfoItem = () => {
   return (
     <StyledApp>
       <div className="container-info-item">
@@ -31,11 +26,8 @@ const DetailItem = () => {
           Save Action
         </Button>
       </div>
-      <div className="container-content">
-        <ContentItem />
-      </div>
     </StyledApp>
   );
 };
 
-export default DetailItem;
+export default InfoItem;

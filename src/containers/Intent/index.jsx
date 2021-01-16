@@ -4,7 +4,7 @@ import StyledApp from './index.style';
 import LayoutData from '../../components/LayoutData';
 import Content from './Content';
 
-const Action = () => {
+const Intent = () => {
   const { t } = useTranslation();
 
   const handleSearch = (value) => {
@@ -12,17 +12,17 @@ const Action = () => {
   };
 
   const handleCreate = (e) => {
-    console.log('create action');
+    console.log('create intent');
   };
 
   const handleCreateGroup = (e) => {
-    console.log('create group action');
+    console.log('create group intent');
   };
   const handleDelete = (id) => {
-    console.log('delete action');
+    console.log('delete intent');
   };
   const handleDeleteGroup = (id) => {
-    console.log('delete group action');
+    console.log('delete group intent');
   };
 
   return (
@@ -40,4 +40,4 @@ const Action = () => {
   );
 };
 
-export default Action;
+export default Intent;

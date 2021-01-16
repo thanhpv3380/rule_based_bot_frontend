@@ -2,47 +2,46 @@ import React from 'react';
 import { Menu, Dropdown, Collapse, Space } from 'antd';
 import { PlusOutlined, MoreOutlined } from '@ant-design/icons';
 import StyledApp from './index.style';
-import SearchBox from '../../../components/SearchBox';
-import PaginationPanel from '../../../components/Pagination';
+import SearchBox from '../../SearchBox';
+import PaginationPanel from '../../Pagination';
 
 const { Panel } = Collapse;
 
-const MenuItem = ({
+const ListSelect = ({
   handleSearch,
-  handleCreateAction,
+  handleCreate,
   handleCreateGroup,
-  handleDeleteAction,
-  handleDeleteGroupAction,
+  handleDelete,
+  handleDeleteGroup,
+  name,
 }) => {
   const menuAdd = () => {
     return (
       <Menu>
-        <Menu.Item onClick={handleCreateAction}>Create Action</Menu.Item>
+        <Menu.Item onClick={handleCreate}>Create {name}</Menu.Item>
         <Menu.Item onClick={handleCreateGroup}>Create Group</Menu.Item>
       </Menu>
     );
   };
 
-  const menuEditActionBox = (id) => {
+  const menuEditBox = (id) => {
     return (
       <Menu>
-        <Menu.Item onClick={() => handleDeleteAction(id)}>Delete</Menu.Item>
+        <Menu.Item onClick={() => handleDelete(id)}>Delete</Menu.Item>
       </Menu>
     );
   };
 
-  const menuEditGroupActionBox = (id) => {
+  const menuEditGroupBox = (id) => {
     return (
       <Menu>
-        <Menu.Item onClick={() => handleDeleteGroupAction(id)}>
-          Delete
-        </Menu.Item>
+        <Menu.Item onClick={() => handleDeleteGroup(id)}>Delete</Menu.Item>
       </Menu>
     );
   };
 
   const genExtra = () => (
-    <Dropdown overlay={menuEditGroupActionBox(1)}>
+    <Dropdown overlay={menuEditGroupBox(1)}>
       <MoreOutlined />
     </Dropdown>
   );
@@ -53,7 +52,7 @@ const MenuItem = ({
         <SearchBox handleSearch={handleSearch} />
         <Dropdown overlay={menuAdd}>
           <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-            <PlusOutlined /> Add Action or Group
+            <PlusOutlined /> Add {name} or Group
           </a>
         </Dropdown>
         <Collapse accordion>
@@ -61,13 +60,13 @@ const MenuItem = ({
             <Space direction="vertical" className="w-100">
               <div className="box-item">
                 <div className="box-item-title">Action 1</div>
-                <Dropdown overlay={menuEditActionBox(1)}>
+                <Dropdown overlay={menuEditBox(1)}>
                   <MoreOutlined />
                 </Dropdown>
               </div>
               <div className="box-item">
                 <div className="box-item-title">Action 2</div>
-                <Dropdown overlay={menuEditActionBox(2)}>
+                <Dropdown overlay={menuEditBox(2)}>
                   <MoreOutlined />
                 </Dropdown>
               </div>
@@ -81,4 +80,4 @@ const MenuItem = ({
   );
 };
 
-export default MenuItem;
+export default ListSelect;

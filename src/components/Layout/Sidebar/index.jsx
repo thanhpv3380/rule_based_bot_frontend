@@ -39,8 +39,8 @@ const pages = [
         icon: <AppstoreOutlined />,
       },
       {
-        title: 'Itents',
-        href: '/itents',
+        title: 'Intents',
+        href: '/intents',
         icon: <MessageOutlined />,
       },
       {
