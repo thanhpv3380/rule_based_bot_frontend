@@ -24,7 +24,9 @@ const Intent = () => {
   const handleDeleteGroup = (id) => {
     console.log('delete group intent');
   };
-
+  const handleChangeInput = (e) => {
+    console.log(e.target.value);
+  };
   return (
     <StyledApp>
       <LayoutData
@@ -34,7 +36,7 @@ const Intent = () => {
         handleDelete={handleDelete}
         handleDeleteGroup={handleDeleteGroup}
         name="Intent"
-        content={<Content />}
+        content={<Content handleChangeInput={handleChangeInput} />}
       />
     </StyledApp>
   );

@@ -10,13 +10,13 @@ export default styled.div`
   .ant-select {
     width: 100%;
   }
-  .ant-table-thead {
-    display: none;
-  }
-  .ant-table-cell {
-    padding: 0;
-    margin: 10px 0;
-  }
+  // .ant-table-thead {
+  //   display: none;
+  // }
+  // .ant-table-cell {
+  //   padding: 0;
+  //   margin: 10px 0;
+  // }
   .ant-input-affix-wrapper {
     border-top: none;
     border-left: none;
