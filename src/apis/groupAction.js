@@ -8,7 +8,7 @@ export async function getGroupActions() {
   return response;
 }
 
-export async function getGroupAndItems() {
+export async function getGroupAndItems({ keyword }) {
   const response = await api({
     method: 'POST',
     url: '/groupActions/getGroupAndItems',

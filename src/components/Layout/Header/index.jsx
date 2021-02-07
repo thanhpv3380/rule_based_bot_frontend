@@ -1,85 +1,161 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  Layout,
-  Row,
-  Col,
-  Icon,
-  Badge,
-  Menu,
-  Dropdown,
+  AppBar,
+  Toolbar,
   Avatar,
-  Popover,
-} from 'antd';
-import './index.less';
-import { Link, withRouter } from 'react-router-dom';
+  Button,
+  Menu,
+  MenuItem,
+  Typography,
+  Tooltip,
+  IconButton,
+  Hidden,
+} from '@material-ui/core';
+import { ExpandMore, Launch, Menu as MenuIcon } from '@material-ui/icons';
+import { useDispatch } from 'react-redux';
+import { Link, useHistory } from 'react-router-dom';
+import useStyles from './index.style';
+// import i18n from '../../../i18n';
+import actions from '../../../redux/actions';
+import logo from '../../../assets/images/logo.png';
 
-const { Header } = Layout;
+const languages = [
+  { value: 'en', label: 'English' },
+  { value: 'vi', label: 'Vietnamese' },
+];
 
-class commonHeader extends React.Component {
-  constructor() {
-    super();
-  }
+const MainAppBar = ({
+  accessToken,
+  user,
+  bgColor,
+  displaySideBar,
+  handleDrawerToggle,
+}) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [isOpenAccount, setIsOpenAccount] = useState(null);
 
-  handleLogOut = () => {
-    const { logout } = this.props;
-    logout().payload.promise.then(() => {
-      this.props.history.replace('/login');
-    });
+  const classes = useStyles({ bgColor });
+  const { t } = useTranslation();
+  // const history = useHistory();
+
+  const dispatch = useDispatch();
+
+  const handleOpenLanguage = (event) => setAnchorEl(event.currentTarget);
+  const handleCloseLanguage = () => setAnchorEl(null);
+  const handleChangeLanguage = (event, index) => {
+    // i18n.changeLanguage(languages[index].value);
+    console.log(event, index);
+    setAnchorEl(null);
   };
 
-  render() {
-    const { profile } = this.props;
-    let username = profile.user ? profile.user.name : '';
-    const menu = (
-      <Menu>
-        <Menu.Item>选项1</Menu.Item>
-        <Menu.Item>选项2</Menu.Item>
-        <Menu.Item>
-          <a onClick={this.handleLogOut}>注销</a>
-        </Menu.Item>
-      </Menu>
-    );
+  // const handleOpenAccount = (event) => {
+  //   if (accessToken) setIsOpenAccount(event.currentTarget);
+  // };
+  const handleCloseAccount = () => setIsOpenAccount(null);
+  const handleLogout = () => {
+    dispatch(actions.auth.logout());
+    setIsOpenAccount(null);
+  };
 
-    const content = (
-      <div>
-        <p>Content</p>
-        <p>Content</p>
-        <p>Content</p>
-        <p>Content</p>
-        <p>Content</p>
+  // const handleBackToDashboard = () => {
+  //   if (user.isAdmin) {
+  //     history.push('/admin/accounts');
+  //   } else {
+  //     history.push('/dashboard');
+  //   }
+  // };
+
+  // const renderAvatar = () => {
+  //   const { name, avatar } = user;
+  //   if (avatar)
+  //     return (
+  //       <Avatar
+  //         className={classes.avatar}
+  //         src={avatar}
+  //         onClick={handleOpenAccount}
+  //       />
+  //     );
+
+  //   const words = name.split(' ');
+  //   return (
+  //     <Avatar className={classes.avatar} onClick={handleOpenAccount}>
+  //       {words[words.length - 1].slice(0, 1).toUpperCase()}
+  //     </Avatar>
+  //   );
+  // };
+
+  return (
+    <AppBar position="fixed" className={classes.root}>
+      <Toolbar className={classes.root}>
+        {displaySideBar && (
+          <Hidden mdUp implementation="css">
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Hidden>
+        )}
+        <div className={classes.title}>
+          <Link to="/" className={classes.brandName}>
+            <img src={logo} alt="logo" height="50px" width="auto" />
+          </Link>
+        </div>
+        <Tooltip title={t('backToDashboard')}>
+          <IconButton
+            className={classes.language}
+            // onClick={handleBackToDashboard}
+          >
+            <Launch />
+          </IconButton>
+        </Tooltip>
+        <Button
+          className={classes.language}
+          endIcon={<ExpandMore />}
+          onClick={handleOpenLanguage}
+        >
+          {/* {i18n.language} */}
+        </Button>
+        <Menu
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleCloseLanguage}
+        >
+          {languages.map((language, index) => (
+            <MenuItem
+              key={language.value}
+              onClick={(event) => handleChangeLanguage(event, index)}
+            >
+              {t(language.label)}
+            </MenuItem>
+          ))}
+        </Menu>
+        <Typography className={classes.account}>Henry</Typography>
+      </Toolbar>
+      <div className={classes.avatarWrapper}>
+        {/* {renderAvatar()} */}
+        <Menu
+          anchorEl={isOpenAccount}
+          keepMounted
+          open={Boolean(isOpenAccount)}
+          onClose={handleCloseAccount}
+        >
+          <MenuItem
+            component={Link}
+            to="/settings"
+            onClick={handleCloseAccount}
+          >
+            {t('setting')}
+          </MenuItem>
+          <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
+        </Menu>
       </div>
-    );
+    </AppBar>
+  );
+};
 
-    return (
-      <Header style={{ background: '#fff', padding: 0 }}>
-        <Row type="flex" justify="end" align="middle">
-          <Col span={3}>
-            <Badge className="header-icon" count={5}>
-              <Link to="/mailbox">
-                <Icon type="mail" />
-              </Link>
-            </Badge>
-            <Popover content={content} title="Title" trigger="click">
-              <Badge className="header-icon" dot>
-                <a href="#">
-                  <Icon type="notification" />
-                </a>
-              </Badge>
-            </Popover>
-          </Col>
-          <Col span={3}>
-            <Dropdown overlay={menu}>
-              <a className="ant-dropdown-link" href="#">
-                <Avatar style={{ verticalAlign: 'middle' }}>{username}</Avatar>{' '}
-                <Icon type="down" />
-              </a>
-            </Dropdown>
-          </Col>
-        </Row>
-      </Header>
-    );
-  }
-}
-
-export default withRouter(commonHeader);
+export default MainAppBar;

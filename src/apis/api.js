@@ -1,8 +1,8 @@
+/* eslint-disable no-param-reassign */
 import axios from 'axios';
-import { notification } from 'antd';
 import camelCase from 'camelcase-keys';
-import { getCookie } from '../utils/cookie';
 import { useSelector } from 'react-redux';
+import { getCookie } from '../utils/cookie';
 
 const axiosClient = axios.create({
   baseURL: `${process.env.REACT_APP_API_DOMAIN}/api/v1`,
@@ -14,7 +14,6 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(async (config) => {
   const accessToken = getCookie('accessToken');
   const bot = useSelector((state) => state.bot.bot);
-  // eslint-disable-next-line no-param-reassign
   config.headers.Authorization = `Bearer ${accessToken}`;
   config.headers['agent-id'] = bot.id;
   return config;
@@ -27,12 +26,6 @@ axiosClient.interceptors.response.use(
   (error) => {
     // Handle error
     console.error(error);
-    notification.open({
-      message: 'Notification Title',
-      description:
-        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-      bottomLeft,
-    });
   },
 );
 
