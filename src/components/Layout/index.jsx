@@ -12,7 +12,18 @@ const menu = [
   {
     heading: 'accounts',
     icon: <People />,
-    route: `/admin/accounts`,
+    subMenus: [
+      {
+        route: `/admin/accounts`,
+        icon: <People />,
+        heading: 'accounts',
+      },
+      {
+        route: `/admin/accounts`,
+        icon: <People />,
+        heading: 'accounts',
+      },
+    ],
   },
   {
     heading: 'apps',

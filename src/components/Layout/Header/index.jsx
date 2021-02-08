@@ -16,7 +16,7 @@ import { ExpandMore, Launch, Menu as MenuIcon } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import useStyles from './index.style';
-// import i18n from '../../../i18n';
+import i18n from '../../../i18n';
 import actions from '../../../redux/actions';
 import logo from '../../../assets/images/logo.png';
 
@@ -37,7 +37,7 @@ const MainAppBar = ({
 
   const classes = useStyles({ bgColor });
   const { t } = useTranslation();
-  // const history = useHistory();
+  const history = useHistory();
 
   const dispatch = useDispatch();
 
@@ -49,41 +49,40 @@ const MainAppBar = ({
     setAnchorEl(null);
   };
 
-  // const handleOpenAccount = (event) => {
-  //   if (accessToken) setIsOpenAccount(event.currentTarget);
-  // };
+  const handleOpenAccount = (event) => {
+    if (accessToken) setIsOpenAccount(event.currentTarget);
+  };
   const handleCloseAccount = () => setIsOpenAccount(null);
   const handleLogout = () => {
     dispatch(actions.auth.logout());
     setIsOpenAccount(null);
   };
 
-  // const handleBackToDashboard = () => {
-  //   if (user.isAdmin) {
-  //     history.push('/admin/accounts');
-  //   } else {
-  //     history.push('/dashboard');
-  //   }
-  // };
+  const handleBackToDashboard = () => {
+    history.push('/dashboard');
+  };
 
-  // const renderAvatar = () => {
-  //   const { name, avatar } = user;
-  //   if (avatar)
-  //     return (
-  //       <Avatar
-  //         className={classes.avatar}
-  //         src={avatar}
-  //         onClick={handleOpenAccount}
-  //       />
-  //     );
+  const renderAvatar = () => {
+    // const { name, avatar } = user;
+    const name = 'henry';
+    const avatar =
+      'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png';
+    if (avatar)
+      return (
+        <Avatar
+          className={classes.avatar}
+          src={avatar}
+          onClick={handleOpenAccount}
+        />
+      );
 
-  //   const words = name.split(' ');
-  //   return (
-  //     <Avatar className={classes.avatar} onClick={handleOpenAccount}>
-  //       {words[words.length - 1].slice(0, 1).toUpperCase()}
-  //     </Avatar>
-  //   );
-  // };
+    const words = name.split(' ');
+    return (
+      <Avatar className={classes.avatar} onClick={handleOpenAccount}>
+        {words[words.length - 1].slice(0, 1).toUpperCase()}
+      </Avatar>
+    );
+  };
 
   return (
     <AppBar position="fixed" className={classes.root}>
@@ -107,7 +106,7 @@ const MainAppBar = ({
         <Tooltip title={t('backToDashboard')}>
           <IconButton
             className={classes.language}
-            // onClick={handleBackToDashboard}
+            onClick={handleBackToDashboard}
           >
             <Launch />
           </IconButton>
@@ -117,7 +116,7 @@ const MainAppBar = ({
           endIcon={<ExpandMore />}
           onClick={handleOpenLanguage}
         >
-          {/* {i18n.language} */}
+          {i18n.language}
         </Button>
         <Menu
           anchorEl={anchorEl}
@@ -137,7 +136,7 @@ const MainAppBar = ({
         <Typography className={classes.account}>Henry</Typography>
       </Toolbar>
       <div className={classes.avatarWrapper}>
-        {/* {renderAvatar()} */}
+        {renderAvatar()}
         <Menu
           anchorEl={isOpenAccount}
           keepMounted
