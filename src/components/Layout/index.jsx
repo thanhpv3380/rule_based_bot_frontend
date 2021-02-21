@@ -1,16 +1,10 @@
 import React, { useState, createContext } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  People,
-  Reddit,
-  RouterSharp,
-  SettingsInputComponent,
-} from '@material-ui/icons';
+import { People, Reddit, SettingsInputComponent } from '@material-ui/icons';
 import useStyles from './index.style';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Content from './Content';
-import routes from '../../constants/route';
 
 export const AppContext = createContext();
 
@@ -46,7 +40,6 @@ const menu = [
 const Layout = ({ children, isLayout }) => {
   const classes = useStyles();
   const { accessToken, user } = useSelector((state) => state.auth);
-
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openSideBar, setOpenSideBar] = useState(true);
   const [displaySideBar] = useState(true);
@@ -64,26 +57,24 @@ const Layout = ({ children, isLayout }) => {
         accessToken={accessToken}
         user={user}
         bgColor="#fff"
-        displaySideBar={displaySideBar}
+        displaySideBar={displaySideBar && isLayout}
         handleDrawerToggle={handleDrawerToggle}
       />
       {isLayout && (
-        <div>
-          <Sidebar
-            menu={menu}
-            mobileOpen={mobileOpen}
-            openSideBar={openSideBar}
-            displaySideBar={displaySideBar}
-            handleDrawerToggle={handleDrawerToggle}
-          />
-        </div>
+        <Sidebar
+          menu={menu}
+          mobileOpen={mobileOpen}
+          openSideBar={openSideBar}
+          displaySideBar={displaySideBar}
+          handleDrawerToggle={handleDrawerToggle}
+        />
       )}
       <Content
-            displaySideBar={displaySideBar}
-            handleSidebarToggle={handleSidebarToggle}
-          >
-            {children}
-          </Content>
+        displaySideBar={displaySideBar && isLayout}
+        handleSidebarToggle={handleSidebarToggle}
+      >
+        {children}
+      </Content>
     </div>
   );
 };

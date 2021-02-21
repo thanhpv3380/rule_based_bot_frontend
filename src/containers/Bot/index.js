@@ -24,7 +24,7 @@ function Bot() {
   const history = useHistory();
   const methods = useForm({
     defaultValues: {},
-    mode: "all",
+    mode: 'all',
   });
 
   const [open, setOpen] = React.useState(false);
@@ -39,7 +39,7 @@ function Bot() {
   };
 
   const fetchBots = async () => {
-    const { result } = await apis.bot.getbots("");
+    const { result } = await apis.bot.getbots('');
     console.log(result.bots);
     setBots(result.bots);
   };
@@ -52,13 +52,13 @@ function Bot() {
     const { value } = e.target;
     const { result } = await apis.bot.getbots(value);
     setBots(result.bots);
-  }
+  };
   const onSubmit = async (data) => {
     const bot = {
-      name: data.name
-    } 
+      name: data.name,
+    };
     const response = await apis.bot.createBot(bot);
-    if(response.status === 1) {
+    if (response.status === 1) {
       history.push('/');
     }
   };
@@ -67,18 +67,18 @@ function Bot() {
     <Box>
       <Typography variant="h5">CHATBOT LIST</Typography>
       <Grid container justify="space-between">
-        <SearchBox handleOnChange={handleOnChange}/>
+        <SearchBox handleOnChange={handleOnChange} />
         {/* <FormProvider {...methods}> */}
-          <CreateBotModal
-            open={open}
-            handleOpen={handleOpen}
-            handleClose={handleClose}
-            onSubmit={onSubmit}
-            methods={methods}
-          />
+        <CreateBotModal
+          open={open}
+          handleOpen={handleOpen}
+          handleClose={handleClose}
+          onSubmit={onSubmit}
+          methods={methods}
+        />
         {/* </FormProvider> */}
       </Grid>
-      <ListBot bots={bots}/>
+      <ListBot bots={bots} />
     </Box>
   );
 }

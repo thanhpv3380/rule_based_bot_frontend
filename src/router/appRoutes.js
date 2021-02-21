@@ -1,7 +1,7 @@
+import routes from '../constants/route';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
 import Bot from '../pages/Bot';
-import routes from '../constants/route';
 
 export default [
   {
@@ -10,6 +10,7 @@ export default [
     exact: true,
     restricted: true,
     isPrivate: false,
+    isLayout: false,
   },
   {
     path: routes.HOME,

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@material-ui/styles';
+import { SnackbarProvider } from 'notistack';
 import * as serviceWorker from './serviceWorker';
 import './languages';
 import Router from './router';
@@ -13,7 +14,9 @@ ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <Provider store={store()}>
-        <Router />
+        <SnackbarProvider>
+          <Router />
+        </SnackbarProvider>
       </Provider>
     </ThemeProvider>
   </React.StrictMode>,
