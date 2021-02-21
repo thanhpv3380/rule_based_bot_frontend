@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -19,6 +20,8 @@ import useStyles from './index.style';
 import i18n from '../../../i18n';
 import actions from '../../../redux/actions';
 import logo from '../../../assets/images/logo.png';
+import userImage from '../../../assets/images/user.jpg';
+import { removeCookie } from '../../../utils/cookie';
 
 const languages = [
   { value: 'en', label: 'English' },
@@ -54,23 +57,23 @@ const MainAppBar = ({
   };
   const handleCloseAccount = () => setIsOpenAccount(null);
   const handleLogout = () => {
+    removeCookie();
     dispatch(actions.auth.logout());
     setIsOpenAccount(null);
   };
 
   const handleBackToDashboard = () => {
-    history.push('/dashboard');
+    history.push('/');
   };
 
   const renderAvatar = () => {
-    // const { name, avatar } = user;
-    const name = 'henry';
-    const avatar =
-      'https://www.talkwalker.com/images/2020/blog-headers/image-analysis.png';
+    const name = user ? (user.name ? user.name : 'Admin') : 'Admin';
+    const avatar = user ? (user.avatar ? user.avatar : userImage) : userImage;
+
     if (avatar)
       return (
         <Avatar
-          className={classes.avatar}
+          classavatar={classes.avatar}
           src={avatar}
           onClick={handleOpenAccount}
         />
@@ -133,7 +136,9 @@ const MainAppBar = ({
             </MenuItem>
           ))}
         </Menu>
-        <Typography className={classes.account}>Henry</Typography>
+        <Typography className={classes.account}>
+          {user ? (user.name ? user.name : 'Admin') : 'Admin'}
+        </Typography>
       </Toolbar>
       <div className={classes.avatarWrapper}>
         {renderAvatar()}

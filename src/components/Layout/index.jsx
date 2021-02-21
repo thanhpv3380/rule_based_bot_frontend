@@ -37,10 +37,9 @@ const menu = [
   },
 ];
 
-const Layout = ({ children }) => {
+const Layout = ({ children, isLayout }) => {
   const classes = useStyles();
   const { accessToken, user } = useSelector((state) => state.auth);
-
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openSideBar, setOpenSideBar] = useState(true);
   const [displaySideBar] = useState(true);
@@ -59,18 +58,21 @@ const Layout = ({ children }) => {
         accessToken={accessToken}
         user={user}
         bgColor="#fff"
-        displaySideBar={displaySideBar}
+        displaySideBar={displaySideBar && isLayout}
         handleDrawerToggle={handleDrawerToggle}
       />
-      <Sidebar
-        menu={menu}
-        mobileOpen={mobileOpen}
-        openSideBar={openSideBar}
-        displaySideBar={displaySideBar}
-        handleDrawerToggle={handleDrawerToggle}
-      />
+      {isLayout && (
+        <Sidebar
+          menu={menu}
+          mobileOpen={mobileOpen}
+          openSideBar={openSideBar}
+          displaySideBar={displaySideBar}
+          handleDrawerToggle={handleDrawerToggle}
+        />
+      )}
+
       <Content
-        displaySideBar={displaySideBar}
+        displaySideBar={displaySideBar && isLayout}
         handleSidebarToggle={handleSidebarToggle}
       >
         {children}
