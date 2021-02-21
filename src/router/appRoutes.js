@@ -10,6 +10,7 @@ export default [
     exact: true,
     restricted: true,
     isPrivate: false,
+    isLayout: false,
   },
   {
     path: routes.HOME,
@@ -17,5 +18,6 @@ export default [
     exact: true,
     restricted: false,
     isPrivate: true,
+    isLayout: false,
   },
 ];

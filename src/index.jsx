@@ -1,17 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import './index.css';
+import { ThemeProvider } from '@material-ui/styles';
+import { SnackbarProvider } from 'notistack';
 import * as serviceWorker from './serviceWorker';
 import './languages';
 import Router from './router';
 import store from './redux/store';
+import theme from './theme';
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store()}>
-      <Router />
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <Provider store={store()}>
+        <SnackbarProvider>
+          <Router />
+        </SnackbarProvider>
+      </Provider>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
