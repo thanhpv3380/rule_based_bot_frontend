@@ -4,4 +4,5 @@ export default {
   ACTION: '/actions',
   INTENT: '/intents',
   DICTIONARY: '/dictionary',
+  BOT: '/bots'
 };

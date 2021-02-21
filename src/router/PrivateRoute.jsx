@@ -3,15 +3,23 @@ import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import routes from '../constants/route';
+import Layout from '../components/Layout';
 
 export default function PrivateRoute({ Component, ...rest }) {
   const accessToken = useSelector((state) => state.auth.accessToken);
+  const { isLayout } = rest;
   return (
-    <Route
-      {...rest}
-      render={(props) =>
-        !accessToken ? <Component {...props} /> : <Redirect to={routes.LOGIN} />
-      }
-    />
+    <Layout isLayout={isLayout}>
+      <Route
+        {...rest}
+        render={(props) =>
+          !accessToken ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to={routes.LOGIN} />
+          )
+        }
+      />
+    </Layout>
   );
 }

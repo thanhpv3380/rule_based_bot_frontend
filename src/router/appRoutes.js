@@ -1,6 +1,6 @@
 import Login from '../pages/Login';
 import Home from '../pages/Home';
-
+import Bot from '../pages/Bot';
 import routes from '../constants/route';
 
 export default [
@@ -17,5 +17,14 @@ export default [
     exact: true,
     restricted: false,
     isPrivate: true,
+    isLayout: true,
+  },
+  {
+    path: routes.BOT,
+    component: Bot,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: false,
   },
 ];

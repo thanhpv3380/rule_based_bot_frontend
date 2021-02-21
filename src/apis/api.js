@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux';
 import { getCookie } from '../utils/cookie';
 
 const axiosClient = axios.create({
-  baseURL: `${process.env.REACT_APP_API_DOMAIN}/api/v1`,
+  // baseURL: `${process.env.REACT_APP_API_DOMAIN}/api/v1`,
+  baseURL: `http://localhost:3000/api/v1`,
   responseType: 'json',
   timeout: 15 * 1000,
   transformResponse: [(data) => camelCase(data, { deep: true })],
@@ -13,9 +14,9 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(async (config) => {
   const accessToken = getCookie('accessToken');
-  const bot = useSelector((state) => state.bot.bot);
+  // const bot = useSelector((state) => state.bot.bot);
   config.headers.Authorization = `Bearer ${accessToken}`;
-  config.headers['agent-id'] = bot.id;
+  // config.headers['agent-id'] = bot.id;
   return config;
 });
 

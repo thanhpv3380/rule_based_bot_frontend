@@ -15,30 +15,31 @@ export default () => {
   const privateRoutes = appRoutes.filter((route) => route.isPrivate);
 
   return (
-    <BrowserRouter>
-      <Switch>
-        {publicRoutes.map((el) => (
-          <PublicRoute
-            key={el.path}
-            exact={el.exact}
-            path={el.path}
-            component={el.component}
-          />
-        ))}
-        <Layout>
-          <Switch>
-            {privateRoutes.map((el) => (
-              <PrivateRoute
-                key={el.path}
-                exact={el.exact}
-                component={el.component}
-                path={el.path}
-              />
-            ))}
-            <Redirect to={routes.HOME} />
-          </Switch>
-        </Layout>
-      </Switch>
-    </BrowserRouter>
+    <div>
+      <BrowserRouter>
+        <Switch>
+          {publicRoutes.map((el) => (
+            <PublicRoute
+              key={el.path}
+              exact={el.exact}
+              path={el.path}
+              component={el.component}
+            />
+          ))}
+            <Switch>
+              {privateRoutes.map((el) => ( 
+                <PrivateRoute
+                  key={el.path}
+                  exact={el.exact}
+                  component={el.component}
+                  path={el.path}
+                  isLayout={el.isLayout}
+                />
+              ))}
+              <Redirect to={routes.HOME} />
+            </Switch>
+        </Switch>
+      </BrowserRouter>
+    </div>
   );
 };
