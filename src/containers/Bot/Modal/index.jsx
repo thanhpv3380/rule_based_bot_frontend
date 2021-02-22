@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid, Typography, Modal, TextField, Button } from '@material-ui/core';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import useStyles from './index.style';
-import { useFormContext, FormProvider } from 'react-hook-form';
 
 function CreateBotModal(props) {
   const classes = useStyles();
@@ -10,11 +9,15 @@ function CreateBotModal(props) {
   const { handleOpen, handleClose, open, onSubmit, methods } = props;
   return (
     <Grid item>
-      {/* <AddCircleOutlineIcon onClick={handleOpen} className={classes.svgIcon} /> */}
-      <Button variant="contained" color="primary" onClick={handleOpen} classes={{
-                    containedPrimary: classes.containedPrimary,
-                    root: classes.buttonRoot,
-                  }}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleOpen}
+        classes={{
+          containedPrimary: classes.containedPrimary,
+          root: classes.buttonRoot,
+        }}
+      >
         {' '}
         <AddCircleOutlineIcon fontSize="small" />{' '}
         <Typography variant="h7"> &nbsp;create bot</Typography>
@@ -42,7 +45,7 @@ function CreateBotModal(props) {
               classes={{
                 root: classes.mutiInput,
               }}
-              autoFocus={true}
+              autoFocus
               required
               id="outlined-required"
               label="name"

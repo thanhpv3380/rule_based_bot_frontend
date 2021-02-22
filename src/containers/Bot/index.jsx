@@ -1,30 +1,21 @@
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Grid, Box, Typography } from '@material-ui/core';
 import { getCookie } from '../../utils/cookie';
-import {
-  Avatar,
-  Grid,
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  InputAdornment,
-  Modal,
-  Button,
-} from '@material-ui/core';
 
 import ListBot from './ListBot';
 import CreateBotModal from './Modal';
 import SearchBox from './SearchBox';
 import apis from '../../apis';
+import actions from '../../redux/actions';
+
 function Bot() {
   // const classes = useStyles();
   // const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { accessToken, verifying } = useSelector((state) => state.auth);
+  const { accessToken } = useSelector((state) => state.auth);
   useEffect(() => {
     if (!accessToken) {
       const accessTokenFromCookie = getCookie('accessToken');
@@ -80,15 +71,15 @@ function Bot() {
       <Typography variant="h5">CHATBOT LIST</Typography>
       <Grid container justify="space-between">
         <SearchBox handleOnChange={handleOnChange} />
-        {/* <FormProvider {...methods}> */}
-        <CreateBotModal
-          open={open}
-          handleOpen={handleOpen}
-          handleClose={handleClose}
-          onSubmit={onSubmit}
-          methods={methods}
-        />
-        {/* </FormProvider> */}
+        <FormProvider {...methods}>
+          <CreateBotModal
+            open={open}
+            handleOpen={handleOpen}
+            handleClose={handleClose}
+            onSubmit={onSubmit}
+            methods={methods}
+          />
+        </FormProvider>
       </Grid>
       <ListBot bots={bots} />
     </Box>

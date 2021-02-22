@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       background: '#e6e6e6',
     },
-    marginTop: '2%'
+    marginTop: '2%',
   },
   rounded: {
     height: 60,

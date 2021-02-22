@@ -1,7 +1,7 @@
 import routes from '../constants/route';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
-import Bot from '../pages/Bot';
+import Dashboards from '../pages/Bot';
 
 export default [
   {
@@ -21,8 +21,8 @@ export default [
     isLayout: true,
   },
   {
-    path: routes.BOT,
-    component: Bot,
+    path: routes.DASHBOARDS,
+    component: Dashboards,
     exact: true,
     restricted: false,
     isPrivate: true,

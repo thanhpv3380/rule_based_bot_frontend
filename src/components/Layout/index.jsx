@@ -33,13 +33,14 @@ const menu = [
   {
     heading: 'bots',
     icon: <Reddit />,
-    route: `/bots`,
+    route: `/dashboards`,
   },
 ];
 
 const Layout = ({ children, isLayout }) => {
   const classes = useStyles();
   const { accessToken, user } = useSelector((state) => state.auth);
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openSideBar, setOpenSideBar] = useState(true);
   const [displaySideBar] = useState(true);
@@ -57,21 +58,24 @@ const Layout = ({ children, isLayout }) => {
         accessToken={accessToken}
         user={user}
         bgColor="#fff"
-        displaySideBar={displaySideBar && isLayout}
+        displaySideBar={displaySideBar}
         handleDrawerToggle={handleDrawerToggle}
       />
       {isLayout && (
-        <Sidebar
-          menu={menu}
-          mobileOpen={mobileOpen}
-          openSideBar={openSideBar}
-          displaySideBar={displaySideBar}
-          handleDrawerToggle={handleDrawerToggle}
-        />
+        <div>
+          <Sidebar
+            menu={menu}
+            mobileOpen={mobileOpen}
+            openSideBar={openSideBar}
+            displaySideBar={displaySideBar}
+            handleDrawerToggle={handleDrawerToggle}
+          />
+        </div>
       )}
       <Content
-        displaySideBar={displaySideBar && isLayout}
+        displaySideBar={displaySideBar}
         handleSidebarToggle={handleSidebarToggle}
+        isLayout={isLayout}
       >
         {children}
       </Content>
