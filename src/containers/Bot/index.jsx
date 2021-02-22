@@ -3,7 +3,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Grid, Box, Typography } from '@material-ui/core';
-import { getCookie } from '../../utils/cookie';
+import { getCookie, setCookie } from '../../utils/cookie';
 
 import ListBot from './ListBot';
 import CreateBotModal from './Modal';
@@ -66,6 +66,11 @@ function Bot() {
     }
   };
 
+  const handleOnClick = (data) => {
+    console.log(data, '  bot ');
+    setCookie('agent-id', data.id);
+  }
+
   return (
     <Box>
       <Typography variant="h5">CHATBOT LIST</Typography>
@@ -81,7 +86,7 @@ function Bot() {
           />
         </FormProvider>
       </Grid>
-      <ListBot bots={bots} />
+      <ListBot handleOnClick={handleOnClick} bots={bots} />
     </Box>
   );
 }

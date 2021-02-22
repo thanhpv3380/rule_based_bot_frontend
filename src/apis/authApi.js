@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 import camelCase from 'camelcase-keys';
-import { useSelector } from 'react-redux';
 import { getCookie } from '../utils/cookie';
 
 const axiosClient = axios.create({
@@ -14,6 +13,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(async (config) => {
   const accessToken = getCookie('accessToken');
   config.headers.Authorization = `Bearer ${accessToken}`;
+  config.headers['agent-id'] = getCookie('agent-id');
   return config;
 });
 

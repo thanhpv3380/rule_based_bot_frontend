@@ -4,14 +4,14 @@ import useStyles from './index.style';
 
 function ListBot(props) {
   const classes = useStyles();
-  const { bots } = props;
+  const { bots, handleOnClick } = props;
   return (
     <div>
       <Grid container spacing={3}>
         {bots &&
           bots.map((bot) => {
             return (
-              <Grid item xs={4}>
+              <Grid item xs={4} onClick={() => handleOnClick(bot)}>
                 <Card className={classes.root} elevation={4}>
                   <Grid container spacing={3}>
                     <Grid item>

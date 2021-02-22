@@ -10,7 +10,11 @@ export default function PublicRoute({ Component, restricted, ...rest }) {
     <Route
       {...rest}
       render={(props) =>
-        accessToken ? <Redirect to={routes.HOME} /> : <Component {...props} />
+        accessToken ? (
+          <Redirect to={routes.DASHBOARDS} />
+        ) : (
+          <Component {...props} />
+        )
       }
     />
   );

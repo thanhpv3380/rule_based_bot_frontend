@@ -50,7 +50,7 @@ export default () => {
               isLayout={el.isLayout}
             />
           ))}
-          <Redirect to={routes.HOME} />
+          <Redirect to={routes.DASHBOARDS} />
         </Switch>
       </Switch>
     </BrowserRouter>
