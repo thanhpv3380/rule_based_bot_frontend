@@ -7,12 +7,13 @@ export default function Content({
   children,
   displaySideBar,
   handleSidebarToggle,
+  isLayout,
 }) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      {displaySideBar && (
+      {displaySideBar && isLayout &&(
         <Hidden smDown>
           <IconButton
             onClick={handleSidebarToggle}

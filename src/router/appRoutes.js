@@ -1,7 +1,7 @@
+import routes from '../constants/route';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
-
-import routes from '../constants/route';
+import Dashboards from '../pages/Bot';
 
 export default [
   {
@@ -15,6 +15,14 @@ export default [
   {
     path: routes.HOME,
     component: Home,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+  },
+  {
+    path: routes.DASHBOARDS,
+    component: Dashboards,
     exact: true,
     restricted: false,
     isPrivate: true,
