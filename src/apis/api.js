@@ -3,8 +3,7 @@ import axios from 'axios';
 import camelCase from 'camelcase-keys';
 
 const axiosClient = axios.create({
-  // baseURL: `${process.env.REACT_APP_API_DOMAIN}/api/v1`,
-  baseURL: `http://localhost:3000/api/v1`,
+  baseURL: `${process.env.REACT_APP_API_DOMAIN}/api/v1`,
   responseType: 'json',
   timeout: 15 * 1000,
   transformResponse: [(data) => camelCase(data, { deep: true })],

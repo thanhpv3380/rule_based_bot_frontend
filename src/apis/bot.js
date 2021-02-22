@@ -1,26 +1,29 @@
 import api from './api';
 
-export async function getbots(name) {
+export async function getbots(name, accessToken) {
     const response = await api({
       method: 'GET',
       url: `/bots?name=${name}`,
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
     return response;
   }
   
-  export async function getBotById(id) {
+  export async function getBotById(id, accessToken) {
     const response = await api({
       method: 'GET',
       url: `/bots/${id}`,
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
     return response;
   }
   
-  export async function createBot(Bot) {
+  export async function createBot(Bot, accessToken) {
     const response = await api({
       method: 'POST',
       url: '/bots',
       data: Bot,
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
     return response;
   }

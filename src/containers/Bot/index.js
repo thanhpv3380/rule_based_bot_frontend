@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCookie } from '../../utils/cookie';
 import {
   Avatar,
   Grid,
@@ -21,6 +23,16 @@ import apis from '../../apis';
 function Bot() {
   // const classes = useStyles();
   // const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const { accessToken, verifying } = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (!accessToken) {
+      const accessTokenFromCookie = getCookie('accessToken');
+      if (accessTokenFromCookie) {
+        dispatch(actions.auth.verifyToken(accessTokenFromCookie));
+      }
+    }
+  }, []);
   const history = useHistory();
   const methods = useForm({
     defaultValues: {},
@@ -39,26 +51,26 @@ function Bot() {
   };
 
   const fetchBots = async () => {
-    const { result } = await apis.bot.getbots('');
+    const { result } = await apis.bot.getbots('', accessToken);
     console.log(result.bots);
     setBots(result.bots);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchBots();
   }, []);
 
   const handleOnChange = async (e) => {
     const { value } = e.target;
-    const { result } = await apis.bot.getbots(value);
+    const { result } = await apis.bot.getbots(value, accessToken);
     setBots(result.bots);
   };
   const onSubmit = async (data) => {
     const bot = {
       name: data.name,
     };
-    const response = await apis.bot.createBot(bot);
-    if (response.status === 1) {
+    const response = await apis.bot.createBot(bot, accessToken);
+    if (response && response.status === 1) {
       history.push('/');
     }
   };

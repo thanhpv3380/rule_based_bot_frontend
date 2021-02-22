@@ -37,7 +37,7 @@ export default () => {
             key={el.path}
             exact={el.exact}
             path={el.path}
-            component={el.component}
+            Component={el.component}
           />
         ))}
         <Switch>
@@ -45,7 +45,7 @@ export default () => {
             <PrivateRoute
               key={el.path}
               exact={el.exact}
-              component={el.component}
+              Component={el.component}
               path={el.path}
               isLayout={el.isLayout}
             />
