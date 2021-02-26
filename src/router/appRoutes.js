@@ -1,7 +1,8 @@
 import routes from '../constants/route';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
-import Dashboards from '../pages/Bot';
+import Dashboard from '../pages/Bot';
+import Dictionary from '../pages/Dictionary';
 
 export default [
   {
@@ -13,7 +14,15 @@ export default [
     isLayout: false,
   },
   {
-    path: routes.HOME,
+    path: routes.DASHBOARD,
+    component: Dashboard,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: false,
+  },
+  {
+    path: routes.DASHBOARD_AGENT,
     component: Home,
     exact: true,
     restricted: false,
@@ -21,11 +30,11 @@ export default [
     isLayout: true,
   },
   {
-    path: routes.DASHBOARDS,
-    component: Dashboards,
+    path: routes.DICTIONARY,
+    component: Dictionary,
     exact: true,
     restricted: false,
     isPrivate: true,
-    isLayout: false,
+    isLayout: true,
   },
 ];

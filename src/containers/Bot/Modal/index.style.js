@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+
 const useStyles = makeStyles((theme) => ({
   svgIcon: {
     borderRadius: '100%',
@@ -50,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: 'rgba(74, 74, 74, 0.04)',
     },
   },
- 
 }));
 
 export default useStyles;

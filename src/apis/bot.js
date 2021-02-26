@@ -1,6 +1,6 @@
 import api from './authApi';
 
-export async function getbots(name) {
+export async function getBots(name) {
   const response = await api({
     method: 'GET',
     url: `/bots?name=${name}`,

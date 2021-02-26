@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,9 @@ import actions from '../redux/actions';
 
 export default () => {
   const dispatch = useDispatch();
+  const [isFirstTime, setIsFirstTime] = useState(true);
   const { accessToken, verifying } = useSelector((state) => state.auth);
+
   useEffect(() => {
     if (!accessToken) {
       const accessTokenFromCookie = getCookie('accessToken');
@@ -19,9 +21,10 @@ export default () => {
         dispatch(actions.auth.verifyToken(accessTokenFromCookie));
       }
     }
+    setIsFirstTime(false);
   }, []);
 
-  if (verifying) {
+  if (isFirstTime || verifying) {
     return <CircularProgress />;
   }
 
@@ -50,7 +53,7 @@ export default () => {
               isLayout={el.isLayout}
             />
           ))}
-          <Redirect to={routes.DASHBOARDS} />
+          <Redirect to={routes.DASHBOARD} />
         </Switch>
       </Switch>
     </BrowserRouter>

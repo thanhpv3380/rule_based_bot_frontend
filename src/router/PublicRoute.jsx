@@ -11,7 +11,7 @@ export default function PublicRoute({ Component, restricted, ...rest }) {
       {...rest}
       render={(props) =>
         accessToken ? (
-          <Redirect to={routes.DASHBOARDS} />
+          <Redirect to={routes.DASHBOARD} />
         ) : (
           <Component {...props} />
         )

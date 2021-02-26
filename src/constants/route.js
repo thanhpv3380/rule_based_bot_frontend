@@ -3,6 +3,7 @@ export default {
   LOGIN: '/login',
   ACTION: '/actions',
   INTENT: '/intents',
-  DICTIONARY: '/dictionary',
-  DASHBOARDS: '/dashboards',
+  DICTIONARY: '/agent/:id/dictionary',
+  DASHBOARD_AGENT: '/agent/:id/dashboard',
+  DASHBOARD: '/dashboard',
 };

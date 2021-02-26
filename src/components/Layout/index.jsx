@@ -1,44 +1,59 @@
-import React, { useState, createContext } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { People, Reddit, SettingsInputComponent } from '@material-ui/icons';
+import { People, SettingsInputComponent } from '@material-ui/icons';
 import useStyles from './index.style';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Content from './Content';
 
-export const AppContext = createContext();
-
-const menu = [
-  {
-    heading: 'accounts',
-    icon: <People />,
-    subMenus: [
-      {
-        route: `/admin/accounts`,
-        icon: <People />,
-        heading: 'accounts',
-      },
-      {
-        route: `/admin/accounts`,
-        icon: <People />,
-        heading: 'accounts',
-      },
-    ],
-  },
-  {
-    heading: 'apps',
-    icon: <SettingsInputComponent />,
-    route: `/admin/apps`,
-  },
-  {
-    heading: 'bots',
-    icon: <Reddit />,
-    route: `/dashboards`,
-  },
-];
-
 const Layout = ({ children, isLayout }) => {
   const classes = useStyles();
+  const agentId = useSelector((state) => state.bot.bot);
+  const menu = [
+    {
+      heading: 'General',
+      icon: <SettingsInputComponent />,
+      subMenus: [
+        {
+          route: `/agent/${agentId}`,
+          icon: <People />,
+          heading: 'Dashboard',
+        },
+      ],
+    },
+    {
+      heading: 'Data',
+      icon: <People />,
+      subMenus: [
+        {
+          route: `/agent/${agentId}/entities`,
+          icon: <People />,
+          heading: 'Entities',
+        },
+        {
+          route: `/agent/${agentId}/intents`,
+          icon: <People />,
+          heading: 'Intents',
+        },
+        {
+          route: `/agent/${agentId}/actions`,
+          icon: <People />,
+          heading: 'Actions',
+        },
+        {
+          route: `/agent/${agentId}/dictionary`,
+          icon: <People />,
+          heading: 'Dictionary',
+        },
+      ],
+    },
+    {
+      heading: 'Settings',
+      icon: <SettingsInputComponent />,
+      route: `/agent/${agentId}/settings`,
+    },
+  ];
+
   const { accessToken, user } = useSelector((state) => state.auth);
 
   const [mobileOpen, setMobileOpen] = useState(false);

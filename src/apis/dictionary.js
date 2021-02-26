@@ -1,9 +1,9 @@
-import api from './api';
+import api from './authApi';
 
-export async function getDictionaries() {
+export async function getDictionaries(query) {
   const response = await api({
     method: 'GET',
-    url: '/dictionaries',
+    url: `/dictionaries?${query}`,
   });
   return response;
 }

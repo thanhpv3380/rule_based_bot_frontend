@@ -1,9 +1,10 @@
+/* eslint-disable no-debugger */
 import React, { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Grid, Box, Typography } from '@material-ui/core';
-import { getCookie, setCookie } from '../../utils/cookie';
+import { setCookie } from '../../utils/cookie';
 
 import ListBot from './ListBot';
 import CreateBotModal from './Modal';
@@ -11,19 +12,10 @@ import SearchBox from './SearchBox';
 import apis from '../../apis';
 import actions from '../../redux/actions';
 
-function Bot() {
+const Bot = () => {
   // const classes = useStyles();
   // const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { accessToken } = useSelector((state) => state.auth);
-  useEffect(() => {
-    if (!accessToken) {
-      const accessTokenFromCookie = getCookie('accessToken');
-      if (accessTokenFromCookie) {
-        dispatch(actions.auth.verifyToken(accessTokenFromCookie));
-      }
-    }
-  }, []);
   const history = useHistory();
   const methods = useForm({
     defaultValues: {},
@@ -31,7 +23,7 @@ function Bot() {
   });
 
   const [open, setOpen] = React.useState(false);
-  const [bots, setBots] = React.useState();
+  const [bots, setBots] = React.useState([]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -42,8 +34,7 @@ function Bot() {
   };
 
   const fetchBots = async () => {
-    const { result } = await apis.bot.getbots('', accessToken);
-    console.log(result.bots);
+    const { result } = await apis.bot.getBots('');
     setBots(result.bots);
   };
 
@@ -53,23 +44,25 @@ function Bot() {
 
   const handleOnChange = async (e) => {
     const { value } = e.target;
-    const { result } = await apis.bot.getbots(value, accessToken);
+    const { result } = await apis.bot.getBots(value);
     setBots(result.bots);
   };
+
   const onSubmit = async (data) => {
     const bot = {
       name: data.name,
     };
-    const response = await apis.bot.createBot(bot, accessToken);
+    const response = await apis.bot.createBot(bot);
     if (response && response.status === 1) {
       history.push('/');
     }
   };
 
   const handleOnClick = (data) => {
-    console.log(data, '  bot ');
     setCookie('agent-id', data.id);
-  }
+    dispatch(actions.bot.changeBot(data.id));
+    history.push(`/agent/${data.id}/dashboard`);
+  };
 
   return (
     <Box>
@@ -89,6 +82,6 @@ function Bot() {
       <ListBot handleOnClick={handleOnClick} bots={bots} />
     </Box>
   );
-}
+};
 
 export default Bot;
