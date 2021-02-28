@@ -1,9 +1,11 @@
 import api from './authApi';
+import { renderQueryAll } from '../utils/query';
 
 export async function getDictionaries(query) {
+  const newQuery = renderQueryAll(query);
   const response = await api({
     method: 'GET',
-    url: `/dictionaries?${query}`,
+    url: `/dictionaries?${newQuery}`,
   });
   return response;
 }

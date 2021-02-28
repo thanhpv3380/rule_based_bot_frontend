@@ -1,28 +1,53 @@
 import React from 'react';
-import { Grid, TextField, InputAdornment } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  InputBase,
+  Button,
+} from '@material-ui/core';
+import { List as ListIcon, Search as SearchIcon } from '@material-ui/icons';
+
 import useStyles from './index.style';
 
-function SearchBox(props) {
+function SearchBox({ keySearch, handleSearch, handleToggleModal }) {
   const classes = useStyles();
-  const { handleOnChange } = props;
+
   return (
-    <Grid item xs={6}>
-      <TextField
-        className={classes.margin}
-        placeholder="search"
-        id="input-with-icon-textfield"
-        onChange={handleOnChange}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-          classes: { underline: classes.underline },
-        }}
-      />
-    </Grid>
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          color="inherit"
+          aria-label="open drawer"
+        >
+          <ListIcon />
+        </IconButton>
+        <Typography className={classes.title} variant="h6" noWrap>
+          List Bot
+        </Typography>
+        <Button variant="contained" onClick={handleToggleModal}>
+          Create
+        </Button>
+        <div className={classes.search}>
+          <div className={classes.searchIcon}>
+            <SearchIcon />
+          </div>
+          <InputBase
+            placeholder="Search…"
+            classes={{
+              root: classes.inputRoot,
+              input: classes.inputInput,
+            }}
+            inputProps={{ 'aria-label': 'search' }}
+            value={keySearch}
+            onChange={handleSearch}
+          />
+        </div>
+      </Toolbar>
+    </AppBar>
   );
 }
 

@@ -1,16 +1,42 @@
 /* eslint-disable react/jsx-boolean-value */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Typography, TextField, Button, Box } from '@material-ui/core';
 import useStyles from './index.style';
 
 function DictionaryAction({
   openModal,
   handleToggleModal,
-  dictionary,
-  handleChange,
+  dictionaryUpdate,
   handleAction,
 }) {
   const classes = useStyles();
+  const [dictionary, setDictionary] = useState({
+    id: null,
+    acronym: '',
+    original: '',
+  });
+
+  const handleChange = (e) => {
+    setDictionary({
+      ...dictionary,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handlePrevAction = async () => {
+    await handleAction(dictionary);
+    setDictionary({
+      id: null,
+      acronym: '',
+      original: '',
+    });
+  };
+
+  useEffect(() => {
+    if (dictionaryUpdate) {
+      setDictionary({ ...dictionaryUpdate });
+    }
+  }, [dictionaryUpdate]);
 
   return (
     <Modal
@@ -51,7 +77,7 @@ function DictionaryAction({
             <Button color="primary" onClick={handleToggleModal}>
               Cancel
             </Button>
-            <Button color="primary" onClick={handleAction}>
+            <Button color="primary" onClick={handlePrevAction}>
               {dictionary.id ? 'Update' : 'Create'}
             </Button>
           </Box>

@@ -8,14 +8,14 @@ import Content from './Content';
 
 const Layout = ({ children, isLayout }) => {
   const classes = useStyles();
-  const agentId = useSelector((state) => state.bot.bot);
+  const botId = useSelector((state) => state.bot.bot);
   const menu = [
     {
       heading: 'General',
       icon: <SettingsInputComponent />,
       subMenus: [
         {
-          route: `/agent/${agentId}`,
+          route: `/bot/${botId}`,
           icon: <People />,
           heading: 'Dashboard',
         },
@@ -26,22 +26,22 @@ const Layout = ({ children, isLayout }) => {
       icon: <People />,
       subMenus: [
         {
-          route: `/agent/${agentId}/entities`,
+          route: `/bot/${botId}/entities`,
           icon: <People />,
           heading: 'Entities',
         },
         {
-          route: `/agent/${agentId}/intents`,
+          route: `/bot/${botId}/intents`,
           icon: <People />,
           heading: 'Intents',
         },
         {
-          route: `/agent/${agentId}/actions`,
+          route: `/bot/${botId}/actions`,
           icon: <People />,
           heading: 'Actions',
         },
         {
-          route: `/agent/${agentId}/dictionary`,
+          route: `/bot/${botId}/dictionary`,
           icon: <People />,
           heading: 'Dictionary',
         },
@@ -50,7 +50,7 @@ const Layout = ({ children, isLayout }) => {
     {
       heading: 'Settings',
       icon: <SettingsInputComponent />,
-      route: `/agent/${agentId}/settings`,
+      route: `/bot/${botId}/settings`,
     },
   ];
 

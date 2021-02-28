@@ -13,6 +13,10 @@ import {
   TableContainer,
   TableCell,
   Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  TablePagination,
 } from '@material-ui/core';
 import {
   List as ListIcon,
@@ -25,30 +29,51 @@ import DictionaryAction from './DictionaryAction';
 import useStyles from './index.style';
 import apis from '../../apis';
 
+const dictionaryDefault = {
+  id: null,
+  acronym: '',
+  original: '',
+};
+
+let dictionariesDefault = [];
 const Dictionary = () => {
   const classes = useStyles();
-  let searchId = null;
   const { enqueueSnackbar } = useSnackbar();
   const [query, setQuery] = useState();
+  const [dictionaryDelete, setDictionaryDelete] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [dictionary, setDictionary] = useState({
-    id: null,
-    acronym: null,
-    original: null,
+  const [dictionary, setDictionary] = useState({ ...dictionaryDefault });
+
+  const [dictionaries, setDictionaries] = useState([]);
+  const [pagination, setPagination] = useState({
+    itemsLength: 100,
+    itemsPerPage: 10,
+    page: 1,
   });
 
-  const [dictionaries, setDictionaries] = useState([
-    {
-      id: '123',
-      acronym: 'test',
-      original: 'demo',
-    },
-  ]);
+  const handleChangePage = (event, newPage) => {
+    setPagination({
+      ...pagination,
+      page: newPage,
+    });
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination({
+      ...pagination,
+      itemsPerPage: parseInt(event.target.value, 10),
+      page: 0,
+    });
+  };
 
   const fetchDictionaries = async (search) => {
     const data = await apis.dictionary.getDictionaries(search);
     if (data && data.status) {
+      setPagination({
+        itemsLength: data.results.metadata.count,
+      });
       setDictionaries(data.results.dictionaries);
+      dictionariesDefault = [...data.results.dictionaries];
     } else {
       enqueueSnackbar('Cannot fetch data', {
         variant: 'error',
@@ -56,34 +81,42 @@ const Dictionary = () => {
     }
   };
 
-  const handleChangeSearch = (e) => {
-    const key = e.target.value;
-    setQuery(e.target.value);
-    clearTimeout(searchId);
-    searchId = setTimeout(
-      () => fetchDictionaries(`key=${key}&searchFields=acronym,original`),
-      1000,
-    );
-  };
-
   useEffect(() => {
-    fetchDictionaries();
+    fetchDictionaries({});
   }, []);
 
-  const handleChange = (e) => {
-    setDictionary({
-      ...dictionary,
-      [e.target.name]: e.target.value,
+  const handleSearch = (e) => {
+    const { value } = e.target;
+    setQuery(value);
+    const reg = new RegExp(value.toLowerCase());
+    const newDictionaries = dictionariesDefault.filter((el) => {
+      return (
+        reg.test(el.acronym.toLowerCase()) ||
+        reg.test(el.original.toLowerCase())
+      );
     });
+    setDictionaries([...newDictionaries]);
   };
 
-  const handleAction = async () => {
-    const data = dictionary.id
-      ? await apis.dictionary.updateDictionary(dictionary.id, dictionary)
-      : await apis.dictionary.createDictionary(dictionary);
+  const handleToggleModal = (row) => {
+    if (row) {
+      setDictionary(row);
+    }
+    setOpenModal((preOpenModal) => !preOpenModal);
+  };
 
-    const title = dictionary.id ? 'Update' : 'Create';
+  const handleAction = async (value) => {
+    const data = value.id
+      ? await apis.dictionary.updateDictionary(value.id, {
+          acronym: value.acronym,
+          original: value.original,
+        })
+      : await apis.dictionary.createDictionary(value);
+
+    const title = value.id ? 'Update' : 'Create';
     if (data && data.status) {
+      handleToggleModal();
+      fetchDictionaries();
       enqueueSnackbar(`${title} successfully`, {
         variant: 'success',
       });
@@ -94,9 +127,14 @@ const Dictionary = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    const data = await apis.dictionary.deleteDictionary(id);
+  const handleToggleConfirmDelete = (id) => {
+    setDictionaryDelete(id);
+  };
+
+  const handleDelete = async () => {
+    const data = await apis.dictionary.deleteDictionary(dictionaryDelete);
     if (data && data.status) {
+      fetchDictionaries();
       enqueueSnackbar('Delete successfully', {
         variant: 'success',
       });
@@ -105,17 +143,7 @@ const Dictionary = () => {
         variant: 'error',
       });
     }
-  };
-
-  const handleToggleModal = () => {
-    setOpenModal((preOpenModal) => !preOpenModal);
-  };
-
-  const handleOpenModal = (row) => {
-    if (row) {
-      setDictionary(row);
-    }
-    setOpenModal(true);
+    setDictionaryDelete(null);
   };
 
   return (
@@ -133,7 +161,7 @@ const Dictionary = () => {
           <Typography className={classes.title} variant="h6" noWrap>
             Dictionary
           </Typography>
-          <Button variant="contained" onClick={() => handleOpenModal()}>
+          <Button variant="contained" onClick={() => handleToggleModal()}>
             Create
           </Button>
           <div className={classes.search}>
@@ -148,7 +176,7 @@ const Dictionary = () => {
               }}
               inputProps={{ 'aria-label': 'search' }}
               value={query}
-              onChange={handleChangeSearch}
+              onChange={handleSearch}
             />
           </div>
         </Toolbar>
@@ -176,14 +204,14 @@ const Dictionary = () => {
                     <IconButton
                       aria-label="edit"
                       className={classes.margin}
-                      onClick={() => handleOpenModal(row)}
+                      onClick={() => handleToggleModal(row)}
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
                       aria-label="delete"
                       className={classes.margin}
-                      onClick={() => handleDelete(row.id)}
+                      onClick={() => handleToggleConfirmDelete(row.id)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -194,11 +222,34 @@ const Dictionary = () => {
           </Table>
         </TableContainer>
       </Paper>
+      {/* <TablePagination
+        component="div"
+        count={pagination.itemsLength}
+        page={pagination.page}
+        onChangePage={handleChangePage}
+        rowsPerPage={pagination.itemsPerPage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      /> */}
+      <Dialog
+        open={dictionaryDelete}
+        onClose={() => handleToggleConfirmDelete()}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Do you agree delete?</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => handleToggleConfirmDelete()} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="primary" autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
       <DictionaryAction
         openModal={openModal}
         handleToggleModal={handleToggleModal}
-        dictionary={dictionary}
-        handleChange={handleChange}
+        dictionaryUpdate={dictionary}
         handleAction={handleAction}
       />
     </div>

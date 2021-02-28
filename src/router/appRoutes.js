@@ -1,7 +1,7 @@
 import routes from '../constants/route';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
-import Dashboard from '../pages/Bot';
+import Bot from '../pages/Bot';
 import Dictionary from '../pages/Dictionary';
 
 export default [
@@ -15,14 +15,14 @@ export default [
   },
   {
     path: routes.DASHBOARD,
-    component: Dashboard,
+    component: Bot,
     exact: true,
     restricted: false,
     isPrivate: true,
     isLayout: false,
   },
   {
-    path: routes.DASHBOARD_AGENT,
+    path: routes.DASHBOARD_BOT,
     component: Home,
     exact: true,
     restricted: false,
