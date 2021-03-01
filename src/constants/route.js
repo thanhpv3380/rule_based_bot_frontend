@@ -1,9 +1,9 @@
 export default {
   HOME: '/',
   LOGIN: '/login',
-  ACTION: '/actions',
-  INTENT: '/intents',
-  DICTIONARY: '/bot/:id/dictionary',
-  DASHBOARD_BOT: '/bot/:id/dashboard',
   DASHBOARD: '/dashboard',
+  INTENT_BOT: '/bot/:id/intents',
+  DICTIONARY_BOT: '/bot/:id/dictionary',
+  DASHBOARD_BOT: '/bot/:id/dashboard',
+  ACTION_BOT: '/bot/:id/actions',
 };

@@ -41,9 +41,7 @@ const Bot = () => {
       setPagination({
         ...pagination,
         count: data.results.metadata.count,
-        page: query.offset
-          ? Math.floor(data.results.metadata.count / query.offset)
-          : 0,
+        page: Math.floor(query.offset / query.limit),
       });
     } else {
       enqueueSnackbar('Cannot fetch data', {

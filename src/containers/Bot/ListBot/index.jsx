@@ -28,7 +28,11 @@ const ListBot = ({
               <Grid
                 key={item.id}
                 item
-                xs={4}
+                xs={12}
+                sm={4}
+                md={4}
+                lg={4}
+                xl={3}
                 onClick={() => handleView(item.id)}
               >
                 <Card className={classes.card}>

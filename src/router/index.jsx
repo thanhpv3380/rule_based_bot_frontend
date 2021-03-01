@@ -51,6 +51,7 @@ export default () => {
               Component={el.component}
               path={el.path}
               isLayout={el.isLayout}
+              isLayoutListGroup={el.isLayoutListGroup}
             />
           ))}
           <Redirect to={routes.DASHBOARD} />

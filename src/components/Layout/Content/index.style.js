@@ -8,6 +8,7 @@ export default makeStyles(() => ({
     marginTop: '128px',
     minHeight: 'calc(100vh - 128px)',
     boxSizing: 'border-box',
+    zIndex: 1,
   },
   menuIcon: {
     position: 'absolute',

@@ -1,3 +1,4 @@
+/* eslint-disable no-unneeded-ternary */
 import React, { useState, useEffect } from 'react';
 import {
   AppBar,
@@ -35,23 +36,56 @@ const dictionaryDefault = {
   original: '',
 };
 
-let dictionariesDefault = [];
+let searchId = null;
+const sortDefault = 'createdAt_desc';
+
 const Dictionary = () => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [query, setQuery] = useState();
+  const [query, setQuery] = useState('');
   const [dictionaryDelete, setDictionaryDelete] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [dictionary, setDictionary] = useState({ ...dictionaryDefault });
 
   const [dictionaries, setDictionaries] = useState([]);
   const [pagination, setPagination] = useState({
-    itemsLength: 100,
-    itemsPerPage: 10,
-    page: 1,
+    page: 0,
+    rowsPerPage: 5,
+    count: 100,
   });
 
-  const handleChangePage = (event, newPage) => {
+  const fetchDictionaries = async (search) => {
+    const data = await apis.dictionary.getDictionaries(search);
+    if (data && data.status) {
+      setPagination({
+        ...pagination,
+        count: data.results.metadata.count,
+        page: Math.floor(search.offset / search.limit),
+      });
+      setDictionaries(data.results.dictionaries);
+    } else {
+      enqueueSnackbar('Cannot fetch data', {
+        variant: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchDictionaries({
+      limit: pagination.rowsPerPage,
+      offset: 0,
+    });
+  }, []);
+
+  const handleChangePage = async (event, newPage) => {
+    await fetchDictionaries({
+      key: query,
+      searchFields: 'acronym,original',
+      limit: pagination.rowsPerPage,
+      offset: newPage * pagination.rowsPerPage,
+      sort: sortDefault,
+    });
+
     setPagination({
       ...pagination,
       page: newPage,
@@ -66,36 +100,19 @@ const Dictionary = () => {
     });
   };
 
-  const fetchDictionaries = async (search) => {
-    const data = await apis.dictionary.getDictionaries(search);
-    if (data && data.status) {
-      setPagination({
-        itemsLength: data.results.metadata.count,
-      });
-      setDictionaries(data.results.dictionaries);
-      dictionariesDefault = [...data.results.dictionaries];
-    } else {
-      enqueueSnackbar('Cannot fetch data', {
-        variant: 'error',
-      });
-    }
-  };
-
-  useEffect(() => {
-    fetchDictionaries({});
-  }, []);
-
   const handleSearch = (e) => {
     const { value } = e.target;
     setQuery(value);
-    const reg = new RegExp(value.toLowerCase());
-    const newDictionaries = dictionariesDefault.filter((el) => {
-      return (
-        reg.test(el.acronym.toLowerCase()) ||
-        reg.test(el.original.toLowerCase())
-      );
-    });
-    setDictionaries([...newDictionaries]);
+    clearTimeout(searchId);
+    searchId = setTimeout(() => {
+      fetchDictionaries({
+        key: value,
+        searchFields: 'acronym,original',
+        limit: pagination.rowsPerPage,
+        offset: 0,
+        sort: sortDefault,
+      });
+    }, 1000);
   };
 
   const handleToggleModal = (row) => {
@@ -116,7 +133,11 @@ const Dictionary = () => {
     const title = value.id ? 'Update' : 'Create';
     if (data && data.status) {
       handleToggleModal();
-      fetchDictionaries();
+      await fetchDictionaries({
+        limit: pagination.rowsPerPage,
+        offset: 0,
+        sort: sortDefault,
+      });
       enqueueSnackbar(`${title} successfully`, {
         variant: 'success',
       });
@@ -134,7 +155,11 @@ const Dictionary = () => {
   const handleDelete = async () => {
     const data = await apis.dictionary.deleteDictionary(dictionaryDelete);
     if (data && data.status) {
-      fetchDictionaries();
+      await fetchDictionaries({
+        limit: pagination.rowsPerPage,
+        offset: 0,
+        sort: sortDefault,
+      });
       enqueueSnackbar('Delete successfully', {
         variant: 'success',
       });
@@ -222,16 +247,17 @@ const Dictionary = () => {
           </Table>
         </TableContainer>
       </Paper>
-      {/* <TablePagination
+      <TablePagination
         component="div"
-        count={pagination.itemsLength}
+        rowsPerPageOptions={[6]}
+        count={pagination.count}
         page={pagination.page}
         onChangePage={handleChangePage}
-        rowsPerPage={pagination.itemsPerPage}
+        rowsPerPage={pagination.rowsPerPage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
-      /> */}
+      />
       <Dialog
-        open={dictionaryDelete}
+        open={dictionaryDelete ? true : false}
         onClose={() => handleToggleConfirmDelete()}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"

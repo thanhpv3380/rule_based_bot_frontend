@@ -4,9 +4,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 10,
   },
-  card: {
-    maxWidth: 345,
-  },
   media: {
     height: 140,
   },
