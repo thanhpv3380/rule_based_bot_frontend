@@ -18,7 +18,7 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import Content from './Content';
 
-const Layout = ({ children, isLayout, isLayoutListGroup }) => {
+const Layout = ({ children, isLayout }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const botId = useSelector((state) => state.bot.bot);
@@ -110,7 +110,6 @@ const Layout = ({ children, isLayout, isLayoutListGroup }) => {
         displaySideBar={displaySideBar}
         handleSidebarToggle={handleSidebarToggle}
         isLayout={isLayout}
-        isLayoutListGroup={isLayoutListGroup}
         className={
           !isLayout
             ? classes.contentSideBar

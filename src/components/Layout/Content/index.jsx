@@ -1,9 +1,8 @@
 import React from 'react';
-import { IconButton, Hidden, Grid } from '@material-ui/core';
+import { IconButton, Hidden } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import clsx from 'clsx';
 import useStyles from './index.style';
-import LayoutListGroup from './LayoutListGroup';
 
 const Content = ({
   children,
@@ -11,7 +10,6 @@ const Content = ({
   handleSidebarToggle,
   isLayout,
   className,
-  isLayoutListGroup,
 }) => {
   const classes = useStyles();
 

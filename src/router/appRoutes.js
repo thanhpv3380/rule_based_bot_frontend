@@ -13,7 +13,6 @@ export default [
     restricted: true,
     isPrivate: false,
     isLayout: false,
-    isLayoutListGroup: false,
   },
   {
     path: routes.DASHBOARD,
@@ -22,7 +21,6 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: false,
-    isLayoutListGroup: false,
   },
   {
     path: routes.DASHBOARD_BOT,
@@ -40,15 +38,13 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: true,
-    isLayoutListGroup: false,
   },
   {
-    path: routes.ACTION_BOT,
+    path: routes.ACTION_BOT.ACTION,
     component: Action,
     exact: false,
     restricted: false,
     isPrivate: true,
     isLayout: true,
-    isLayoutListGroup: true,
   },
 ];
