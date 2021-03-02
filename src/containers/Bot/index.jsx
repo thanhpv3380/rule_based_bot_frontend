@@ -7,9 +7,10 @@ import { getCookie, setCookie } from '../../utils/cookie';
 
 import ListBot from './ListBot';
 import CreateBotModal from './Modal';
-import SearchBox from './SearchBox';
+import SearchBox from '../../components/SearchBox';
 import apis from '../../apis';
 import actions from '../../redux/actions';
+import { text } from '../../enums';
 
 function Bot() {
   // const classes = useStyles();
@@ -67,15 +68,21 @@ function Bot() {
   };
 
   const handleOnClick = (data) => {
-    console.log(data, '  bot ');
     setCookie('agent-id', data.id);
-  }
+    history.push('/');
+  };
 
   return (
     <Box>
       <Typography variant="h5">CHATBOT LIST</Typography>
       <Grid container justify="space-between">
-        <SearchBox handleOnChange={handleOnChange} />
+        <Grid item xs={6}>
+          <SearchBox
+            handleOnChange={handleOnChange}
+            placeholder={text.SEARCH}
+            isStartPositionIcon
+          />
+        </Grid>
         <FormProvider {...methods}>
           <CreateBotModal
             open={open}

@@ -6,7 +6,6 @@ import routes from '../constants/route';
 
 export default function PrivateRoute({ Component, isLayout, ...rest }) {
   const accessToken = useSelector((state) => state.auth.accessToken);
-
   return (
     <Layout isLayout={isLayout}>
       <Route

@@ -3,5 +3,15 @@ import * as action from './action';
 import * as groupAction from './groupAction';
 import * as dictionary from './dictionary';
 import * as bot from './bot';
+import * as groupIntent from './groupIntent';
+import * as intent from './intent';
 
-export default { auth, action, groupAction, dictionary, bot };
+export default {
+  auth,
+  action,
+  groupAction,
+  dictionary,
+  bot,
+  groupIntent,
+  intent,
+};

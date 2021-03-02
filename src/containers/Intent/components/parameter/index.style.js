@@ -1,13 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
-  svgIcon: {
-    borderRadius: '100%',
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#dadada',
-    },
-  },
   modal: {
     display: 'flex',
     marginTop: '10%',
@@ -24,32 +17,38 @@ const useStyles = makeStyles((theme) => ({
     outline: 'none',
     borderRadius: 10,
   },
+  formControl: {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 10,
+      backgroundColor: 'white',
+    },
+    marginTop: '4%',
+  },
   mutiInput: {
     '& .MuiOutlinedInput-root': {
       borderRadius: 10,
     },
   },
-  containedPrimary: {
-    color: '#fff',
-    backgroundColor: '#000034',
-    borderRadius: 10,
-    height: 38,
-  },
-  textPrimary: {
-    color: '#000034',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    height: 38,
-  },
-  buttonRoot: {
-    '&:hover': {
-      backgroundColor: '#000034', // #32b711
+  table: {
+    '& table': {
+      borderLeft: 'none',
     },
+    marginTop: 15,
+    borderLeftColor: '#fff',
+    borderRightColor: '#fff',
   },
-  buttonCancelRoot: {
-    '&:hover': {
-      backgroundColor: 'rgba(74, 74, 74, 0.04)',
-    },
+  textFieldModal: {
+    width: '100%',
+    marginTop: '4%',
+  },
+  gridButtonModal: {
+    marginTop: '1%',
+  },
+  tableRowHeader: {
+    backgroundColor: '#e6e6e6',
+  },
+  iconTableCell: {
+    marginRight: '3%',
   },
 }));
 

@@ -31,9 +31,20 @@ const menu = [
     route: `/admin/apps`,
   },
   {
-    heading: 'bots',
-    icon: <Reddit />,
-    route: `/dashboards`,
+    heading: 'data',
+    icon: <People />,
+    subMenus: [
+      {
+        route: `/admin/accounts`,
+        icon: <People />,
+        heading: 'accounts',
+      },
+      {
+        route: `/intents`,
+        icon: <People />,
+        heading: 'intent',
+      },
+    ],
   },
 ];
 
