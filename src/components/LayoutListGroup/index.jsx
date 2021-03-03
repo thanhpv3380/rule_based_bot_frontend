@@ -13,11 +13,24 @@ import {
 import { Add as AddIcon } from '@material-ui/icons';
 import SearchBox from '../SearchBox';
 import GroupItem from './GroupItem';
+import CreateGroupItem from './CreateGroupItem';
 import useStyles from './index.style';
 
-const LayoutListGroup = ({ title, groupItems, handleOpenCreate, children }) => {
+const LayoutListGroup = ({
+  title,
+  groupItems,
+  handleSearch,
+  handleCreateItem,
+  handleDeleteItem,
+  handleCreateGroup,
+  handleChangeNameGroup,
+  handleDeleteGroup,
+  children,
+}) => {
   const classes = useStyles();
+  const [isCreateGroup, setIsCreateGroup] = useState(false);
   const [open, setOpen] = useState(false);
+
   const anchorRef = useRef(null);
 
   const handleToggle = () => {
@@ -48,20 +61,23 @@ const LayoutListGroup = ({ title, groupItems, handleOpenCreate, children }) => {
     prevOpen.current = open;
   }, [open]);
 
+  const handleToggleCreateGroup = () => {
+    setIsCreateGroup((prev) => !prev);
+  };
   const handleOpenCreateSingle = () => {
     handleToggle();
-    handleOpenCreate();
+    handleCreateItem();
   };
 
   const handleOpenCreateGroup = () => {
     handleToggle();
-    alert('create group');
+    setIsCreateGroup(true);
   };
   return (
     <Grid container spacing={3}>
-      <Grid item xs={4}>
+      <Grid item xs={12} md={4} lg={4} xl={4}>
         <>
-          <SearchBox />
+          <SearchBox handleSearch={handleSearch} />
           <Box component="span" display="block" bgcolor="background.paper" />
           <div>
             <Button
@@ -109,13 +125,24 @@ const LayoutListGroup = ({ title, groupItems, handleOpenCreate, children }) => {
               )}
             </Popper>
           </div>
-          {groupItems.map((groupItem) => (
-            <GroupItem groupItem={groupItem} />
-          ))}
+          {isCreateGroup && (
+            <CreateGroupItem
+              handleCreateGroup={handleCreateGroup}
+              handleToggleCreateGroup={handleToggleCreateGroup}
+            />
+          )}
+          {groupItems &&
+            groupItems.map((groupItem) => (
+              <GroupItem
+                groupItem={groupItem}
+                key={groupItem.id}
+                handleChangeNameGroup={handleChangeNameGroup}
+              />
+            ))}
         </>
       </Grid>
-      <Grid item xs={8}>
-        {children}
+      <Grid item xs={12} md={8} lg={8} xl={8}>
+        <Paper className={classes.children}>{children}</Paper>
       </Grid>
     </Grid>
   );

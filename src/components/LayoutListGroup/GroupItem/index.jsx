@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   Accordion,
@@ -10,148 +10,152 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  Popper,
+  ListItemSecondaryAction,
   IconButton,
-  MenuItem,
-  Grow,
-  Paper,
-  ClickAwayListener,
-  MenuList,
+  TextField,
 } from '@material-ui/core';
 import {
   ExpandMore as ExpandMoreIcon,
   MoreVert as MoreVertIcon,
-  LabelImportant as LabelImportantIcon,
+  Folder as FolderIcon,
+  Check as CheckIcon,
+  Close as CloseIcon,
 } from '@material-ui/icons';
+import MenuToggle from '../../MenuToggle';
 import useStyles from './index.style';
 
-const GroupItem = ({ groupItem }) => {
+const GroupItem = ({ groupItem, handleChangeNameGroup }) => {
   const classes = useStyles();
+  const history = useHistory();
   const botId = useSelector((state) => state.bot.bot);
   const [expanded, setExpanded] = useState(false);
+  const [isChange, setIsChange] = useState(false);
+  const [nameGroup, setNameGroup] = useState('');
 
-  const [open, setOpen] = useState(false);
-  const anchorRef = useRef(null);
-
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+  const handleChangeExpanded = () => {
+    setExpanded((prev) => !prev);
   };
 
-  const handleClickMore = (e) => {
+  const handleToggleGroup = (e) => {
     e.stopPropagation();
-    handleToggle();
-  };
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
-    setOpen(false);
+    setIsChange((prev) => !prev);
   };
 
-  function handleListKeyDown(event) {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      setOpen(false);
-    }
-  }
-  const prevOpen = useRef(open);
-
-  useEffect(() => {
-    if (prevOpen.current === true && open === false) {
-      anchorRef.current.focus();
-    }
-
-    prevOpen.current = open;
-  }, [open]);
-
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
+  const handleUpdateChangeNameGroup = (e) => {
+    handleToggleGroup(e);
+    handleChangeNameGroup(groupItem.id, nameGroup);
   };
 
+  const handleAdd = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleChangeName = (e) => {
+    e.stopPropagation();
+    setNameGroup(groupItem.name);
+    setIsChange(true);
+  };
+
+  const handleDelete = () => {};
+  const groupMenus = [
+    {
+      heading: 'Add',
+      event: handleAdd,
+    },
+    {
+      heading: 'Change Name',
+      event: handleChangeName,
+    },
+    {
+      heading: 'Delete',
+      event: handleDelete,
+    },
+  ];
+
+  const itemMenus = [
+    {
+      heading: 'Add',
+      event: handleAdd,
+    },
+    {
+      heading: 'Delete',
+      event: handleDelete,
+    },
+  ];
+
+  const handleClickItem = (id) => {
+    history.push(`/bot/${botId}/actions/detail/${id}`);
+  };
   return (
     <div className={classes.root}>
-      <Accordion
-        expanded={expanded === 'panel1'}
-        onChange={handleChange('panel1')}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <div className={classes.moreIcon}>
-            <IconButton
-              aria-label="delete"
-              ref={anchorRef}
-              aria-controls={open ? 'menu-list-grow' : undefined}
-              aria-haspopup="true"
+      {isChange ? (
+        <Accordion expanded={false}>
+          <AccordionSummary
+            classes={{
+              expanded: classes.container,
+            }}
+          >
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              placeholder="Name Group"
               size="small"
-              onClick={handleClickMore}
+              value={nameGroup}
+              onChange={(e) => setNameGroup(e.target.value)}
+            />
+            <IconButton
+              aria-label="edit"
+              size="small"
+              onClick={handleUpdateChangeNameGroup}
             >
-              <MoreVertIcon />
+              <CheckIcon />
             </IconButton>
-            <Popper
-              open={open}
-              anchorEl={anchorRef.current}
-              role={undefined}
-              transition
-              disablePortal
-              className={classes.popper}
+            <IconButton
+              aria-label="close"
+              size="small"
+              onClick={handleToggleGroup}
             >
-              {({ TransitionProps, placement }) => (
-                <Grow
-                  {...TransitionProps}
-                  style={{
-                    transformOrigin:
-                      placement === 'bottom' ? 'center top' : 'center bottom',
-                  }}
-                >
-                  <Paper>
-                    <ClickAwayListener onClickAway={handleClose}>
-                      <MenuList
-                        autoFocusItem={open}
-                        id="menu-list-grow"
-                        onKeyDown={handleListKeyDown}
-                      >
-                        <MenuItem>Add</MenuItem>
-                        <MenuItem>Delete</MenuItem>
-                      </MenuList>
-                    </ClickAwayListener>
-                  </Paper>
-                </Grow>
-              )}
-            </Popper>
-          </div>
-          <Typography className={classes.heading}>{groupItem.name}</Typography>
-        </AccordionSummary>
-        <AccordionDetails classes={classes.accordionDetails}>
-          {groupItem.children.length >= 0 ? (
-            <List
-              component="nav"
-              aria-label="main mailbox folders"
-              className={classes.listItem}
-            >
-              {groupItem.children.map((el) => (
-                <Link
-                  to={`/bot/${botId}/actions/detail/${el.id}`}
-                  className={classes.link}
-                >
-                  <ListItem button divider>
+              <CloseIcon />
+            </IconButton>
+          </AccordionSummary>
+        </Accordion>
+      ) : (
+        <Accordion expanded={expanded} onClick={handleChangeExpanded}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <MenuToggle icon={<MoreVertIcon />} menus={groupMenus} />
+            <Typography className={classes.heading}>
+              {groupItem.name}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails className={classes.accordionDetails}>
+            {groupItem.children.length >= 0 ? (
+              <List dense="false" className={classes.listItem}>
+                {groupItem.children.map((el) => (
+                  <ListItem
+                    onClick={() => handleClickItem(el.id)}
+                    className={classes.item}
+                    button
+                  >
                     <ListItemIcon>
-                      <LabelImportantIcon />
+                      <FolderIcon />
                     </ListItemIcon>
                     <ListItemText primary={el.name} />
-                    <MoreVertIcon />
+                    <ListItemSecondaryAction>
+                      <MenuToggle icon={<MoreVertIcon />} menus={itemMenus} />
+                    </ListItemSecondaryAction>
                   </ListItem>
-                </Link>
-              ))}
-            </List>
-          ) : (
-            <div>no data</div>
-          )}
-        </AccordionDetails>
-      </Accordion>
+                ))}
+              </List>
+            ) : (
+              <div>No Data</div>
+            )}
+          </AccordionDetails>
+        </Accordion>
+      )}
     </div>
   );
 };

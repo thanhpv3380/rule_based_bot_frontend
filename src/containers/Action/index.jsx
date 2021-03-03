@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import routes from '../../constants/route';
@@ -11,6 +11,7 @@ function Action() {
   const { t } = useTranslation();
   const match = useRouteMatch();
   const history = useHistory();
+  const [searchKey, setSearchKey] = useState();
   const [groupAndItems, setGroupAndItems] = useState([
     {
       id: '1',
@@ -36,15 +37,34 @@ function Action() {
       name: 'group 2',
     },
   ]);
-  const handleOpenCreate = () => {
+
+  const handleSearch = (e) => {
+    console.log(e.target.value);
+    setSearchKey(e.target.value);
+  };
+
+  const handleCreateItem = () => {
     console.log(match);
     history.push(`${match.url}/create`);
   };
 
+  const handleCreateGroup = (value) => {
+    console.log(value);
+  };
+
+  const handleChangeNameGroup = (groupId, value) => {
+    console.log(groupId, value);
+  };
+
   return (
     <LayoutListGroup
+      handleSearch={handleSearch}
+      handleCreateItem={handleCreateItem}
+      // handleDeleteItem={handleDeleteItem}
+      handleCreateGroup={handleCreateGroup}
+      handleChangeNameGroup={handleChangeNameGroup}
+      // handleDeleteGroup={handleDeleteGroup}
       groupItems={groupAndItems}
-      handleOpenCreate={handleOpenCreate}
       title="action"
     >
       <Route
@@ -53,11 +73,9 @@ function Action() {
         component={ActionDetail}
       />
       <Route exact path={routes.ACTION_BOT.ACTION} component={EmptyPage} />
-      <Route
-        exact
-        path={routes.ACTION_BOT.CREATE_ACTION}
-        component={CreateAction}
-      />
+      <Route exact path={routes.ACTION_BOT.CREATE_ACTION}>
+        <CreateAction />
+      </Route>
     </LayoutListGroup>
   );
 }
