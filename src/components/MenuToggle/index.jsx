@@ -2,7 +2,7 @@ import React from 'react';
 import { IconButton, MenuItem, Menu } from '@material-ui/core';
 import useStyles from './index.style';
 
-const MenuToggle = ({ icon, menus }) => {
+const MenuToggle = ({ id, icon, menus }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -45,7 +45,14 @@ const MenuToggle = ({ icon, menus }) => {
       >
         {menus &&
           menus.map((menu) => (
-            <MenuItem onClick={menu.event}>{menu.heading}</MenuItem>
+            <MenuItem
+              onClick={(e) => {
+                handleClose(e);
+                menu.event(e, id);
+              }}
+            >
+              {menu.heading}
+            </MenuItem>
           ))}
       </Menu>
     </div>

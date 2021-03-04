@@ -25,6 +25,7 @@ const LayoutListGroup = ({
   handleCreateGroup,
   handleChangeNameGroup,
   handleDeleteGroup,
+  handleAddItemInGroup,
   children,
 }) => {
   const classes = useStyles();
@@ -137,6 +138,9 @@ const LayoutListGroup = ({
                 groupItem={groupItem}
                 key={groupItem.id}
                 handleChangeNameGroup={handleChangeNameGroup}
+                handleDeleteItem={handleDeleteItem}
+                handleDeleteGroup={handleDeleteGroup}
+                handleAddItem={handleAddItemInGroup}
               />
             ))}
         </>

@@ -24,7 +24,13 @@ import {
 import MenuToggle from '../../MenuToggle';
 import useStyles from './index.style';
 
-const GroupItem = ({ groupItem, handleChangeNameGroup }) => {
+const GroupItem = ({
+  groupItem,
+  handleChangeNameGroup,
+  handleAddItem,
+  handleDeleteGroup,
+  handleDeleteItem,
+}) => {
   const classes = useStyles();
   const history = useHistory();
   const botId = useSelector((state) => state.bot.bot);
@@ -42,12 +48,14 @@ const GroupItem = ({ groupItem, handleChangeNameGroup }) => {
   };
 
   const handleUpdateChangeNameGroup = (e) => {
+    e.stopPropagation();
     handleToggleGroup(e);
     handleChangeNameGroup(groupItem.id, nameGroup);
   };
 
-  const handleAdd = (e) => {
+  const handleAddItemInGroup = (e, id) => {
     e.stopPropagation();
+    handleAddItem(id);
   };
 
   const handleChangeName = (e) => {
@@ -56,11 +64,20 @@ const GroupItem = ({ groupItem, handleChangeNameGroup }) => {
     setIsChange(true);
   };
 
-  const handleDelete = () => {};
+  const handlePrevDeleteGroup = (e, id) => {
+    e.stopPropagation();
+    handleDeleteGroup(id);
+  };
+
+  const handlePrevDeleteItem = (e, id) => {
+    e.stopPropagation();
+    handleDeleteItem(groupItem.id, id);
+  };
+
   const groupMenus = [
     {
       heading: 'Add',
-      event: handleAdd,
+      event: handleAddItemInGroup,
     },
     {
       heading: 'Change Name',
@@ -68,18 +85,14 @@ const GroupItem = ({ groupItem, handleChangeNameGroup }) => {
     },
     {
       heading: 'Delete',
-      event: handleDelete,
+      event: handlePrevDeleteGroup,
     },
   ];
 
   const itemMenus = [
     {
-      heading: 'Add',
-      event: handleAdd,
-    },
-    {
       heading: 'Delete',
-      event: handleDelete,
+      event: handlePrevDeleteItem,
     },
   ];
 
@@ -126,16 +139,21 @@ const GroupItem = ({ groupItem, handleChangeNameGroup }) => {
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-            <MenuToggle icon={<MoreVertIcon />} menus={groupMenus} />
+            <MenuToggle
+              id={groupItem.id}
+              icon={<MoreVertIcon />}
+              menus={groupMenus}
+            />
             <Typography className={classes.heading}>
               {groupItem.name}
             </Typography>
           </AccordionSummary>
-          <AccordionDetails className={classes.accordionDetails}>
-            {groupItem.children.length >= 0 ? (
+          {groupItem.children.length >= 0 && (
+            <AccordionDetails className={classes.accordionDetails}>
               <List dense="false" className={classes.listItem}>
                 {groupItem.children.map((el) => (
                   <ListItem
+                    key={el.id}
                     onClick={() => handleClickItem(el.id)}
                     className={classes.item}
                     button
@@ -145,15 +163,17 @@ const GroupItem = ({ groupItem, handleChangeNameGroup }) => {
                     </ListItemIcon>
                     <ListItemText primary={el.name} />
                     <ListItemSecondaryAction>
-                      <MenuToggle icon={<MoreVertIcon />} menus={itemMenus} />
+                      <MenuToggle
+                        id={el.id}
+                        icon={<MoreVertIcon />}
+                        menus={itemMenus}
+                      />
                     </ListItemSecondaryAction>
                   </ListItem>
                 ))}
-              </List>
-            ) : (
-              <div>No Data</div>
-            )}
-          </AccordionDetails>
+              </List>{' '}
+            </AccordionDetails>
+          )}
         </Accordion>
       )}
     </div>

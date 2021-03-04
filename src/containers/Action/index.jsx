@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
-import routes from '../../constants/route';
-import LayoutListGroup from '../../components/LayoutListGroup';
-import ActionDetail from './DetailAction';
-import CreateAction from './CreateAction';
 import EmptyPage from '../../components/EmptyPage';
+import LayoutListGroup from '../../components/LayoutListGroup';
+import routes from '../../constants/route';
+import CreateAction from './CreateAction';
+import ActionDetail from './DetailAction';
 
 function Action() {
   const { t } = useTranslation();
@@ -48,6 +48,11 @@ function Action() {
     history.push(`${match.url}/create`);
   };
 
+  const handleAddItemInGroup = (id) => {
+    console.log(id);
+    history.push(`${match.url}/create`);
+  };
+
   const handleCreateGroup = (value) => {
     console.log(value);
   };
@@ -56,14 +61,23 @@ function Action() {
     console.log(groupId, value);
   };
 
+  const handleDeleteGroup = (id) => {
+    console.log('delete group', id);
+  };
+
+  const handleDeleteItem = (groupId, itemId) => {
+    console.log(`delete item ${itemId} in group ${groupId}`);
+  };
+
   return (
     <LayoutListGroup
       handleSearch={handleSearch}
       handleCreateItem={handleCreateItem}
-      // handleDeleteItem={handleDeleteItem}
+      handleDeleteItem={handleDeleteItem}
       handleCreateGroup={handleCreateGroup}
       handleChangeNameGroup={handleChangeNameGroup}
-      // handleDeleteGroup={handleDeleteGroup}
+      handleDeleteGroup={handleDeleteGroup}
+      handleAddItemInGroup={handleAddItemInGroup}
       groupItems={groupAndItems}
       title="action"
     >
