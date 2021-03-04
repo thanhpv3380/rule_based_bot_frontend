@@ -4,7 +4,8 @@ import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import apis from '../../apis';
 import useStyles from './index.style';
-import LayoutBody from './components/LayoutBody';
+import LayoutBody from '../../components/LayoutBody';
+import title from '../../enums/title';
 
 function Intent() {
   const classes = useStyles();
@@ -106,12 +107,13 @@ function Intent() {
 
   return (
     <LayoutBody
+      title={title.INTENTS}
       noneGroups={noneGroups}
       groups={groups}
       handleClickGroup={handleClickGroup}
       handleClickIntent={handleClickIntent}
       handleCreateGroup={handleCreateGroup}
-      handleCreateIntent={handleCreateIntent}
+      handleCreateItem={handleCreateIntent}
       handleSearch={handleSearchIntent}
     >
       <Card className={classes.root}>

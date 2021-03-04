@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
@@ -9,8 +10,9 @@ import ActionMapping from '../components/actionMapping';
 import ContentHeader from '../../../components/contentHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
-import LayoutBody from '../components/LayoutBody';
-import groupDefault from '../../../enums/groupDefault';
+import LayoutBody from '../../../components/LayoutBody';
+// import groupDefault from '../../../enums/groupDefault';
+import title from '../../../enums/title';
 
 function IntentDetail() {
   const classes = useStyles();
@@ -26,6 +28,8 @@ function IntentDetail() {
   const [intent, setIntent] = useState({});
   // const [currentGroup, setCurrentGroup] = useState(null);
   const [groupSelect, setGroupSelect] = useState();
+  const [patterns, setPatterns] = useState();
+  const [userExpression, setUserExpression] = useState();
 
   const fetchGroupIntents = async () => {
     const { results } = await apis.groupIntent.getGroupIntents();
@@ -52,8 +56,12 @@ function IntentDetail() {
   };
 
   const fetchIntent = async () => {
-    const { result } = await apis.intent.getIntent(id);
-    setIntent(result);
+    console.log(id);
+    const { result, status } = await apis.intent.getIntent(id);
+    if (status === 1 && result) {
+      setIntent(result);
+      setPatterns(result.patterns);
+    }
   };
 
   useEffect(() => {
@@ -67,6 +75,7 @@ function IntentDetail() {
       const { value } = e.target;
       await apis.intent.addUsersay(id, value);
       fetchIntent();
+      setUserExpression('');
     }
   };
 
@@ -107,7 +116,7 @@ function IntentDetail() {
         });
       setNoneGroup(notAGroups);
       setGroups(isGroups);
-    } 
+    }
   };
 
   const handleClickIntent = (data) => {
@@ -193,6 +202,14 @@ function IntentDetail() {
     }
   };
 
+  const handleSearchPattern = (e) => {
+    const { value } = e.target;
+    const newPattern = intent.patterns.filter(
+      (item) => item.indexOf(value) >= 0,
+    );
+    setPatterns(newPattern);
+  };
+
   const handleClickGroup = (data) => {
     const newGroups = groups.map((item) => {
       if (item.name === data.name) {
@@ -230,17 +247,19 @@ function IntentDetail() {
   const handleCreateIntent = () => {
     history.push('/intents/createIntent');
     setIntent(null);
+    setPatterns(null);
   };
 
   return (
     <LayoutBody
+      title={title.INTENTS}
       noneGroups={noneGroups}
       groups={groups}
       handleSearch={handleSearchIntent}
       handleClickGroup={handleClickGroup}
-      handleClickIntent={handleClickIntent}
+      handleClickItem={handleClickIntent}
       handleCreateGroup={handleCreateGroup}
-      handleCreateIntent={handleCreateIntent}
+      handleCreateItem={handleCreateIntent}
     >
       <Card>
         <ContentHeader
@@ -254,8 +273,11 @@ function IntentDetail() {
         <CardContent className={classes.cardContent}>
           <TranningPhrases
             intent={intent}
+            patterns={patterns}
+            userExpression={userExpression}
             handleKeyDown={handleKeyDown}
             handleDelete={handleDeleteUsersay}
+            handleChangeSearch={handleSearchPattern}
           />
           <br />
           <Divider />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Box } from '@material-ui/core';
-import GroupIntent from './group';
+import Group from './group';
 
 function LayoutBody(props) {
   const {
@@ -10,7 +10,7 @@ function LayoutBody(props) {
     groups,
     handleSearch,
     handleClickGroup,
-    handleClickIntent,
+    handleClickItem,
     handleCreateGroup,
     handleCreateItem,
   } = props;
@@ -19,13 +19,13 @@ function LayoutBody(props) {
     <Box>
       <Grid container spacing={1}>
         <Grid item xs={4}>
-          <GroupIntent
+          <Group
             title={title}
             noneGroups={noneGroups}
             groups={groups}
             handleSearch={handleSearch}
             handleClickGroup={handleClickGroup}
-            handleClickIntent={handleClickIntent}
+            handleClickItem={handleClickItem}
             handleCreateGroup={handleCreateGroup}
             handleCreateItem={handleCreateItem}
           />

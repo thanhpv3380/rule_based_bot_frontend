@@ -19,7 +19,14 @@ import useStyles from './index.style';
 
 function TranningPhrases(props) {
   const classes = useStyles();
-  const { intent, handleKeyDown, handleDelete } = props;
+  const {
+    intent,
+    userExpression,
+    handleKeyDown,
+    handleDelete,
+    patterns,
+    handleChangeSearch,
+  } = props;
   return (
     <Grid container>
       <Grid item xs={4}>
@@ -29,6 +36,7 @@ function TranningPhrases(props) {
         <SearchBox
           placeholder={text.SEARCH_TRANNING_PHRASES}
           isStartPositionIcon={false}
+          handleOnChange={handleChangeSearch}
         />
       </Grid>
       <Grid item xs={12}>
@@ -38,6 +46,7 @@ function TranningPhrases(props) {
           placeholder={text.ADD_USER_EXPRESSION}
           size="medium"
           name="usersay"
+          value={userExpression}
           onKeyDown={(e) => handleKeyDown(e)}
           InputProps={{
             startAdornment: (
@@ -52,16 +61,14 @@ function TranningPhrases(props) {
           }}
         />
       </Grid>
-      <TableContainer component={Paper}>
-        <Table
-          size="small"
-          aria-label="a dense table"
-          classes={{ table: classes.table }}
-        >
+      <TableContainer
+        component={Paper}
+        classes={{ root: classes.tableContainer }}
+      >
+        <Table size="small" classes={{ table: classes.table }}>
           <TableBody>
-            {intent &&
-              intent.patterns &&
-              intent.patterns.map((pattern) => (
+            {patterns &&
+              patterns.map((pattern) => (
                 <TableRow key={pattern}>
                   <TableCell size="medium" align="left">
                     <TextField

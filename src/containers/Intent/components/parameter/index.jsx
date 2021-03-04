@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { useState } from 'react';
 import {
   Grid,
@@ -100,7 +101,6 @@ function Parameter(props) {
                 <InputLabel>entity</InputLabel>
                 <Controller
                   name="entity"
-                  control={methods?.control}
                   as={
                     <Select
                       label="entity"
@@ -117,6 +117,7 @@ function Parameter(props) {
                       </MenuItem>
                     </Select>
                   }
+                  control={methods.control}
                 />
               </FormControl>
 

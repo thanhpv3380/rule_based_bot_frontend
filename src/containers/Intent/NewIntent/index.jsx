@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
@@ -11,7 +12,8 @@ import ActionMapping from '../components/actionMapping';
 import ContentHeader from '../../../components/contentHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
-import LayoutBody from '../components/LayoutBody';
+import LayoutBody from '../../../components/LayoutBody';
+import title from '../../../enums/title';
 
 function NewIntent() {
   const classes = useStyles();
@@ -157,7 +159,7 @@ function NewIntent() {
     if (field === 'name' && intent.parameters) {
       const newParameter = intent.parameters.map((item) => {
         if (item.name === name) {
-          items.name = value;
+          item.name = value;
           return item;
         }
         return item;
@@ -244,11 +246,12 @@ function NewIntent() {
 
   return (
     <LayoutBody
+      title={title.INTENTS}
       noneGroups={noneGroups}
       groups={groups}
       handleSearch={handleSearchIntent}
       handleClickGroup={handleClickGroup}
-      handleClickIntent={handleClickIntent}
+      handleClickItem={handleClickIntent}
       handleCreateGroup={handleCreateGroup}
       handleCreateItem={handleCreateIntent}
     >

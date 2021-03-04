@@ -17,7 +17,6 @@ export async function getIntent(id) {
 }
 
 export async function createIntent(intent) {
-  console.log(" create intent ");
   const response = await api({
     method: 'POST',
     url: '/intents',
@@ -44,12 +43,12 @@ export async function deleteIntent(id) {
 }
 
 export async function addUsersay(id, pattern) {
-  // const response = await api({
-  //   method: 'PUT',
-  //   url: `/intents/${id}/addUsersay`,
-  //   data: { pattern },
-  // });
-  // return response;
+  const response = await api({
+    method: 'PUT',
+    url: `/intents/${id}/addUsersay`,
+    data: { pattern },
+  });
+  return response;
 }
 
 export async function removeUsersay(id, pattern) {

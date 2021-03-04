@@ -11,6 +11,9 @@ const useStyles = makeStyles(() => ({
     marginTop: 15,
     minHeight: '40%',
   },
+  tableContainer: {
+    minHeight: 300,
+  },
   underline: {
     '&::after': {
       border: '0px solid #fff',
