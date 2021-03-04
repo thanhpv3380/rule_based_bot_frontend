@@ -10,22 +10,6 @@ export const AppContext = createContext();
 
 const menu = [
   {
-    heading: 'accounts',
-    icon: <People />,
-    subMenus: [
-      {
-        route: `/admin/accounts`,
-        icon: <People />,
-        heading: 'accounts',
-      },
-      {
-        route: `/admin/accounts`,
-        icon: <People />,
-        heading: 'accounts',
-      },
-    ],
-  },
-  {
     heading: 'apps',
     icon: <SettingsInputComponent />,
     route: `/admin/apps`,
@@ -35,14 +19,14 @@ const menu = [
     icon: <People />,
     subMenus: [
       {
-        route: `/admin/accounts`,
+        route: `/entities`,
         icon: <People />,
-        heading: 'accounts',
+        heading: 'Entities',
       },
       {
         route: `/intents`,
         icon: <People />,
-        heading: 'intent',
+        heading: 'Intents',
       },
     ],
   },

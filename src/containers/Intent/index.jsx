@@ -14,7 +14,7 @@ function Intent() {
   const [groups, setGroups] = useState();
 
   const fetchGroupintents = async () => {
-    const { results, message } = await apis.groupIntent.getGroupIntents('');
+    const { results, message } = await apis.groupIntent.getGroupIntents();
     if (results.groupIntents) {
       const notAGroups = results.groupIntents.filter((group) => !group.isGroup);
       const isGroups = results.groupIntents
@@ -37,6 +37,31 @@ function Intent() {
   useEffect(() => {
     fetchGroupintents();
   }, []);
+
+  const handleSearchIntent = async (e) => {
+    const { value } = e.target;
+    if (value && value !== '' && value !== null) {
+      const { results } = await apis.groupIntent.search(value);
+      if (results.groupIntents) {
+        const notAGroups = results.groupIntents.filter(
+          (group) => !group.isGroup,
+        );
+        const isGroups = results.groupIntents
+          .filter((group) => group.isGroup)
+          .map((item) => {
+            const { open } = groups.find((oldGroup) => oldGroup.id === item.id);
+            return {
+              ...item,
+              open,
+            };
+          });
+        setNoneGroup(notAGroups);
+        setGroups(isGroups);
+      }
+    } else {
+      fetchGroupintents();
+    }
+  };
 
   const handleClickGroup = (data) => {
     const newGroups = groups.map((item) => {
@@ -79,16 +104,15 @@ function Intent() {
   //   console.log(entity, type);
   // };
 
-  console.log(noneGroups, groups);
-
   return (
     <LayoutBody
       noneGroups={noneGroups}
       groups={groups}
       handleClickGroup={handleClickGroup}
-      handleClickItem={handleClickIntent}
+      handleClickIntent={handleClickIntent}
       handleCreateGroup={handleCreateGroup}
-      handleClickIntent={handleCreateIntent}
+      handleCreateIntent={handleCreateIntent}
+      handleSearch={handleSearchIntent}
     >
       <Card className={classes.root}>
         <Typography className={classes.typographyBody}>

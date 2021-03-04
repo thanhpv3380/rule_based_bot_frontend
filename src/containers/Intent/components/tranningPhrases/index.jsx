@@ -38,7 +38,7 @@ function TranningPhrases(props) {
           placeholder={text.ADD_USER_EXPRESSION}
           size="medium"
           name="usersay"
-          onKeyDown={handleKeyDown}
+          onKeyDown={(e) => handleKeyDown(e)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

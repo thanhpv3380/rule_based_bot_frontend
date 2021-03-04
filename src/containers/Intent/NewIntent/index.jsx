@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
+import { Redirect } from 'react-router';
 import { useSnackbar } from 'notistack';
 // import GroupIntent from '../../../components/LayoutBody/group';
 import TranningPhrases from '../components/tranningPhrases';
@@ -27,18 +28,18 @@ function NewIntent() {
   const [groupSelect, setGroupSelect] = useState({});
 
   const fetchGroupIntents = async () => {
-    const { results } = await apis.groupIntent.getGroupIntents('');
+    const { results } = await apis.groupIntent.getGroupIntents();
     // setGroupIntents(results.groupIntents);
     if (results.groupIntents) {
       const notAGroups = results.groupIntents.filter((group) => !group.isGroup);
       const isGroups = results.groupIntents
         .filter((group) => group.isGroup)
         .map((item) => {
-          let open = false;
-          if (item.intents.find((element) => element.id === id)) {
-            setGroupSelect(item);
-            open = true;
-          }
+          const open = false;
+          // if (item.intents.find((element) => element.id === id)) {
+          //   setGroupSelect(item);
+          //   open = true;
+          // }
           return {
             ...item,
             open,
@@ -57,7 +58,30 @@ function NewIntent() {
   useEffect(() => {
     fetchGroupIntents();
   }, []);
-  
+
+  const handleSearchIntent = async (e) => {
+    const { value } = e.target;
+    if (value && value !== '' && value !== null) {
+      const { results } = await apis.groupIntent.search(value);
+      if (results.groupIntents) {
+        const notAGroups = results.groupIntents.filter(
+          (group) => !group.isGroup,
+        );
+        const isGroups = results.groupIntents
+          .filter((group) => group.isGroup)
+          .map((item) => {
+            const { open } = groups.find((oldGroup) => oldGroup.id === item.id);
+            return {
+              ...item,
+              open,
+            };
+          });
+        setNoneGroup(notAGroups);
+        setGroups(isGroups);
+      }
+    }
+  };
+
   const handleCreateGroup = async (name) => {
     if (!name || name === null || name === '') {
       enqueueSnackbar('Name cannot be empty', {
@@ -72,10 +96,12 @@ function NewIntent() {
   };
 
   const handleCreateIntent = () => {
-    history.push('/intents/createIntent');
+    // history.push('/intents/createIntent');
+    return <Redirect to="/intents/createIntent" />;
   };
 
   const handleKeyDown = async (e) => {
+    console.log('newInten', e);
     if (e.keyCode === 13) {
       const { value } = e.target;
       intent.patterns.push(value);
@@ -94,19 +120,19 @@ function NewIntent() {
     }
   };
 
-  const handleDeleteUsersay = async (usersay) => {
-    const { status } = await apis.intent.removeUsersay(id, usersay);
-    if (status === 1) {
-      enqueueSnackbar('Delete usersay success', {
-        variant: 'success',
-      });
-    } else {
-      enqueueSnackbar('Cannot fetch data', {
-        variant: 'error',
-      });
-    }
-    fetchIntent();
-  };
+  // const handleDeleteUsersay = async (usersay) => {
+  //   const { status } = await apis.intent.removeUsersay(id, usersay);
+  //   if (status === 1) {
+  //     enqueueSnackbar('Delete usersay success', {
+  //       variant: 'success',
+  //     });
+  //   } else {
+  //     enqueueSnackbar('Cannot fetch data', {
+  //       variant: 'error',
+  //     });
+  //   }
+  //   fetchIntent();
+  // };
 
   const handleChangeGroup = (e) => {
     const { value } = e.target;
@@ -155,19 +181,19 @@ function NewIntent() {
     }
   };
 
-  const handleDeleteParameter = async (parameter) => {
-    const { status } = await apis.intent.removeParameter(id, parameter);
-    if (status === 1) {
-      enqueueSnackbar('Remove parameter success', {
-        variant: 'success',
-      });
-    } else {
-      enqueueSnackbar('Cannot fetch data', {
-        variant: 'error',
-      });
-    }
-    fetchIntent();
-  };
+  // const handleDeleteParameter = async (parameter) => {
+  //   const { status } = await apis.intent.removeParameter(id, parameter);
+  //   if (status === 1) {
+  //     enqueueSnackbar('Remove parameter success', {
+  //       variant: 'success',
+  //     });
+  //   } else {
+  //     enqueueSnackbar('Cannot fetch data', {
+  //       variant: 'error',
+  //     });
+  //   }
+  //   fetchIntent();
+  // };
 
   const handleAddParameter = async (data) => {
     console.log(data);
@@ -220,8 +246,9 @@ function NewIntent() {
     <LayoutBody
       noneGroups={noneGroups}
       groups={groups}
+      handleSearch={handleSearchIntent}
       handleClickGroup={handleClickGroup}
-      handleClickItem={handleClickIntent}
+      handleClickIntent={handleClickIntent}
       handleCreateGroup={handleCreateGroup}
       handleCreateItem={handleCreateIntent}
     >
@@ -238,7 +265,7 @@ function NewIntent() {
           <TranningPhrases
             intent={intent}
             handleKeyDown={handleKeyDown}
-            handleDelete={handleDeleteUsersay}
+            // handleDelete={handleDeleteUsersay}
           />
           <br />
           <Divider />
@@ -247,7 +274,7 @@ function NewIntent() {
             <Parameters
               intent={intent}
               handleChange={handleChangeParameter}
-              handleDelete={handleDeleteParameter}
+              // handleDelete={handleDeleteParameter}
               handleAddParameter={handleAddParameter}
             />
           </FormProvider>

@@ -37,7 +37,7 @@ function Group(props) {
     noneGroups,
     groups,
     handleCreateGroup,
-    handleCreate,
+    handleCreateIntent,
   } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -70,7 +70,7 @@ function Group(props) {
 
   const handleOpenCreateGroup = () => {
     setOpenCreateGroup(true);
-    setAnchorEl(null);
+    handleCloseOption();
   };
 
   const handleCloseCreateGroup = () => {
@@ -80,6 +80,11 @@ function Group(props) {
   const handleClickCreateGroup = async (name) => {
     await handleCreateGroup(name);
     handleCloseCreateGroup();
+  };
+
+  const handleClickCreateIntent = async () => {
+    handleCreateIntent();
+    handleCloseOption();
   };
 
   return (
@@ -121,7 +126,7 @@ function Group(props) {
             left: 70,
           }}
         >
-          <MenuItem value={10} onClick={handleCreate}>
+          <MenuItem value={10} onClick={handleClickCreateIntent}>
             Create intent
           </MenuItem>
           <MenuItem value={20} onClick={handleOpenCreateGroup}>
@@ -164,28 +169,23 @@ function Group(props) {
 
       {noneGroups &&
         noneGroups.map((noneGroup) => (
-          <Card
-            className={classes.groupRoot}
-            elevation={5}
-            onClick={() => handleClickIntent(noneGroup.intens)} // TODO chỗ này chưa biết sửa ntn
-          >
-            <ListItem button>
-              <ListItemIcon>
-                <NotesIcon />
-              </ListItemIcon>
-              <ListItemText primary={noneGroup.intens[0].name} />
-            </ListItem>
-          </Card>
+          <Link to={`/intents/${noneGroup.id}`}>
+            <Card
+              className={classes.groupRoot}
+              elevation={5}
+              onClick={() => handleClickIntent(noneGroup.intens)}
+            >
+              <ListItem button onClick={handleClickIntent}>
+                <ListItemIcon>
+                  <NotesIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={noneGroup.intens && noneGroup.intens[0].name}
+                />
+              </ListItem>
+            </Card>
+          </Link>
         ))}
-
-      <Card className={classes.groupRoot} elevation={5}>
-        <ListItem button>
-          <ListItemIcon>
-            <NotesIcon />
-          </ListItemIcon>
-          <ListItemText primary="test" />
-        </ListItem>
-      </Card>
       {groups &&
         groups.map((group) => {
           if (!group.open) {
@@ -194,7 +194,7 @@ function Group(props) {
                 style={{
                   border: '1px solid rgba(0, 0, 0, 0.23)',
                   borderRadius: 5,
-                  width: '99%',
+                  width: '100%',
                   margin: '20px 0px 10px 0px',
                   height: 60,
                   background: '#f5f5f5',
@@ -230,21 +230,26 @@ function Group(props) {
                 <ListItemIcon>
                   <ExpandLess />
                 </ListItemIcon>
-                <ListItemText primary="tên group" />
+                <ListItemText primary={group.name} />
                 <MoreVertIcon />
               </ListItem>
               <Divider style={{ margin: '8px 16px 0px 16px' }} />
               <Collapse in={group.open} timeout="auto" unmountOnExit>
                 {group.intents.map((intent) => {
                   return (
-                    <Card className={classes.groupRoot} elevation={5}>
-                      <ListItem button>
-                        <ListItemIcon>
-                          <NotesIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={intent.name} />
-                      </ListItem>
-                    </Card>
+                    <Link to={`/intents/${intent.id}`}>
+                      <Card className={classes.groupRoot} elevation={5}>
+                        <ListItem
+                          button
+                          onClick={() => handleClickIntent(intent)}
+                        >
+                          <ListItemIcon>
+                            <NotesIcon />
+                          </ListItemIcon>
+                          <ListItemText primary={intent.name} />
+                        </ListItem>
+                      </Card>
+                    </Link>
                   );
                 })}
               </Collapse>

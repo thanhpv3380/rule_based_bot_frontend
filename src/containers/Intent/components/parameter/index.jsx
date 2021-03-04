@@ -35,7 +35,7 @@ const rows = [
 function Parameter(props) {
   const classes = useStyles();
   const methods = useFormContext();
-  const { control } = methods;
+  // const { control } = methods;
   const { intent, handleChange, handleDelete, handleAddParameter } = props;
 
   const [openModal, setOpenModal] = useState(false);
@@ -89,10 +89,7 @@ function Parameter(props) {
                 variant="outlined"
               />
               <br />
-              {/* <Controller
-                name="entity"
-                control={methods?.control}
-                as={ */}
+
               <FormControl
                 control={methods.control}
                 name="entity"
@@ -101,23 +98,28 @@ function Parameter(props) {
                 className={classes.formControl}
               >
                 <InputLabel>entity</InputLabel>
-                <Select
-                  label="entity"
-                  displayEmpty
+                <Controller
                   name="entity"
-                  // value={groupSelect.name}
-                  // onChange={(e) => handleChangeGroup(e)}
-                >
-                  <MenuItem name="Not in group" value="rest">
-                    number
-                  </MenuItem>
-                  <MenuItem name="Not in group" value="rest">
-                    email
-                  </MenuItem>
-                </Select>
+                  control={methods?.control}
+                  as={
+                    <Select
+                      label="entity"
+                      displayEmpty
+                      name="entity"
+                      // value={groupSelect.name}
+                      // onChange={(e) => handleChangeGroup(e)}
+                    >
+                      <MenuItem name="Not in group" value="rest">
+                        number
+                      </MenuItem>
+                      <MenuItem name="Not in group" value="rest">
+                        email
+                      </MenuItem>
+                    </Select>
+                  }
+                />
               </FormControl>
-              {/* }
-              /> */}
+
               <Grid container justify="flex-end" spacing={2}>
                 <Grid item>
                   <Button

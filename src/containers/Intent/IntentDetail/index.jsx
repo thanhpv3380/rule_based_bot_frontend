@@ -10,6 +10,7 @@ import ContentHeader from '../../../components/contentHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
 import LayoutBody from '../components/LayoutBody';
+import groupDefault from '../../../enums/groupDefault';
 
 function IntentDetail() {
   const classes = useStyles();
@@ -24,13 +25,15 @@ function IntentDetail() {
   const [groups, setGroups] = useState();
   const [intent, setIntent] = useState({});
   // const [currentGroup, setCurrentGroup] = useState(null);
-  const [groupSelect, setGroupSelect] = useState({});
+  const [groupSelect, setGroupSelect] = useState();
 
   const fetchGroupIntents = async () => {
-    const { results } = await apis.groupIntent.getGroupIntents('');
+    const { results } = await apis.groupIntent.getGroupIntents();
     if (results.groupIntents) {
-      const notAGroups = results.groupIntents.filter((group) => !group.isGroup);
-      const isGroups = results.groupIntents
+      const notAGroups = await results.groupIntents.filter(
+        (group) => !group.isGroup,
+      );
+      const isGroups = await results.groupIntents
         .filter((group) => group.isGroup)
         .map((item) => {
           let open = false;
@@ -59,6 +62,7 @@ function IntentDetail() {
   }, []);
 
   const handleKeyDown = async (e) => {
+    console.log(e, ' detail');
     if (e.keyCode === 13) {
       const { value } = e.target;
       await apis.intent.addUsersay(id, value);
@@ -83,6 +87,27 @@ function IntentDetail() {
   const handleChangeGroup = (e) => {
     const { value } = e.target;
     setGroupSelect(value);
+  };
+
+  const handleSearchIntent = async (e) => {
+    const { value } = e.target;
+    const { results } = await apis.groupIntent.search(value);
+    if (results.groupIntents) {
+      const notAGroups = results.groupIntents.filter((group) => !group.isGroup);
+      const isGroups = results.groupIntents
+        .filter((group) => group.isGroup)
+        .map((item) => {
+          const statusOldGroup = groups.find(
+            (oldGroup) => oldGroup.id === item.id,
+          );
+          return {
+            ...item,
+            open: statusOldGroup ? statusOldGroup.open : false,
+          };
+        });
+      setNoneGroup(notAGroups);
+      setGroups(isGroups);
+    } 
   };
 
   const handleClickIntent = (data) => {
@@ -204,16 +229,18 @@ function IntentDetail() {
 
   const handleCreateIntent = () => {
     history.push('/intents/createIntent');
+    setIntent(null);
   };
 
   return (
     <LayoutBody
       noneGroups={noneGroups}
       groups={groups}
+      handleSearch={handleSearchIntent}
       handleClickGroup={handleClickGroup}
-      handleClickItem={handleClickIntent}
+      handleClickIntent={handleClickIntent}
       handleCreateGroup={handleCreateGroup}
-      handleCreateItem={handleCreateIntent}
+      handleCreateIntent={handleCreateIntent}
     >
       <Card>
         <ContentHeader

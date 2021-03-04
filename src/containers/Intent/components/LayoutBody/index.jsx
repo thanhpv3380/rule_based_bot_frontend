@@ -7,12 +7,13 @@ function LayoutBody(props) {
     children,
     noneGroups,
     groups,
+    handleSearch,
     handleClickGroup,
-    handleClickItem,
+    handleClickIntent,
     handleCreateGroup,
-    handleCreateItem,
+    handleCreateIntent,
   } = props;
-
+  
   return (
     <Box>
       <Grid container spacing={1}>
@@ -20,10 +21,11 @@ function LayoutBody(props) {
           <GroupIntent
             noneGroups={noneGroups}
             groups={groups}
+            handleSearch={handleSearch}
             handleClickGroup={handleClickGroup}
-            handleClickItem={handleClickItem}
+            handleClickIntent={handleClickIntent}
             handleCreateGroup={handleCreateGroup}
-            handleCreateItem={handleCreateItem}
+            handleCreateIntent={handleCreateIntent}
           />
         </Grid>
         <Grid item xs={8}>

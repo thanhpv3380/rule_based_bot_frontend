@@ -1,9 +1,17 @@
 import api from './authApi';
 
-export async function getGroupIntents(keyword) {
+export async function getGroupIntents() {
   const response = await api({
     method: 'GET',
-    url: `/groupIntents?keyword=${keyword}`,
+    url: `/groupIntents`,
+  });
+  return response;
+}
+
+export async function search(keyword) {
+  const response = await api({
+    method: 'GET',
+    url: `/groupIntents/search?keyword=${keyword}`,
   });
   return response;
 }

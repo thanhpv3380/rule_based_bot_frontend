@@ -4,7 +4,7 @@ const useStyles = makeStyles(() => ({
   root: {
     height: '180%',
     width: '100%',
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#ffffff',
   },
   typographyBody: {
     textAlign: 'center',
