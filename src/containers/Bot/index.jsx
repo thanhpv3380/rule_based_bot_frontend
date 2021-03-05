@@ -37,10 +37,10 @@ const Bot = () => {
   const fetchBots = async (query) => {
     const data = await apis.bot.getBots(query);
     if (data.status) {
-      setBots(data.results.bots);
+      setBots(data.result.bots);
       setPagination({
         ...pagination,
-        count: data.results.metadata.count,
+        count: data.result.metadata.count,
         page: Math.floor(query.offset / query.limit),
       });
     } else {
@@ -92,7 +92,7 @@ const Bot = () => {
   const handleCreate = async (value) => {
     const data = await apis.bot.createBot(value);
     if (data && data.status) {
-      const { id } = data.results;
+      const { id } = data.result;
       setCookie('bot-id', id);
       dispatch(actions.bot.changeBot(id));
       history.push(`/bot/${id}/dashboard`);

@@ -59,10 +59,10 @@ const Dictionary = () => {
     if (data && data.status) {
       setPagination({
         ...pagination,
-        count: data.results.metadata.count,
+        count: data.result.metadata.count,
         page: Math.floor(search.offset / search.limit),
       });
-      setDictionaries(data.results.dictionaries);
+      setDictionaries(data.result.dictionaries);
     } else {
       enqueueSnackbar('Cannot fetch data', {
         variant: 'error',
