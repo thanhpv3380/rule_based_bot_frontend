@@ -77,4 +77,3 @@ export async function removeParameter(id, parameter) {
   });
   return response;
 }
-

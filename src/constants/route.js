@@ -2,9 +2,11 @@ export default {
   HOME: '/',
   LOGIN: '/login',
   ACTION: '/actions',
-  INTENT: '/intents',
-  INTENT_DETAIL: '/intents/:id',
+  INTENT_BOT: {
+    INTENT: '/intents',
+    CREATE_INTENT: '/intents/createIntent',
+    INTENT_DETAIL: '/intents/detail/:id',
+  },
   DICTIONARY: '/dictionary',
   DASHBOARDS: '/dashboards',
-  INTENT_CREATE: '/intents/createIntent', 
 };

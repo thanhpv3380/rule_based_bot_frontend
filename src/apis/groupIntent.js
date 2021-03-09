@@ -1,9 +1,9 @@
 import api from './authApi';
 
-export async function getGroupIntents() {
+export async function getGroupIntents(keyword) {
   const response = await api({
     method: 'GET',
-    url: `/groupIntents`,
+    url: `/groupIntents?keyword=${keyword}`,
   });
   return response;
 }

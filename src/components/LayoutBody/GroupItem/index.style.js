@@ -40,28 +40,22 @@ const useStyles = makeStyles((theme) => ({
   link: {
     margin: 10,
   },
-  gridItemAddGroup: {
-    marginTop: '0.5%',
-  },
-  textAddGroup: {
-    marginTop: '3%',
-  },
   listRoot: {
     border: '1px solid rgb(0 0 0 / 23%)',
     borderRadius: 5,
     margin: '20px 0px 10px 0px',
     background: theme.palette.greyWhile,
   },
-  listItemNameGroup: {
-    height: 42,
-  },
   listItem: {
     border: '1px solid rgba(0, 0, 0, 0.23)',
     borderRadius: 5,
     width: '100%',
-    margin: '20px 10px 10px 0px',
+    margin: '20px 0px 10px 0px',
     height: 60,
     background: theme.palette.greyWhile,
+  },
+  listItemNameGroup: {
+    height: 42,
   },
   divider: {
     margin: '8px 16px 0px 16px',

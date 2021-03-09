@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import useStyles from './index.style';
-import groupDefault from '../../enums/groupDefault';
 
 function ContentHeader(props) {
   const classes = useStyles();
@@ -23,10 +22,6 @@ function ContentHeader(props) {
     handleOnChangeName,
     handleSubmit,
   } = props;
-  if (groupSelect) {
-    const title = 'name';
-    console.log(groupSelect[title], ' select');
-  }
 
   return (
     <Paper className={classes.paper} elevation={5}>
@@ -60,51 +55,18 @@ function ContentHeader(props) {
               variant="outlined"
               className={classes.formControl}
             >
-              {/* <Select
+              <Select
                 displayEmpty
-                defaultValue={test}
-                onChange={(e) => handleChangeTest(e)}
-              >
-                <MenuItem value={10}>ten</MenuItem>
-
-                <MenuItem name="Not in group" value={20}>
-                  Not in group
-                </MenuItem>
-              </Select>  */}
-              {/* <Select
-                displayEmpty
-                defaultValue={groupSelect}
+                value={groupSelect}
                 onChange={(e) => handleChangeGroup(e)}
               >
                 {groups &&
                   groups.map((group) => {
-                    return (
-                      <MenuItem name={item && item.id} value={group}>
-                        {group.name}
-                      </MenuItem>
-                    );
+                    return <MenuItem value={group}>{group.name}</MenuItem>;
                   })}
-                <MenuItem name={groupDefault.name} value={groupDefault}>
+                {/* <MenuItem value={groupDefault} key={0}>
                   {groupDefault.name}
-                </MenuItem>
-              </Select> */}
-
-              <Select
-                displayEmpty
-                defaultValue={groupSelect}
-                // onChange={(e) => handleChangeGroup(e)}
-              >
-                {groups &&
-                  groups.map((group, i) => {
-                    return (
-                      <MenuItem value={group} key={i}>
-                        {group.name}
-                      </MenuItem>
-                    );
-                  })}
-                <MenuItem value={groupDefault} key={0}>
-                  {groupDefault.name}
-                </MenuItem>
+                </MenuItem> */}
               </Select>
             </FormControl>
           </Grid>

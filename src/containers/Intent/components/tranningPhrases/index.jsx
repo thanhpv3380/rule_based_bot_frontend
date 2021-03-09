@@ -20,7 +20,6 @@ import useStyles from './index.style';
 function TranningPhrases(props) {
   const classes = useStyles();
   const {
-    intent,
     userExpression,
     handleKeyDown,
     handleDelete,

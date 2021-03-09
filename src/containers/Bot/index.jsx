@@ -44,7 +44,6 @@ function Bot() {
 
   const fetchBots = async () => {
     const { result } = await apis.bot.getbots('', accessToken);
-    console.log(result.bots);
     setBots(result.bots);
   };
 
