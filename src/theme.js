@@ -1,10 +1,12 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-import { blue, lightBlue } from '@material-ui/core/colors';
+import { blue, lightBlue, grey } from '@material-ui/core/colors';
 
 const initialCustomTheme = createMuiTheme({
   palette: {
     primary: blue,
     secondary: lightBlue,
+    black: grey[900],
+    greyWhile: '#f5f5f5',
   },
   typography: {
     fontFamily:

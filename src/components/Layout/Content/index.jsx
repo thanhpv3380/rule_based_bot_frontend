@@ -13,7 +13,7 @@ export default function Content({
 
   return (
     <div className={classes.root}>
-      {displaySideBar && isLayout &&(
+      {displaySideBar && isLayout && (
         <Hidden smDown>
           <IconButton
             onClick={handleSidebarToggle}

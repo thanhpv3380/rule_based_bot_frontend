@@ -2,6 +2,7 @@ import routes from '../constants/route';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
 import Dashboards from '../pages/Bot';
+import Intent from '../pages/Intent';
 
 export default [
   {
@@ -27,5 +28,13 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: false,
+  },
+  {
+    path: routes.INTENT,
+    component: Intent,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
   },
 ];
