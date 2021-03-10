@@ -1,4 +1,4 @@
-import api from './api';
+import api from './authApi';
 
 export async function getGroupActions() {
   const response = await api({

@@ -1,17 +1,18 @@
 import api from './authApi';
 
-export async function getGroupIntents(keyword) {
+export async function getGroupIntents() {
   const response = await api({
     method: 'GET',
-    url: `/groupIntents?keyword=${keyword}`,
+    url: '/groupIntents',
   });
   return response;
 }
 
-export async function search(keyword) {
+export async function getGroupAndItems({ keyword }) {
   const response = await api({
-    method: 'GET',
-    url: `/groupIntents/search?keyword=${keyword}`,
+    method: 'POST',
+    url: '/groupIntents/getGroupAndItems',
+    data: { keyword: keyword || '' },
   });
   return response;
 }
@@ -24,11 +25,11 @@ export async function getGroupIntent(id) {
   return response;
 }
 
-export async function createGroupIntent(name) {
+export async function createGroupIntent(groupIntent) {
   const response = await api({
     method: 'POST',
     url: `/groupIntents`,
-    data: { name },
+    data: groupIntent,
   });
   return response;
 }

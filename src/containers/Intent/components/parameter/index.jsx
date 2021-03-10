@@ -57,7 +57,7 @@ function Parameter(props) {
   };
 
   useEffect(() => {
-    fetchEntities();
+    // fetchEntities();
   }, []);
 
   const handleSubmitAddParameter = async () => {
