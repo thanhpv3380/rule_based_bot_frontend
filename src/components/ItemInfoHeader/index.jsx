@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import useStyles from './index.style';
 
-const ItemInfoHeader = ({ name, listGroup, handleCreate }) => {
+const ItemInfoHeader = ({ name, listGroup, handleSave }) => {
   const classes = useStyles();
   const [input, setInput] = useState();
   const [groupSelected, setGroupSelected] = useState();
@@ -23,7 +23,6 @@ const ItemInfoHeader = ({ name, listGroup, handleCreate }) => {
     <AppBar position="static">
       <Toolbar>
         <TextField
-          id="outlined-basic"
           variant="outlined"
           color="secondary"
           placeholder="Type name..."
@@ -47,11 +46,13 @@ const ItemInfoHeader = ({ name, listGroup, handleCreate }) => {
             </MenuItem>
             {listGroup &&
               listGroup.map((el) => (
-                <MenuItem value={el.id}>{el.name}</MenuItem>
+                <MenuItem key={el.id} value={el.id}>
+                  {el.name}
+                </MenuItem>
               ))}
           </Select>
         </FormControl>
-        <Button size="large" variant="contained" onClick={handleCreate}>
+        <Button size="large" variant="contained" onClick={handleSave}>
           Save
         </Button>
       </Toolbar>

@@ -34,6 +34,7 @@ const GroupItem = ({
   const classes = useStyles();
   const history = useHistory();
   const botId = useSelector((state) => state.bot.bot);
+  const dense = false;
   const [expanded, setExpanded] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const [nameGroup, setNameGroup] = useState('');
@@ -150,7 +151,7 @@ const GroupItem = ({
           </AccordionSummary>
           {groupItem.children.length >= 0 && (
             <AccordionDetails className={classes.accordionDetails}>
-              <List dense="false" className={classes.listItem}>
+              <List dense={dense} className={classes.listItem}>
                 {groupItem.children.map((el) => (
                   <ListItem
                     key={el.id}

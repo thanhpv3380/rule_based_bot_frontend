@@ -1,0 +1,9 @@
+export default {
+  TEXT: 'TEXT',
+  SEND_MAIL: 'SEND_MAIL',
+  MEDIA: 'MEDIA',
+  MEDIA_AUDIO: 'MEDIA_AUDIO',
+  MEDIA_VIDEO: 'MEDIA_VIDEO',
+  API: 'API',
+  LOOP: 'LOOP',
+};

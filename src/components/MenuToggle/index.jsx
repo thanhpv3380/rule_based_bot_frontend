@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import { IconButton, MenuItem, Menu } from '@material-ui/core';
 import useStyles from './index.style';
@@ -44,8 +45,9 @@ const MenuToggle = ({ id, icon, menus }) => {
         onClose={handleClose}
       >
         {menus &&
-          menus.map((menu) => (
+          menus.map((menu, index) => (
             <MenuItem
+              key={index}
               onClick={(e) => {
                 handleClose(e);
                 menu.event(e, id);
