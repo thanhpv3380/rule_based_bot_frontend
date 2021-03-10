@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Typography, Switch } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import useStyles from './index.style';
+import apis from '../../../../apis';
 
 function ActionMapping() {
   const classes = useStyles();
 
+  const [actions, setActions] = useState([]);
+
+  const fetchActions = async () => {
+    const { results } = await apis.action.getActions();
+    if (results) {
+      setActions(results.actions);
+    }
+  };
+
+  useEffect(() => {
+    fetchActions();
+  },[]);
   return (
     <Grid container>
       <Grid item xs={4}>
@@ -17,14 +31,20 @@ function ActionMapping() {
         </Typography>
       </Grid>
       <Grid item xs={12} style={{ marginTop: 5 }}>
-        <TextField
-          fullWidth
-          id="outlined-basic"
-          variant="outlined"
-          placeholder="Enter action name"
-          classes={{
-            root: classes.textInput,
-          }}
+        <Autocomplete
+          options={actions}
+          getOptionLabel={(option) => option.name}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              fullWidth
+              variant="outlined"
+              placeholder="Enter action name"
+              classes={{
+                root: classes.textInput,
+              }}
+            />
+          )}
         />
       </Grid>
       <Grid item style={{ marginTop: 5 }}>

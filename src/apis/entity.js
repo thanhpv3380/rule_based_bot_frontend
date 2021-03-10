@@ -1,43 +1,43 @@
 import api from './authApi';
 
-export async function getActions() {
+export async function getEntities() {
   const response = await api({
     method: 'GET',
-    url: '/actions',
+    url: '/entities',
   });
   return response;
 }
 
-export async function getAction(id) {
+export async function getEntityById(id) {
   const response = await api({
     method: 'GET',
-    url: `/actions/${id}`,
+    url: `/entities/${id}`,
   });
   return response;
 }
 
-export async function createAction(action) {
+export async function createEntity(entity) {
   const response = await api({
     method: 'POST',
-    url: '/actions',
-    data: action,
+    url: '/entities',
+    data: entity,
   });
   return response;
 }
 
-export async function updateAction(id, action) {
+export async function updateEntity(id, entity) {
   const response = await api({
     method: 'PUT',
-    url: `/actions/${id}`,
-    data: action,
+    url: `/entities/${id}`,
+    data: entity,
   });
   return response;
 }
 
-export async function deleteAction(id) {
+export async function deleteEntity(id) {
   const response = await api({
     method: 'DELETE',
-    url: `/actions/${id}`,
+    url: `/entities/${id}`,
   });
   return response;
 }

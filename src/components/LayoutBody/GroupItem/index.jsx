@@ -34,6 +34,7 @@ function GroupItem(props) {
     handleCloseEditGroup,
     handleUpdateGroupName,
     handleDeleteGroup,
+    handleDeleteItem,
   } = props;
 
   const [isHovering, setIsHovering] = useState(false);
@@ -156,7 +157,11 @@ function GroupItem(props) {
                     </ListItemIcon>
 
                     <ListItemText primary={item.name} />
-                    {isHovering && <DeleteIcon />}
+                    {isHovering && (
+                      <DeleteIcon
+                        onClick={() => handleDeleteItem(item.id, group)}
+                      />
+                    )}
                   </ListItem>
                 </Card>
               );

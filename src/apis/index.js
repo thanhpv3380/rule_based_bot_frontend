@@ -5,6 +5,7 @@ import * as dictionary from './dictionary';
 import * as bot from './bot';
 import * as groupIntent from './groupIntent';
 import * as intent from './intent';
+import * as entity from './entity';
 
 export default {
   auth,
@@ -14,4 +15,5 @@ export default {
   bot,
   groupIntent,
   intent,
+  entity,
 };

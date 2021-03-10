@@ -37,6 +37,7 @@ function LayoutBody(props) {
     handleCloseEditGroup,
     handleUpdateGroupName,
     handleDeleteGroup,
+    handleDeleteItem,
   } = props;
   const classes = useStyles();
   const history = useHistory();
@@ -157,7 +158,9 @@ function LayoutBody(props) {
                     primary={item && item.name}
                     onClick={() => handleClickItem(item)}
                   />
-                  <DeleteIcon />
+                  <DeleteIcon
+                    onClick={() => handleDeleteItem(item.id, noneGroups)}
+                  />
                 </ListItem>
               </Card>
             ))}
@@ -174,6 +177,7 @@ function LayoutBody(props) {
                 handleCloseEditGroup={handleCloseEditGroup}
                 handleUpdateGroupName={handleUpdateGroupName}
                 handleDeleteGroup={handleDeleteGroup}
+                handleDeleteItem={handleDeleteItem}
               />
             ))}
         </Grid>

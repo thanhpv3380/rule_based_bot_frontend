@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
@@ -27,15 +28,10 @@ function IntentDetail() {
   const [groups, setGroups] = useState();
 
   const fetchGroupIntents = async () => {
-    const { results } = await apis.groupIntent.getGroupIntents();
+    const { results } = await apis.groupIntent.getGroupIntents('');
+    console.log(results);
     if (results.groupIntents) {
-      const notIsGroup = results.groupIntents.find((group) => !group.isGroup);
-      const isGroups = results.groupIntents.filter((group) => group.isGroup);
-      if (notIsGroup) {
-        notIsGroup.name = 'Not is group';
-        isGroups.push(notIsGroup);
-      }
-      isGroups.find((group) => {
+      results.groupIntents.find((group) => {
         if (group.intents) {
           group.intents.find((item) => {
             if (item.id === id) {
@@ -44,7 +40,8 @@ function IntentDetail() {
           });
         }
       });
-      setGroups(isGroups);
+      setGroups(results.groupIntents);
+      console.log(results.groupIntents);
     }
   };
 
@@ -53,6 +50,7 @@ function IntentDetail() {
     if (status === 1 && result) {
       setIntent(result);
       setPatterns(result.patterns);
+      console.log(result.patterns);
     }
   };
 
@@ -143,7 +141,17 @@ function IntentDetail() {
   };
 
   const handleAddParameter = async (data) => {
-    console.log(data);
+    const parameter = {
+      name: data.name,
+      entity: data.id,
+    };
+
+    const { status } = await apis.intent.addParameter(id, parameter);
+    if (status === 1) {
+      fetchIntent();
+      return true;
+    }
+    return false;
   };
 
   const handleSubmit = async () => {

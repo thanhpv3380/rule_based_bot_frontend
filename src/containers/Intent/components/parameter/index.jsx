@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-wrap-multilines */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   Typography,
@@ -23,15 +23,7 @@ import { useFormContext, Controller } from 'react-hook-form';
 import BorderColorOutlinedIcon from '@material-ui/icons/BorderColorOutlined';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import useStyles from './index.style';
-
-function createData(name, entity) {
-  return { name, entity };
-}
-
-const rows = [
-  createData('người gửi', 'email'),
-  createData('người nhận', 'email'),
-];
+import apis from '../../../../apis';
 
 function Parameter(props) {
   const classes = useStyles();
@@ -41,6 +33,7 @@ function Parameter(props) {
 
   const [openModal, setOpenModal] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [entities, setEntities] = useState([]);
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -56,6 +49,22 @@ function Parameter(props) {
 
   const handleCloseModalEdit = () => {
     setOpenModalEdit(false);
+  };
+
+  const fetchEntities = async () => {
+    const { results } = await apis.entity.getEntities();
+    setEntities(results.entities);
+  };
+
+  useEffect(() => {
+    fetchEntities();
+  }, []);
+
+  const handleSubmitAddParameter = async () => {
+    const status = await handleAddParameter();
+    if (status) {
+      handleCloseModal();
+    }
   };
 
   return (
@@ -76,7 +85,7 @@ function Parameter(props) {
           <div className={classes.paper}>
             <Typography variant="h6">Add parameter</Typography>
 
-            <form onSubmit={methods.handleSubmit(handleAddParameter)}>
+            <form onSubmit={methods.handleSubmit(handleSubmitAddParameter)}>
               <TextField
                 className={classes.textFieldModal}
                 name="name"
@@ -109,12 +118,12 @@ function Parameter(props) {
                       // value={groupSelect.name}
                       // onChange={(e) => handleChangeGroup(e)}
                     >
-                      <MenuItem name="Not in group" value="rest">
-                        number
-                      </MenuItem>
-                      <MenuItem name="Not in group" value="rest">
-                        email
-                      </MenuItem>
+                      {entities &&
+                        entities.map((entity) => (
+                          <MenuItem name={entity.name} value={entity}>
+                            {entity.name}
+                          </MenuItem>
+                        ))}
                     </Select>
                   }
                   control={methods.control}
@@ -164,9 +173,10 @@ function Parameter(props) {
           </TableHead>
           <TableBody>
             {intent &&
-              rows.map((parameter, item) => (
+              intent.parameters &&
+              intent.parameters.map((parameter, item) => (
                 <TableRow key={parameter.name}>
-                  <TableCell align="left">{item}</TableCell>
+                  <TableCell align="left">{item + 1}</TableCell>
                   <TableCell align="left">{parameter.name}</TableCell>
                   <TableCell align="left">{parameter.entity}</TableCell>
                   <TableCell align="left">

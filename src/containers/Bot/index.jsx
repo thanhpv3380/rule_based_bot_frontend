@@ -43,8 +43,8 @@ function Bot() {
   };
 
   const fetchBots = async () => {
-    const { result } = await apis.bot.getbots('', accessToken);
-    setBots(result.bots);
+    const { results } = await apis.bot.getbots('', accessToken);
+    setBots(results.bots);
   };
 
   useEffect(() => {
@@ -67,7 +67,7 @@ function Bot() {
   };
 
   const handleOnClick = (data) => {
-    setCookie('agent-id', data.id);
+    setCookie('bot-id', data.id);
     history.push('/');
   };
 

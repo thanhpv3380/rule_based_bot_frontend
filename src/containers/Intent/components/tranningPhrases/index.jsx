@@ -26,6 +26,7 @@ function TranningPhrases(props) {
     patterns,
     handleChangeSearch,
   } = props;
+
   return (
     <Grid container>
       <Grid item xs={4}>

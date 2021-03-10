@@ -20,8 +20,10 @@ function Intent() {
   const [statusNoneGroup, setStatusNoneGroup] = useState();
 
   const fetchGroupintents = async () => {
-    const { results, message } = await apis.groupIntent.getGroupIntents('');
-    if (results.groupIntents) {
+    const { status, results, message } = await apis.groupIntent.getGroupIntents(
+      '',
+    );
+    if (status === 1 && results.groupIntents) {
       const notAGroups = results.groupIntents.find((group) => !group.isGroup);
       const isGroups = results.groupIntents
         .filter((group) => group.isGroup)
@@ -218,6 +220,32 @@ function Intent() {
     }
   };
 
+  const handleDeleteIntent = async (id, group) => {
+    const { status } = await apis.intent.deleteIntent(id);
+    if (status === 1) {
+      if (group.isGroup) {
+        const newGroup = groups.map((item) => {
+          if (item.id === group.id) {
+            const newIntents = group.intents.filter(
+              (intent) => intent.id !== id,
+            );
+            group.intents = newIntents;
+            return group;
+          }
+          return item;
+        });
+
+        setGroups(newGroup);
+        setStatusOfGroup(newGroup);
+      } else {
+        const newIntents = group.intents.filter((intent) => intent.id !== id);
+        group.intents = newIntents;
+        setNoneGroup(group);
+        setStatusNoneGroup(group);
+      }
+    }
+  };
+
   return (
     <LayoutBody
       title={title.INTENTS}
@@ -233,6 +261,7 @@ function Intent() {
       handleCloseEditGroup={handleCloseEditGroup}
       handleUpdateGroupName={handleUpdateGroupName}
       handleDeleteGroup={handleDeleteGroup}
+      handleDeleteItem={handleDeleteIntent}
     >
       <Route
         exact
