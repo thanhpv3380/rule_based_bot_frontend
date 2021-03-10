@@ -9,5 +9,9 @@ export default {
     CREATE_ACTION: '/bot/:id/actions/create',
     DETAIL_ACTION: '/bot/:id/actions/detail/:actionId',
   },
-  INTENT_BOT: '/bot/:id/intents',
+  INTENT_BOT: {
+    INTENT: '/bot/:id/intents',
+    CREATE_INTENT: '/bot/:id/intents/createIntent',
+    DETAIL_INTENT: '/bot/:id/intents/detail/:id',
+  },
 };

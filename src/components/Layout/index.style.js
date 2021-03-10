@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 export default makeStyles((theme) => ({
   root: {
     display: 'flex',
+    background: '#f5f5f5',
   },
   sideBar: {
     height: '100vh',

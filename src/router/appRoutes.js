@@ -4,6 +4,7 @@ import Home from '../pages/Home';
 import Bot from '../pages/Bot';
 import Dictionary from '../pages/Dictionary';
 import Action from '../pages/Action';
+import Intent from '../pages/Intent';
 
 export default [
   {
@@ -42,7 +43,15 @@ export default [
   {
     path: routes.ACTION_BOT.ACTION,
     component: Action,
-    exact: false,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+  },
+  {
+    path: routes.INTENT,
+    component: Intent,
+    exact: true,
     restricted: false,
     isPrivate: true,
     isLayout: true,

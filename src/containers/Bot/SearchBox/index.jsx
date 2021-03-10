@@ -8,7 +8,6 @@ import {
   Button,
 } from '@material-ui/core';
 import { List as ListIcon, Search as SearchIcon } from '@material-ui/icons';
-
 import useStyles from './index.style';
 
 function SearchBox({ keySearch, handleSearch, handleToggleModal }) {

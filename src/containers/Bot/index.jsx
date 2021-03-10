@@ -8,7 +8,6 @@ import { setCookie } from '../../utils/cookie';
 import ListBot from './ListBot';
 import CreateBotModal from './CreateBot';
 import SearchBox from './SearchBox';
-
 import apis from '../../apis';
 import useStyles from './index.styles';
 import actions from '../../redux/actions';
