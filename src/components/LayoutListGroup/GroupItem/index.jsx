@@ -113,6 +113,7 @@ const GroupItem = ({
     {
       heading: 'Delete',
       event: handlePrevDeleteGroup,
+      isHidden: groupItem.children.length > 0,
     },
   ];
 

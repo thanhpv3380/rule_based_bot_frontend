@@ -45,17 +45,20 @@ const MenuToggle = ({ id, icon, menus }) => {
         onClose={handleClose}
       >
         {menus &&
-          menus.map((menu, index) => (
-            <MenuItem
-              key={index}
-              onClick={async (e) => {
-                await handleClose(e);
-                menu.event(e, id);
-              }}
-            >
-              {menu.heading}
-            </MenuItem>
-          ))}
+          menus.map(
+            (menu, index) =>
+              !menu.isHidden && (
+                <MenuItem
+                  key={index}
+                  onClick={async (e) => {
+                    await handleClose(e);
+                    menu.event(e, id);
+                  }}
+                >
+                  {menu.heading}
+                </MenuItem>
+              ),
+          )}
       </Menu>
     </div>
   );

@@ -88,7 +88,6 @@ const LayoutListGroup = ({
   }, [open]);
 
   useEffect(() => {
-    console.log('fdsfs');
     setPagination({
       ...pagination,
       count: groupItems.length,
