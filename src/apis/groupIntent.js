@@ -1,13 +1,5 @@
 import api from './authApi';
 
-export async function getGroupIntents() {
-  const response = await api({
-    method: 'GET',
-    url: '/groupIntents',
-  });
-  return response;
-}
-
 export async function getGroupAndItems({ keyword }) {
   const response = await api({
     method: 'POST',

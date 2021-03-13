@@ -54,7 +54,13 @@ const ActionText = ({
             fullWidth
             name="to"
             value={
-              item ? (item.mail ? (item.mail.to ? item.mail.to : '') : '') : ''
+              item
+                ? item.email
+                  ? item.email.to
+                    ? item.email.to
+                    : ''
+                  : ''
+                : ''
             }
             onChange={(e) =>
               handleChangeMailInfoItem(actionId, e.target.name, e.target.value)
@@ -70,9 +76,9 @@ const ActionText = ({
             name="title"
             value={
               item
-                ? item.mail
-                  ? item.mail.title
-                    ? item.mail.title
+                ? item.email
+                  ? item.email.title
+                    ? item.email.title
                     : ''
                   : ''
                 : ''
@@ -91,9 +97,9 @@ const ActionText = ({
             name="body"
             value={
               item
-                ? item.mail
-                  ? item.mail.body
-                    ? item.mail.body
+                ? item.email
+                  ? item.email.body
+                    ? item.email.body
                     : ''
                   : ''
                 : ''

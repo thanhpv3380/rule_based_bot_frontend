@@ -9,6 +9,7 @@ import {
   MenuList,
   MenuItem,
   Grid,
+  TablePagination,
 } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import SearchBox from '../SearchBox';
@@ -26,11 +27,35 @@ const LayoutListGroup = ({
   handleChangeNameGroup,
   handleDeleteGroup,
   handleAddItemInGroup,
+  handleToggleGroup,
+  handleClickItem,
   children,
 }) => {
   const classes = useStyles();
   const [isCreateGroup, setIsCreateGroup] = useState(false);
   const [open, setOpen] = useState(false);
+  const [itemSelected, setItemSelected] = useState();
+  const [groupSelected, setGroupSelected] = useState();
+  const [pagination, setPagination] = useState({
+    page: 0,
+    rowsPerPage: 5,
+    count: 100,
+  });
+
+  const handleChangePage = async (event, newPage) => {
+    setPagination({
+      ...pagination,
+      page: newPage,
+    });
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination({
+      ...pagination,
+      rowsPerPage: parseInt(event.target.value, 10),
+      page: 0,
+    });
+  };
 
   const anchorRef = useRef(null);
 
@@ -62,9 +87,27 @@ const LayoutListGroup = ({
     prevOpen.current = open;
   }, [open]);
 
+  useEffect(() => {
+    console.log('fdsfs');
+    setPagination({
+      ...pagination,
+      count: groupItems.length,
+    });
+  }, [groupItems.length]);
+
+  useEffect(() => {
+    const listUrl = window.location.href.split('/');
+    const itemId = listUrl[listUrl.length - 1];
+    setItemSelected(itemId);
+    // setGroupSelected(
+    //   groupItems.find((el) => el.children.find((item) => item.id === itemId)),
+    // );
+  }, [window.location.href]);
+
   const handleToggleCreateGroup = () => {
     setIsCreateGroup((prev) => !prev);
   };
+
   const handleOpenCreateSingle = () => {
     handleToggle();
     handleCreateItem();
@@ -74,11 +117,17 @@ const LayoutListGroup = ({
     handleToggle();
     setIsCreateGroup(true);
   };
+
+  const handlePrevCreateGroup = async (name) => {
+    await handleCreateGroup(name);
+    setIsCreateGroup((prev) => !prev);
+  };
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} md={4} lg={4} xl={4}>
         <>
-          <SearchBox handleSearch={handleSearch} />
+          <SearchBox handleSearch={handleSearch} size="large" />
           <Box component="span" display="block" bgcolor="background.paper" />
           <div>
             <Button
@@ -128,21 +177,39 @@ const LayoutListGroup = ({
           </div>
           {isCreateGroup && (
             <CreateGroupItem
-              handleCreateGroup={handleCreateGroup}
+              handleCreateGroup={handlePrevCreateGroup}
               handleToggleCreateGroup={handleToggleCreateGroup}
             />
           )}
           {groupItems &&
-            groupItems.map((groupItem) => (
-              <GroupItem
-                groupItem={groupItem}
-                key={groupItem.id}
-                handleChangeNameGroup={handleChangeNameGroup}
-                handleDeleteItem={handleDeleteItem}
-                handleDeleteGroup={handleDeleteGroup}
-                handleAddItem={handleAddItemInGroup}
-              />
-            ))}
+            groupItems
+              .slice(
+                pagination.rowsPerPage * pagination.page,
+                pagination.rowsPerPage * pagination.page +
+                  pagination.rowsPerPage,
+              )
+              .map((groupItem) => (
+                <GroupItem
+                  groupItem={groupItem}
+                  itemSelected={itemSelected}
+                  key={groupItem.id}
+                  handleChangeNameGroup={handleChangeNameGroup}
+                  handleDeleteItem={handleDeleteItem}
+                  handleDeleteGroup={handleDeleteGroup}
+                  handleAddItem={handleAddItemInGroup}
+                  handleToggleClickGroup={handleToggleGroup}
+                  handleClickItem={handleClickItem}
+                />
+              ))}
+          <TablePagination
+            component="div"
+            rowsPerPageOptions={[5]}
+            count={pagination.count}
+            page={pagination.page}
+            rowsPerPage={pagination.rowsPerPage}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
         </>
       </Grid>
       <Grid item xs={12} md={8} lg={8} xl={8}>

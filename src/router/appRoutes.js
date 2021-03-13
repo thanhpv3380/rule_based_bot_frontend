@@ -30,7 +30,6 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: true,
-    isLayoutListGroup: false,
   },
   {
     path: routes.DICTIONARY_BOT,
@@ -43,13 +42,13 @@ export default [
   {
     path: routes.ACTION_BOT.ACTION,
     component: Action,
-    exact: true,
+    exact: false,
     restricted: false,
     isPrivate: true,
     isLayout: true,
   },
   {
-    path: routes.INTENT,
+    path: routes.INTENT_BOT.INTENT,
     component: Intent,
     exact: true,
     restricted: false,

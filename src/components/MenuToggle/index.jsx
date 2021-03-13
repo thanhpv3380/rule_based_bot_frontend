@@ -48,8 +48,8 @@ const MenuToggle = ({ id, icon, menus }) => {
           menus.map((menu, index) => (
             <MenuItem
               key={index}
-              onClick={(e) => {
-                handleClose(e);
+              onClick={async (e) => {
+                await handleClose(e);
                 menu.event(e, id);
               }}
             >

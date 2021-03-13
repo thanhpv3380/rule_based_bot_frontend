@@ -10,14 +10,18 @@ import {
 } from '@material-ui/core';
 import useStyles from './index.style';
 
-const ItemInfoHeader = ({ name, listGroup, handleSave }) => {
+const ItemInfoHeader = ({ name, groupItems, groupActionId, handleSave }) => {
   const classes = useStyles();
   const [input, setInput] = useState();
-  const [groupSelected, setGroupSelected] = useState();
+  const [groupSelected, setGroupSelected] = useState(null);
 
   useEffect(() => {
     setInput(name);
   }, [name]);
+
+  useEffect(() => {
+    setGroupSelected(groupActionId);
+  }, [groupActionId]);
 
   return (
     <AppBar position="static">
@@ -41,18 +45,22 @@ const ItemInfoHeader = ({ name, listGroup, handleSave }) => {
             value={groupSelected}
             onChange={(e) => setGroupSelected(e.target.value)}
           >
-            <MenuItem value="">
+            <MenuItem value={null}>
               <em>Not in Group</em>
             </MenuItem>
-            {listGroup &&
-              listGroup.map((el) => (
+            {groupItems &&
+              groupItems.map((el) => (
                 <MenuItem key={el.id} value={el.id}>
                   {el.name}
                 </MenuItem>
               ))}
           </Select>
         </FormControl>
-        <Button size="large" variant="contained" onClick={handleSave}>
+        <Button
+          size="large"
+          variant="contained"
+          onClick={() => handleSave(input, groupSelected)}
+        >
           Save
         </Button>
       </Toolbar>

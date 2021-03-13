@@ -1,85 +1,179 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useSnackbar } from 'notistack';
 import EmptyPage from '../../components/EmptyPage';
 import LayoutListGroup from '../../components/LayoutListGroup';
 import routes from '../../constants/route';
 import CreateAction from './CreateAction';
 import ActionDetail from './DetailAction';
+import apis from '../../apis';
+import textDefault from '../../constants/textDefault';
+
+let timeOutId = null;
 
 function Action() {
   const { t } = useTranslation();
   const match = useRouteMatch();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
+  const botId = useSelector((state) => state.bot.bot);
+  // eslint-disable-next-line no-unused-vars
   const [searchKey, setSearchKey] = useState();
-  const [groupAndItems, setGroupAndItems] = useState([
-    {
-      id: '1',
-      children: [
-        {
-          id: '1',
-          created_by: '5fc85259ae3528a707c1934a',
-          group_id: '1',
-          name: 'item_1_group_1',
-        },
-        {
-          id: '2',
-          created_by: '5fc85259ae3528a707c1934a',
-          group_id: '1',
-          name: 'item_2_group_1',
-        },
-      ],
-      name: 'group 1',
-    },
-    {
-      id: '2',
-      children: [],
-      name: 'group 2',
-    },
-  ]);
+  const [groupIdSelected, setGroupIdSelected] = useState(null);
+  const [groupAndItems, setGroupAndItems] = useState([]);
+
+  const fetchGroupAndItems = async (keyword) => {
+    const data = await apis.groupAction.getGroupAndItems(keyword);
+    if (data.status) {
+      setGroupAndItems(
+        data.result.groupActions.sort((a, b) => a.createdAt - b.createdAt),
+      );
+    } else {
+      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+        variant: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchGroupAndItems();
+  }, []);
 
   const handleSearch = (e) => {
-    console.log(e.target.value);
-    setSearchKey(e.target.value);
+    const { value } = e.target;
+    setSearchKey(value);
+    clearTimeout(timeOutId);
+    timeOutId = setTimeout(() => fetchGroupAndItems(value), 500);
   };
 
-  const handleCreateItem = () => {
-    console.log(match);
+  const handleCreateItem = (id) => {
+    setGroupIdSelected(id || null);
     history.push(`${match.url}/create`);
   };
 
-  const handleAddItemInGroup = (id) => {
-    console.log(id);
-    history.push(`${match.url}/create`);
+  const handleCreateAction = (data) => {
+    const newGroupAndItems = [...groupAndItems];
+    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupAction);
+    newGroupAndItems[pos].children.unshift({
+      id: data.id,
+      name: data.name,
+      groupAction: data.groupAction,
+      actions: data.actions,
+    });
+    newGroupAndItems[pos].status = true;
+    setGroupAndItems(newGroupAndItems);
+    history.push(`/bot/${botId}/actions/detail/${data.id}`);
   };
 
-  const handleCreateGroup = (value) => {
-    console.log(value);
+  const handleCreateGroup = async (value) => {
+    const data = await apis.groupAction.createGroupAction({ name: value });
+    if (data.status) {
+      const newGroupAndItems = [...groupAndItems];
+      newGroupAndItems.unshift({
+        ...data.result.groupAction,
+        children: [],
+      });
+      setGroupAndItems(newGroupAndItems);
+      enqueueSnackbar(textDefault.CREATE_SUCCESS, {
+        variant: 'success',
+      });
+    } else {
+      enqueueSnackbar(textDefault.CREATE_FAILED, {
+        variant: 'error',
+      });
+    }
   };
 
-  const handleChangeNameGroup = (groupId, value) => {
-    console.log(groupId, value);
+  const handleChangeNameGroup = async (groupId, value) => {
+    const data = await apis.groupAction.updateGroupAction(groupId, {
+      name: value,
+    });
+    if (data.status) {
+      const newGroupAndItems = [...groupAndItems];
+      const pos = newGroupAndItems.findIndex((el) => el.id === groupId);
+      newGroupAndItems[pos] = {
+        ...newGroupAndItems[pos],
+        updatedAt: data.result.groupAction.updatedAt,
+        name: data.result.groupAction.name,
+      };
+      setGroupAndItems(newGroupAndItems);
+      enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
+        variant: 'success',
+      });
+    } else {
+      enqueueSnackbar(textDefault.UPDATE_FAILED, {
+        variant: 'error',
+      });
+    }
   };
 
-  const handleDeleteGroup = (id) => {
-    console.log('delete group', id);
+  const handleDeleteGroup = async (id) => {
+    const data = await apis.groupAction.deleteGroupAction(id);
+    if (data.status) {
+      const newGroupAndItems = groupAndItems.filter((el) => el.id !== id);
+      setGroupAndItems(newGroupAndItems);
+      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+        variant: 'success',
+      });
+    } else {
+      enqueueSnackbar(textDefault.DELETE_FAILED, {
+        variant: 'error',
+      });
+    }
   };
 
-  const handleDeleteItem = (groupId, itemId) => {
-    console.log(`delete item ${itemId} in group ${groupId}`);
+  const handleDeleteItem = async (groupId, itemId) => {
+    const data = await apis.action.deleteAction(itemId);
+    if (data.status) {
+      const newGroupAndItems = [...groupAndItems];
+      const pos = newGroupAndItems.findIndex((el) => el.id === groupId);
+      const newItems = newGroupAndItems[pos].children.filter(
+        (el) => el.id !== itemId,
+      );
+      newGroupAndItems[pos] = {
+        ...newGroupAndItems[pos],
+        children: [...newItems],
+      };
+      setGroupAndItems(newGroupAndItems);
+      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+        variant: 'success',
+      });
+    } else {
+      enqueueSnackbar(textDefault.DELETE_FAILED, {
+        variant: 'error',
+      });
+    }
+  };
+
+  const handleToggleGroup = (id) => {
+    const newGroupAndItems = [...groupAndItems];
+    const pos = newGroupAndItems.findIndex((el) => el.id === id);
+    newGroupAndItems[pos] = {
+      ...newGroupAndItems[pos],
+      status: !newGroupAndItems[pos].status,
+    };
+    setGroupAndItems(newGroupAndItems);
+  };
+
+  const handleClickItem = (id) => {
+    history.push(`/bot/${botId}/actions/detail/${id}`);
   };
 
   return (
     <LayoutListGroup
+      groupItems={groupAndItems}
+      title="action"
       handleSearch={handleSearch}
       handleCreateItem={handleCreateItem}
       handleDeleteItem={handleDeleteItem}
       handleCreateGroup={handleCreateGroup}
       handleChangeNameGroup={handleChangeNameGroup}
       handleDeleteGroup={handleDeleteGroup}
-      handleAddItemInGroup={handleAddItemInGroup}
-      groupItems={groupAndItems}
-      title="action"
+      handleAddItemInGroup={handleCreateItem}
+      handleToggleGroup={handleToggleGroup}
+      handleClickItem={handleClickItem}
     >
       <Route
         exact
@@ -88,7 +182,11 @@ function Action() {
       />
       <Route exact path={routes.ACTION_BOT.ACTION} component={EmptyPage} />
       <Route exact path={routes.ACTION_BOT.CREATE_ACTION}>
-        <CreateAction />
+        <CreateAction
+          groupItems={groupAndItems}
+          groupActionId={groupIdSelected}
+          handleCreate={handleCreateAction}
+        />
       </Route>
     </LayoutListGroup>
   );

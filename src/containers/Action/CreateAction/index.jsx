@@ -10,8 +10,10 @@ import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import { ActionText, ActionSendMail, ActionMedia } from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
+import apis from '../../../apis';
+import textDefault from '../../../constants/textDefault';
 
-const CreateAction = ({ handleCreate }) => {
+const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -28,7 +30,7 @@ const CreateAction = ({ handleCreate }) => {
     setActions([
       ...actions,
       {
-        type: actionsConstant.TEXT,
+        typeAction: actionsConstant.TEXT,
         text: [],
       },
     ]);
@@ -38,8 +40,8 @@ const CreateAction = ({ handleCreate }) => {
     setActions([
       ...actions,
       {
-        type: actionsConstant.SEND_MAIL,
-        mail: {},
+        typeAction: actionsConstant.SEND_MAIL,
+        email: {},
       },
     ]);
   };
@@ -48,11 +50,11 @@ const CreateAction = ({ handleCreate }) => {
     setActions([
       ...actions,
       {
-        type: actionsConstant.MEDIA,
+        typeAction: actionsConstant.MEDIA,
         media: {
           text: null,
           attachment: {
-            type: actionsConstant.MEDIA_AUDIO,
+            typeMedia: actionsConstant.MEDIA_AUDIO,
             payload: {
               url: null,
               elements: [],
@@ -67,11 +69,11 @@ const CreateAction = ({ handleCreate }) => {
     setActions([
       ...actions,
       {
-        type: actionsConstant.MEDIA,
+        typeAction: actionsConstant.MEDIA,
         media: {
           text: null,
           attachment: {
-            type: actionsConstant.MEDIA_VIDEO,
+            typeMedia: actionsConstant.MEDIA_VIDEO,
             payload: {
               url: null,
               elements: [],
@@ -115,8 +117,8 @@ const CreateAction = ({ handleCreate }) => {
 
   const handleChangeMailInfoItem = (id, name, value) => {
     const newActions = [...actions];
-    newActions[id].mail = {
-      ...newActions[id].mail,
+    newActions[id].email = {
+      ...newActions[id].email,
       [name]: value,
     };
     setActions(newActions);
@@ -136,12 +138,26 @@ const CreateAction = ({ handleCreate }) => {
     setActions(newActions);
   };
 
-  const handleSave = () => {
-    console.log(actions);
+  const handleSave = async (name, groupAction) => {
+    const data = await apis.action.createAction({
+      name,
+      actions,
+      groupAction,
+    });
+    if (data.status) {
+      handleCreate(data.result.action);
+      enqueueSnackbar(textDefault.CREATE_SUCCESS, {
+        variant: 'success',
+      });
+    } else {
+      enqueueSnackbar(textDefault.CREATE_FAILED, {
+        variant: 'error',
+      });
+    }
   };
 
   const renderAction = (action, id) => {
-    if (action.type === actionsConstant.TEXT) {
+    if (action.typeAction === actionsConstant.TEXT) {
       return (
         <ActionText
           actionId={id}
@@ -153,7 +169,7 @@ const CreateAction = ({ handleCreate }) => {
         />
       );
     }
-    if (action.type === actionsConstant.SEND_MAIL) {
+    if (action.typeAction === actionsConstant.SEND_MAIL) {
       return (
         <ActionSendMail
           actionId={id}
@@ -163,13 +179,14 @@ const CreateAction = ({ handleCreate }) => {
         />
       );
     }
-    if (action.type === actionsConstant.MEDIA) {
+    if (action.typeAction === actionsConstant.MEDIA) {
       return (
         <ActionMedia
           title={
-            action.media.attachment.type === actionsConstant.MEDIA_AUDIO
+            action.media.attachment.typeMedia === actionsConstant.MEDIA_AUDIO
               ? 'audio'
-              : action.media.attachment.type === actionsConstant.MEDIA_VIDEO
+              : action.media.attachment.typeMedia ===
+                actionsConstant.MEDIA_VIDEO
               ? 'video'
               : ''
           }
@@ -208,7 +225,12 @@ const CreateAction = ({ handleCreate }) => {
 
   return (
     <>
-      <ItemInfoHeader handleCreate={handleCreate} handleSave={handleSave} />
+      <ItemInfoHeader
+        groupItems={groupItems}
+        handleCreate={handleCreate}
+        handleSave={handleSave}
+        groupActionId={groupActionId}
+      />
       <div className={classes.content}>
         {actions.map((action, index) => (
           <div className={classes.actionItem} key={index}>

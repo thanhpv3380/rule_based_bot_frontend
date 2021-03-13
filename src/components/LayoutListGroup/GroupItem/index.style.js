@@ -2,31 +2,65 @@ import { makeStyles } from '@material-ui/styles';
 
 export default makeStyles((theme) => ({
   root: {
-    paddingTop: 10,
+    width: '100%',
+    margin: '20px 0px 10px 0px',
+    border: '1px solid rgba(0, 0, 0, 0.23)',
+    borderRadius: 5,
+    '&:hover': {
+      background: '#f3f3f3',
+    },
+  },
+  button: {
+    '&:hover': {
+      background: '#f5f5f5',
+    },
+  },
+  textSearch: {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 10,
+    },
     width: '100%',
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+  linkRoot: {
+    color: theme.palette.black, // '#000000',
   },
-  popper: {
-    zIndex: 1,
+  groupRoot: {
+    height: theme.spacing(6),
+    width: '90%',
+    borderRadius: 10,
+    margin: '10px 10px 10px 20px',
   },
-  listItem: {
-    width: '100%',
+  muiMenuPaper: {
+    borderRadius: 10,
   },
-  item: {
-    cursor: 'pointer',
-    border: theme.border.l1,
-    borderRadius: theme.spacing(0.5),
-    marginBottom: theme.spacing(1),
-    boxShadow: theme.palette.boxShadow_l1,
-  },
-  accordionDetails: {
-    paddingTop: 0,
+  muiMenu: {
+    top: 40,
+    left: 70,
   },
   link: {
-    color: '#000',
-    textDecoration: 'none',
+    margin: 10,
+  },
+  listRoot: {
+    border: '1px solid rgb(0 0 0 / 23%)',
+    borderRadius: 5,
+    margin: '10px 0px 0px 0px',
+    background: theme.palette.greyWhile,
+  },
+  listItem: {
+    border: '1px solid rgba(0, 0, 0, 0.23)',
+    borderRadius: 5,
+    width: '100%',
+    margin: '20px 0px 10px 0px',
+    height: 60,
+    background: theme.palette.greyWhile,
+  },
+  listItemNameGroup: {
+    cursor: 'pointer',
+  },
+  divider: {
+    margin: '8px 16px 0px 16px',
+  },
+  itemSelected: {
+    background: theme.palette.active,
   },
 }));

@@ -1,46 +1,72 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Typography,
+  Card,
+  Collapse,
+  Divider,
+  IconButton,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
-  ListItemSecondaryAction,
-  IconButton,
+  ListItemText,
   TextField,
+  TablePagination,
 } from '@material-ui/core';
 import {
-  ExpandMore as ExpandMoreIcon,
-  MoreVert as MoreVertIcon,
-  Folder as FolderIcon,
   Check as CheckIcon,
   Close as CloseIcon,
+  ExpandLess as ExpandLessIcon,
+  ExpandMore as ExpandMoreIcon,
+  MoreVert as MoreVertIcon,
+  Notes as NotesIcon,
 } from '@material-ui/icons';
+
 import MenuToggle from '../../MenuToggle';
 import useStyles from './index.style';
 
 const GroupItem = ({
   groupItem,
+  itemSelected,
   handleChangeNameGroup,
   handleAddItem,
   handleDeleteGroup,
   handleDeleteItem,
+  handleToggleClickGroup,
+  handleClickItem,
 }) => {
   const classes = useStyles();
-  const history = useHistory();
-  const botId = useSelector((state) => state.bot.bot);
-  const dense = false;
-  const [expanded, setExpanded] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const [isChange, setIsChange] = useState(false);
   const [nameGroup, setNameGroup] = useState('');
+  const [pagination, setPagination] = useState({
+    page: 0,
+    rowsPerPage: 5,
+    count: 100,
+  });
 
-  const handleChangeExpanded = () => {
-    setExpanded((prev) => !prev);
+  const handleChangePage = async (event, newPage) => {
+    setPagination({
+      ...pagination,
+      page: newPage,
+    });
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination({
+      ...pagination,
+      rowsPerPage: parseInt(event.target.value, 10),
+      page: 0,
+    });
+  };
+
+  useEffect(() => {
+    setPagination({
+      ...pagination,
+      count: groupItem.children.length,
+    });
+  }, [groupItem.children.length]);
+
+  const handleToggleHover = () => {
+    setIsHovering((prev) => !prev);
   };
 
   const handleToggleGroup = (e) => {
@@ -48,10 +74,10 @@ const GroupItem = ({
     setIsChange((prev) => !prev);
   };
 
-  const handleUpdateChangeNameGroup = (e) => {
+  const handleUpdateChangeNameGroup = async (e) => {
     e.stopPropagation();
+    await handleChangeNameGroup(groupItem.id, nameGroup);
     handleToggleGroup(e);
-    handleChangeNameGroup(groupItem.id, nameGroup);
   };
 
   const handleAddItemInGroup = (e, id) => {
@@ -97,26 +123,26 @@ const GroupItem = ({
     },
   ];
 
-  const handleClickItem = (id) => {
-    history.push(`/bot/${botId}/actions/detail/${id}`);
-  };
   return (
-    <div className={classes.root}>
+    <div>
       {isChange ? (
-        <Accordion expanded={false}>
-          <AccordionSummary
+        <List className={classes.listRoot}>
+          <ListItem
+            className={classes.listItemNameGroup}
             classes={{
-              expanded: classes.container,
+              button: classes.button,
             }}
           >
-            <TextField
-              fullWidth
-              id="outlined-basic"
-              placeholder="Name Group"
-              size="small"
-              value={nameGroup}
-              onChange={(e) => setNameGroup(e.target.value)}
-            />
+            <ListItemText>
+              <TextField
+                fullWidth
+                id="outlined-basic"
+                placeholder="Name Group"
+                size="small"
+                value={nameGroup}
+                onChange={(e) => setNameGroup(e.target.value)}
+              />
+            </ListItemText>
             <IconButton
               aria-label="edit"
               size="small"
@@ -131,51 +157,82 @@ const GroupItem = ({
             >
               <CloseIcon />
             </IconButton>
-          </AccordionSummary>
-        </Accordion>
+          </ListItem>
+        </List>
       ) : (
-        <Accordion expanded={expanded} onClick={handleChangeExpanded}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
+        <List className={classes.listRoot}>
+          <ListItem
+            className={classes.listItemNameGroup}
+            classes={{
+              button: classes.button,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleToggleClickGroup(groupItem.id);
+            }}
           >
+            <ListItemIcon>
+              {groupItem.status ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+            </ListItemIcon>
+            <ListItemText primary={groupItem.name} />
             <MenuToggle
               id={groupItem.id}
               icon={<MoreVertIcon />}
               menus={groupMenus}
             />
-            <Typography className={classes.heading}>
-              {groupItem.name}
-            </Typography>
-          </AccordionSummary>
-          {groupItem.children.length >= 0 && (
-            <AccordionDetails className={classes.accordionDetails}>
-              <List dense={dense} className={classes.listItem}>
-                {groupItem.children.map((el) => (
-                  <ListItem
-                    key={el.id}
-                    onClick={() => handleClickItem(el.id)}
-                    className={classes.item}
-                    button
-                  >
-                    <ListItemIcon>
-                      <FolderIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={el.name} />
-                    <ListItemSecondaryAction>
-                      <MenuToggle
-                        id={el.id}
-                        icon={<MoreVertIcon />}
-                        menus={itemMenus}
-                      />
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </List>{' '}
-            </AccordionDetails>
+          </ListItem>
+          {groupItem.status && groupItem.children.length > 0 && (
+            <>
+              <Divider className={classes.divider} />
+              <Collapse in={groupItem.status} timeout="auto" unmountOnExit>
+                {groupItem.children
+                  .slice(
+                    pagination.rowsPerPage * pagination.page,
+                    pagination.rowsPerPage * pagination.page +
+                      pagination.rowsPerPage,
+                  )
+                  .map((item) => (
+                    <Card
+                      key={item.id}
+                      className={[
+                        classes.groupRoot,
+                        // itemSelected === item.id && classes.itemSelected,
+                      ]}
+                      elevation={5}
+                    >
+                      <ListItem
+                        button
+                        onClick={() => handleClickItem(item.id)}
+                        onMouseEnter={handleToggleHover}
+                        onMouseLeave={handleToggleHover}
+                      >
+                        <ListItemIcon>
+                          <NotesIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={item.name} />
+                        {isHovering && (
+                          <MenuToggle
+                            id={item.id}
+                            icon={<MoreVertIcon />}
+                            menus={itemMenus}
+                          />
+                        )}
+                      </ListItem>
+                    </Card>
+                  ))}
+                <TablePagination
+                  component="div"
+                  rowsPerPageOptions={[5]}
+                  count={pagination.count}
+                  page={pagination.page}
+                  rowsPerPage={pagination.rowsPerPage}
+                  onChangePage={handleChangePage}
+                  onChangeRowsPerPage={handleChangeRowsPerPage}
+                />
+              </Collapse>
+            </>
           )}
-        </Accordion>
+        </List>
       )}
     </div>
   );
