@@ -13,19 +13,21 @@ import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
 
-const DetailAction = ({ groupItems, groupActionId, handleUpdate }) => {
+const DetailAction = ({ groupItems, handleUpdate }) => {
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const [actionId, setActionId] = useState();
-  const { enqueueSnackbar } = useSnackbar();
+  const [actionData, setActionData] = useState();
   const [actions, setActions] = useState([]);
 
-  const fetchAction = async () => {
-    const data = await apis.action.getAction(actionId);
-    if (data.status) {
-      setActions(data.result.action);
+  const fetchAction = async (id) => {
+    const data = await apis.action.getAction(id);
+    if (data && data.status) {
+      setActionData(data.result.action);
+      setActions(data.result.action.actions);
     } else {
-      enqueueSnackbar(textDefault.CREATE_FAILED, {
+      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
       });
     }
@@ -35,8 +37,8 @@ const DetailAction = ({ groupItems, groupActionId, handleUpdate }) => {
     const listUrl = window.location.href.split('/');
     const itemId = listUrl[listUrl.length - 1];
     setActionId(itemId);
-    fetchAction();
-  }, []);
+    fetchAction(itemId);
+  }, [window.location.href]);
 
   const handleDeleteItem = (id) => {
     setActions([
@@ -164,7 +166,9 @@ const DetailAction = ({ groupItems, groupActionId, handleUpdate }) => {
       groupAction,
     });
     if (data.status) {
-      handleUpdate(data.result.action);
+      handleUpdate(data.result.action, actionData.groupAction);
+      setActionData(data.result.action);
+      setActions(data.result.action.actions);
       enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
         variant: 'success',
       });
@@ -245,9 +249,10 @@ const DetailAction = ({ groupItems, groupActionId, handleUpdate }) => {
   return (
     <>
       <ItemInfoHeader
+        name={actionData && actionData.name}
         groupItems={groupItems}
         handleSave={handleSave}
-        groupActionId={groupActionId}
+        groupActionId={actionData && actionData.groupAction}
       />
       <div className={classes.content}>
         {actions.map((action, index) => (

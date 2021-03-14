@@ -164,9 +164,9 @@ const GroupItem = ({
         <List className={classes.listRoot}>
           <ListItem
             className={classes.listItemNameGroup}
-            classes={{
-              button: classes.button,
-            }}
+            // classes={{
+            //   button: classes.button,
+            // }}
             onClick={(e) => {
               e.stopPropagation();
               handleToggleClickGroup(groupItem.id);
@@ -202,7 +202,6 @@ const GroupItem = ({
                       elevation={5}
                     >
                       <ListItem
-                        button
                         onClick={() => handleClickItem(item.id)}
                         onMouseEnter={handleToggleHover}
                         onMouseLeave={handleToggleHover}

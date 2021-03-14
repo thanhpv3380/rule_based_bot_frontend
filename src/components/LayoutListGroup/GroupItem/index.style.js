@@ -29,6 +29,7 @@ export default makeStyles((theme) => ({
     width: '90%',
     borderRadius: 10,
     margin: '10px 10px 10px 20px',
+    cursor: 'pointer',
   },
   muiMenuPaper: {
     borderRadius: 10,

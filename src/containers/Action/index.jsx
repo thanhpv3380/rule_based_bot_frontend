@@ -48,12 +48,12 @@ function Action() {
     timeOutId = setTimeout(() => fetchGroupAndItems(value), 500);
   };
 
-  const handleCreateItem = (id) => {
+  const handleOpenCreateItem = (id) => {
     setGroupIdSelected(id || null);
     history.push(`${match.url}/create`);
   };
 
-  const handleCreateAction = (data) => {
+  const handleCreateItem = (data) => {
     const newGroupAndItems = [...groupAndItems];
     const pos = newGroupAndItems.findIndex((el) => el.id === data.groupAction);
     newGroupAndItems[pos].children.unshift({
@@ -65,6 +65,37 @@ function Action() {
     newGroupAndItems[pos].status = true;
     setGroupAndItems(newGroupAndItems);
     history.push(`/bot/${botId}/actions/detail/${data.id}`);
+  };
+
+  const handleUpdateItem = (data, oldGroupAction) => {
+    const newGroupAndItems = [...groupAndItems];
+    const actionData = {
+      id: data.id,
+      name: data.name,
+      groupAction: data.groupAction,
+      actions: data.actions,
+    };
+    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupAction);
+    newGroupAndItems[pos].status = true;
+    const childrenPos = newGroupAndItems[pos].children.findIndex(
+      (el) => el.id === data.id,
+    );
+    if (childrenPos < 0) {
+      const tempPos = newGroupAndItems.findIndex(
+        (el) => el.id === oldGroupAction,
+      );
+      const newItems = newGroupAndItems[tempPos].children.filter(
+        (el) => el.id !== data.id,
+      );
+      newGroupAndItems[tempPos] = {
+        ...newGroupAndItems[tempPos],
+        children: [...newItems],
+      };
+      newGroupAndItems[pos].children.unshift(actionData);
+    } else {
+      newGroupAndItems[pos].children[childrenPos] = actionData;
+    }
+    setGroupAndItems(newGroupAndItems);
   };
 
   const handleCreateGroup = async (value) => {
@@ -166,26 +197,27 @@ function Action() {
       groupItems={groupAndItems}
       title="action"
       handleSearch={handleSearch}
-      handleCreateItem={handleCreateItem}
+      handleCreateItem={handleOpenCreateItem}
       handleDeleteItem={handleDeleteItem}
       handleCreateGroup={handleCreateGroup}
       handleChangeNameGroup={handleChangeNameGroup}
       handleDeleteGroup={handleDeleteGroup}
-      handleAddItemInGroup={handleCreateItem}
+      handleAddItemInGroup={handleOpenCreateItem}
       handleToggleGroup={handleToggleGroup}
       handleClickItem={handleClickItem}
     >
-      <Route
-        exact
-        path={routes.ACTION_BOT.DETAIL_ACTION}
-        component={ActionDetail}
-      />
+      <Route exact path={routes.ACTION_BOT.DETAIL_ACTION}>
+        <ActionDetail
+          groupItems={groupAndItems}
+          handleUpdate={handleUpdateItem}
+        />
+      </Route>
       <Route exact path={routes.ACTION_BOT.ACTION} component={EmptyPage} />
       <Route exact path={routes.ACTION_BOT.CREATE_ACTION}>
         <CreateAction
           groupItems={groupAndItems}
           groupActionId={groupIdSelected}
-          handleCreate={handleCreateAction}
+          handleCreate={handleCreateItem}
         />
       </Route>
     </LayoutListGroup>

@@ -12,6 +12,7 @@ import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
+import { generateTitleItem } from '../../../utils/generateTitle';
 
 const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
   const { t } = useTranslation();
@@ -226,8 +227,8 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
   return (
     <>
       <ItemInfoHeader
+        name={generateTitleItem('Action')}
         groupItems={groupItems}
-        handleCreate={handleCreate}
         handleSave={handleSave}
         groupActionId={groupActionId}
       />

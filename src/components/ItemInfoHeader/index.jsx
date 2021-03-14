@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import useStyles from './index.style';
 
-const ItemInfoHeader = ({ name, groupItems, groupActionId, handleSave }) => {
+const ItemInfoHeader = ({ name, groupActionId, groupItems, handleSave }) => {
   const classes = useStyles();
   const [input, setInput] = useState();
   const [groupSelected, setGroupSelected] = useState(null);

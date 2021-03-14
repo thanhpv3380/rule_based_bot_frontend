@@ -7,10 +7,11 @@ import {
 } from '@material-ui/core';
 import { Check as CheckIcon, Close as CloseIcon } from '@material-ui/icons';
 import useStyles from './index.style';
+import { generateTitleGroup } from '../../../utils/generateTitle';
 
 const GroupItem = ({ handleCreateGroup, handleToggleCreateGroup }) => {
   const classes = useStyles();
-  const [nameGroup, setNameGroup] = useState('');
+  const [nameGroup, setNameGroup] = useState(generateTitleGroup());
   return (
     <div className={classes.root}>
       <Accordion expanded={false}>
