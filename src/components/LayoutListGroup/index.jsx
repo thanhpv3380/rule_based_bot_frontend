@@ -14,6 +14,7 @@ import {
 import { Add as AddIcon } from '@material-ui/icons';
 import SearchBox from '../SearchBox';
 import GroupItem from './GroupItem';
+import GroupSingleItem from './GroupSingleItem';
 import CreateGroupItem from './CreateGroupItem';
 import useStyles from './index.style';
 
@@ -34,8 +35,19 @@ const LayoutListGroup = ({
   const classes = useStyles();
   const [isCreateGroup, setIsCreateGroup] = useState(false);
   const [open, setOpen] = useState(false);
+  const [groupSingleLength, setGroupSingleLength] = useState();
   const [itemSelected, setItemSelected] = useState();
   const [groupSelected, setGroupSelected] = useState();
+  const [groupsSingle, setGroupsSingle] = useState({
+    data: [],
+    start: 0,
+    end: 0,
+  });
+  const [groups, setGroups] = useState({
+    data: [],
+    start: 0,
+    end: 0,
+  });
   const [pagination, setPagination] = useState({
     page: 0,
     rowsPerPage: 5,
@@ -88,11 +100,23 @@ const LayoutListGroup = ({
   }, [open]);
 
   useEffect(() => {
-    setPagination({
-      ...pagination,
-      count: groupItems.length,
+    setGroups({
+      ...groups,
+      data: groupItems.filter((el) => el.groupType <= 2),
     });
-  }, [groupItems.length]);
+    setGroupsSingle({
+      ...groupsSingle,
+      data: groupItems.filter((el) => el.groupType === 3),
+    });
+  }, [
+    groupItems.length,
+    groupItems &&
+      groupItems[0] &&
+      groupItems[0].children &&
+      groupItems[0].children.length,
+  ]);
+
+  console.log(groupSingleLength);
 
   useEffect(() => {
     const listUrl = window.location.href.split('/');
@@ -180,13 +204,23 @@ const LayoutListGroup = ({
               handleToggleCreateGroup={handleToggleCreateGroup}
             />
           )}
-          {groupItems &&
-            groupItems
-              .slice(
-                pagination.rowsPerPage * pagination.page,
-                pagination.rowsPerPage * pagination.page +
-                  pagination.rowsPerPage,
-              )
+          {groupsSingle &&
+            groupsSingle.data &&
+            groupsSingle.data
+              .slice(groupsSingle.start, groupsSingle.end)
+              .map((groupItem) => (
+                <GroupSingleItem
+                  groupItem={groupItem}
+                  itemSelected={itemSelected}
+                  key={groupItem.id}
+                  handleDeleteItem={handleDeleteItem}
+                  handleClickItem={handleClickItem}
+                />
+              ))}
+          {groups &&
+            groups.data &&
+            groups.data
+              .slice(groups.start, groups.end)
               .map((groupItem) => (
                 <GroupItem
                   groupItem={groupItem}
