@@ -27,9 +27,7 @@ function Action() {
   const fetchGroupAndItems = async (keyword) => {
     const data = await apis.groupAction.getGroupAndItems(keyword);
     if (data.status) {
-      setGroupAndItems(
-        data.result.groupActions.sort((a, b) => a.createdAt - b.createdAt),
-      );
+      setGroupAndItems(data.result.groupActions);
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',

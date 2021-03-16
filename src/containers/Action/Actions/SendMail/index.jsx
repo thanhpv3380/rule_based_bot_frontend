@@ -46,7 +46,7 @@ const ActionText = ({
       <Divider />
 
       <form noValidate autoComplete="off">
-        <Box mb={1} mt={1}>
+        <Box mb={1.5} mt={1.5}>
           <TextField
             variant="outlined"
             size="small"
@@ -67,7 +67,7 @@ const ActionText = ({
             }
           />
         </Box>
-        <Box mb={1}>
+        <Box mb={1.5}>
           <TextField
             label="Enter Title Email"
             variant="outlined"
@@ -88,7 +88,7 @@ const ActionText = ({
             }
           />
         </Box>
-        <Box mb={1}>
+        <Box mb={1.5}>
           <TextField
             label="Enter Body Email"
             variant="outlined"

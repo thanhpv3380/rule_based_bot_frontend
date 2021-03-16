@@ -35,7 +35,6 @@ const LayoutListGroup = ({
   const classes = useStyles();
   const [isCreateGroup, setIsCreateGroup] = useState(false);
   const [open, setOpen] = useState(false);
-  const [groupSingleLength, setGroupSingleLength] = useState();
   const [itemSelected, setItemSelected] = useState();
   const [groupSelected, setGroupSelected] = useState();
   const [groupsSingle, setGroupsSingle] = useState({
@@ -53,22 +52,6 @@ const LayoutListGroup = ({
     rowsPerPage: 5,
     count: 100,
   });
-
-  const handleChangePage = async (event, newPage) => {
-    setPagination({
-      ...pagination,
-      page: newPage,
-    });
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPagination({
-      ...pagination,
-      rowsPerPage: parseInt(event.target.value, 10),
-      page: 0,
-    });
-  };
-
   const anchorRef = useRef(null);
 
   const handleToggle = () => {
@@ -99,24 +82,111 @@ const LayoutListGroup = ({
     prevOpen.current = open;
   }, [open]);
 
-  useEffect(() => {
-    setGroups({
-      ...groups,
-      data: groupItems.filter((el) => el.groupType <= 2),
+  const handleChangePage = async (event, newPage) => {
+    setPagination({
+      ...pagination,
+      page: newPage,
     });
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination({
+      ...pagination,
+      rowsPerPage: parseInt(event.target.value, 10),
+      page: 0,
+    });
+  };
+
+  const calcPagination = (newGroups, newGroupsSingle) => {
+    const start = pagination.page * pagination.rowsPerPage;
+    const end = start + pagination.rowsPerPage;
+    console.log({ start, end });
+    let startGroupSingle = 0;
+    let endGroupSingle = 0;
+    let startGroup = 0;
+    let endGroup = 0;
+
+    const groupSingleLength =
+      (newGroupsSingle[0] &&
+        newGroupsSingle[0].children &&
+        newGroupsSingle[0].children.length) ||
+      0;
+    const groupLength = (newGroups && newGroups.length) || 0;
+
+    if (groupSingleLength > start) {
+      startGroupSingle = start;
+      if (groupSingleLength > end) {
+        endGroupSingle = end;
+      } else {
+        endGroupSingle = groupSingleLength;
+        endGroup = groupLength > end ? end - endGroupSingle : groupLength;
+      }
+    } else {
+      startGroup = start - groupSingleLength;
+      endGroup =
+        groupLength > startGroup + pagination.rowsPerPage
+          ? startGroup + pagination.rowsPerPage
+          : groupLength;
+    }
+    console.log({ startGroupSingle, endGroupSingle, startGroup, endGroup });
+    return {
+      startGroupSingle,
+      endGroupSingle,
+      startGroup,
+      endGroup,
+    };
+  };
+
+  useEffect(() => {
+    const {
+      startGroupSingle,
+      endGroupSingle,
+      startGroup,
+      endGroup,
+    } = calcPagination(groups.data, groupsSingle.data);
+
     setGroupsSingle({
       ...groupsSingle,
-      data: groupItems.filter((el) => el.groupType === 3),
+      start: startGroupSingle,
+      end: endGroupSingle,
     });
-  }, [
-    groupItems.length,
-    groupItems &&
-      groupItems[0] &&
-      groupItems[0].children &&
-      groupItems[0].children.length,
-  ]);
+    setGroups({
+      ...groups,
+      start: startGroup,
+      end: endGroup,
+    });
+  }, [pagination.page]);
 
-  console.log(groupSingleLength);
+  useEffect(() => {
+    const newGroups = groupItems.filter((el) => el.groupType <= 2);
+    const newGroupsSingle = groupItems.filter((el) => el.groupType === 3);
+    const {
+      startGroupSingle,
+      endGroupSingle,
+      startGroup,
+      endGroup,
+    } = calcPagination(newGroups, newGroupsSingle);
+
+    setGroupsSingle({
+      ...groupsSingle,
+      data: newGroupsSingle,
+      start: startGroupSingle,
+      end: endGroupSingle,
+    });
+    setGroups({
+      ...groups,
+      data: newGroups,
+      start: startGroup,
+      end: endGroup,
+    });
+    setPagination({
+      ...pagination,
+      count:
+        (newGroupsSingle[0] &&
+          newGroupsSingle[0].children &&
+          newGroupsSingle[0].children.length) + newGroups.length,
+    });
+  }, [groupItems]);
 
   useEffect(() => {
     const listUrl = window.location.href.split('/');
@@ -206,17 +276,16 @@ const LayoutListGroup = ({
           )}
           {groupsSingle &&
             groupsSingle.data &&
-            groupsSingle.data
-              .slice(groupsSingle.start, groupsSingle.end)
-              .map((groupItem) => (
-                <GroupSingleItem
-                  groupItem={groupItem}
-                  itemSelected={itemSelected}
-                  key={groupItem.id}
-                  handleDeleteItem={handleDeleteItem}
-                  handleClickItem={handleClickItem}
-                />
-              ))}
+            groupsSingle.data.map((groupItem) => (
+              <GroupSingleItem
+                pagination={groupsSingle}
+                groupItem={groupItem}
+                itemSelected={itemSelected}
+                key={groupItem.id}
+                handleDeleteItem={handleDeleteItem}
+                handleClickItem={handleClickItem}
+              />
+            ))}
           {groups &&
             groups.data &&
             groups.data

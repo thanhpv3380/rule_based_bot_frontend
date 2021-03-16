@@ -51,7 +51,7 @@ const ActionText = ({
       </Typography>
       <Divider />
       <form noValidate autoComplete="off">
-        <Box mb={1} mt={1}>
+        <Box mb={1.5} mt={1.5}>
           <TextField
             variant="outlined"
             size="small"
@@ -68,7 +68,7 @@ const ActionText = ({
             }
           />
         </Box>
-        <Box mb={1}>
+        <Box mb={1.5}>
           <TextField
             label={`Enter description of ${title}`}
             variant="outlined"

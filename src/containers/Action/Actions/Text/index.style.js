@@ -5,6 +5,10 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     textAlign: 'center',
   },
+  input: {
+    flexGrow: 1,
+    height: '100%',
+  },
 }));
 
 export default useStyles;

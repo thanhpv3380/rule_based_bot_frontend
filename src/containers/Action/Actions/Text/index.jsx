@@ -110,35 +110,32 @@ const ActionText = ({
             <ListItem key={index}>
               {editIndex === index ? (
                 <>
-                  <ListItemText>
-                    <TextField
-                      id="standard-required"
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                    />
-                  </ListItemText>
-                  <ListItemSecondaryAction>
-                    <Box display="flex">
-                      <Box m={0.5}>
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          onClick={handleEdit}
-                        >
-                          Save
-                        </Button>
-                      </Box>
-                      <Box m={0.5}>
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          onClick={handleCancelAdd}
-                        >
-                          Cancel
-                        </Button>
-                      </Box>
+                  <TextField
+                    id="standard-required"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className={classes.input}
+                  />
+                  <Box display="flex">
+                    <Box m={0.5}>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleEdit}
+                      >
+                        Save
+                      </Button>
                     </Box>
-                  </ListItemSecondaryAction>
+                    <Box m={0.5}>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleCancelAdd}
+                      >
+                        Cancel
+                      </Button>
+                    </Box>
+                  </Box>
                 </>
               ) : (
                 <>
@@ -154,38 +151,30 @@ const ActionText = ({
               )}
             </ListItem>
           ))}
-
         {isAdd && (
           <ListItem>
-            <ListItemText>
-              <TextField
-                id="standard-required"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-              />
-            </ListItemText>
-            <ListItemSecondaryAction>
-              <Box display="flex">
-                <Box m={0.5}>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleAdd}
-                  >
-                    Add
-                  </Button>
-                </Box>
-                <Box m={0.5}>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleCancelAdd}
-                  >
-                    Cancel
-                  </Button>
-                </Box>
+            <TextField
+              id="standard-required"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              className={classes.input}
+            />
+            <Box display="flex">
+              <Box m={0.5}>
+                <Button variant="outlined" color="primary" onClick={handleAdd}>
+                  Add
+                </Button>
               </Box>
-            </ListItemSecondaryAction>
+              <Box m={0.5}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleCancelAdd}
+                >
+                  Cancel
+                </Button>
+              </Box>
+            </Box>
           </ListItem>
         )}
       </List>
