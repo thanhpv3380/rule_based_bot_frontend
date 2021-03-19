@@ -9,6 +9,10 @@ const useStyles = makeStyles((theme) => ({
   inputUpload: {
     display: 'none',
   },
+  prevImage: {
+    height: 150,
+    boxShadow: theme.palette.boxShadow_l1,
+  },
 }));
 
 export default useStyles;

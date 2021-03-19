@@ -7,7 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { ListItem, ListItemText, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
-import { ActionText, ActionSendMail, ActionMedia } from '../Actions';
+import {
+  ActionText,
+  ActionSendImage,
+  ActionSendMail,
+  ActionMedia,
+} from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
@@ -53,6 +58,19 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       {
         typeAction: actionsConstant.TEXT,
         text: [],
+      },
+    ]);
+  };
+
+  const handleAddImage = () => {
+    setActions([
+      ...actions,
+      {
+        typeAction: actionsConstant.IMAGE,
+        image: {
+          url: '',
+          description: '',
+        },
       },
     ]);
   };
@@ -133,6 +151,15 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
 
     newActions[id].text[index] = value;
 
+    setActions(newActions);
+  };
+
+  const handleChangeSendImageInfoItem = (id, name, value) => {
+    const newActions = [...actions];
+    newActions[id].image = {
+      ...newActions[id].image,
+      [name]: value,
+    };
     setActions(newActions);
   };
 
@@ -220,6 +247,16 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
         />
       );
     }
+    if (action.typeAction === actionsConstant.IMAGE) {
+      return (
+        <ActionSendImage
+          actionId={id}
+          item={action}
+          handleChangeSendImageInfoItem={handleChangeSendImageInfoItem}
+          handleDeleteSendImageItem={handleDeleteItem}
+        />
+      );
+    }
     return '';
   };
 
@@ -228,6 +265,11 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       heading: 'Text',
       icon: '',
       event: handleAddText,
+    },
+    {
+      heading: 'Image',
+      icon: '',
+      event: handleAddImage,
     },
     {
       heading: 'Mail',

@@ -1,5 +1,6 @@
 export default {
   TEXT: 'TEXT',
+  IMAGE: 'IMAGE',
   SEND_MAIL: 'SEND_MAIL',
   MEDIA: 'MEDIA',
   MEDIA_AUDIO: 'MEDIA_AUDIO',

@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/media-has-caption */
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable no-nested-ternary */
 import React from 'react';
@@ -19,13 +19,11 @@ import {
 import useStyles from './index.style';
 import apis from '../../../../apis';
 
-const ActionText = ({
-  title,
-  example,
+const ActionSendImage = ({
   actionId,
   item,
-  handleDeleteMediaItem,
-  handleChangeMediaInfoItem,
+  handleDeleteSendImageItem,
+  handleChangeSendImageInfoItem,
 }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -36,7 +34,7 @@ const ActionText = ({
     formData.append('file', file);
     const data = await apis.upload.uploadFile({ formData });
     if (data && data.status) {
-      handleChangeMediaInfoItem(actionId, 'url', data.result.link);
+      handleChangeSendImageInfoItem(actionId, 'url', data.result.link);
     } else {
       enqueueSnackbar('Upload failed', {
         variant: 'error',
@@ -54,7 +52,7 @@ const ActionText = ({
             </Box>
             <Box ml={0.5}>
               <Typography variant="button" display="block" gutterBottom>
-                {title}
+                Image
               </Typography>
             </Box>
           </Box>
@@ -62,34 +60,26 @@ const ActionText = ({
         <Box>
           <IconButton
             aria-label="delete"
-            onClick={() => handleDeleteMediaItem(actionId)}
+            onClick={() => handleDeleteSendImageItem(actionId)}
             size="small"
           >
             <DeleteIcon />
           </IconButton>
         </Box>
       </Box>
-      <Typography gutterBottom>Send an {title} link in the chat.</Typography>{' '}
-      <Typography variant="button" gutterBottom>
-        {example}
-      </Typography>
       <Divider />
+
       <form noValidate autoComplete="off">
         <Box mb={1.5} mt={1.5}>
-          <source
-            src={
-              item.media.attachment.payload.url
-                ? item.media.attachment.payload.url
-                : ''
-            }
-            type="video/mp4"
-            height="100px"
+          <img
+            src={(item.image && item.image.url) || ''}
+            className={classes.prevImage}
           />
         </Box>
         <Box mb={1.5} display="flex">
           <div className={classes.uploadBtn}>
             <input
-              accept="*"
+              accept="image/*"
               className={classes.inputUpload}
               id={`contained-button-file-${actionId}`}
               multiple
@@ -110,29 +100,49 @@ const ActionText = ({
           <TextField
             variant="outlined"
             size="small"
-            label={`Enter ${title} file URL`}
+            label="Enter image URL"
             fullWidth
             name="url"
             value={
-              item.media.attachment.payload.url
-                ? item.media.attachment.payload.url
+              item
+                ? item.image
+                  ? item.image.url
+                    ? item.image.url
+                    : ''
+                  : ''
                 : ''
             }
             onChange={(e) =>
-              handleChangeMediaInfoItem(actionId, e.target.name, e.target.value)
+              handleChangeSendImageInfoItem(
+                actionId,
+                e.target.name,
+                e.target.value,
+              )
             }
           />
         </Box>
         <Box mb={1.5}>
           <TextField
-            label={`Enter description of ${title}`}
+            label="Enter description of image"
             variant="outlined"
             size="small"
             fullWidth
-            name="text"
-            value={item.media.text ? item.media.text : ''}
+            name="description"
+            value={
+              item
+                ? item.image
+                  ? item.image.description
+                    ? item.image.description
+                    : ''
+                  : ''
+                : ''
+            }
             onChange={(e) =>
-              handleChangeMediaInfoItem(actionId, e.target.name, e.target.value)
+              handleChangeSendImageInfoItem(
+                actionId,
+                e.target.name,
+                e.target.value,
+              )
             }
           />
         </Box>
@@ -141,4 +151,4 @@ const ActionText = ({
   );
 };
 
-export default ActionText;
+export default ActionSendImage;

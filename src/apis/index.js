@@ -6,6 +6,7 @@ import * as bot from './bot';
 import * as groupIntent from './groupIntent';
 import * as intent from './intent';
 import * as entity from './entity';
+import * as upload from './upload';
 
 export default {
   auth,
@@ -16,4 +17,5 @@ export default {
   groupIntent,
   intent,
   entity,
+  upload,
 };
