@@ -66,21 +66,12 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     setActions([
       ...actions,
       {
-        typeAction: actionsConstant.IMAGE,
-        image: {
-          url: '',
+        typeAction: actionsConstant.MEDIA,
+        media: {
+          typeMedia: actionsConstant.MEDIA_IMAGE,
           description: '',
+          url: '',
         },
-      },
-    ]);
-  };
-
-  const handleAddSendMail = () => {
-    setActions([
-      ...actions,
-      {
-        typeAction: actionsConstant.SEND_MAIL,
-        email: {},
       },
     ]);
   };
@@ -91,14 +82,9 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       {
         typeAction: actionsConstant.MEDIA,
         media: {
-          text: null,
-          attachment: {
-            typeMedia: actionsConstant.MEDIA_AUDIO,
-            payload: {
-              url: null,
-              elements: [],
-            },
-          },
+          typeMedia: actionsConstant.MEDIA_AUDIO,
+          description: '',
+          url: '',
         },
       },
     ]);
@@ -110,14 +96,9 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       {
         typeAction: actionsConstant.MEDIA,
         media: {
-          text: null,
-          attachment: {
-            typeMedia: actionsConstant.MEDIA_VIDEO,
-            payload: {
-              url: null,
-              elements: [],
-            },
-          },
+          typeMedia: actionsConstant.MEDIA_VIDEO,
+          description: '',
+          url: '',
         },
       },
     ]);
@@ -154,35 +135,12 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     setActions(newActions);
   };
 
-  const handleChangeSendImageInfoItem = (id, name, value) => {
-    const newActions = [...actions];
-    newActions[id].image = {
-      ...newActions[id].image,
-      [name]: value,
-    };
-    setActions(newActions);
-  };
-
-  const handleChangeMailInfoItem = (id, name, value) => {
-    const newActions = [...actions];
-    newActions[id].email = {
-      ...newActions[id].email,
-      [name]: value,
-    };
-    setActions(newActions);
-  };
-
   const handleChangeMediaInfoItem = (id, name, value) => {
     const newActions = [...actions];
-    switch (name) {
-      case 'text':
-        newActions[id].media.text = value;
-        break;
-      case 'url':
-        newActions[id].media.attachment.payload.url = value;
-        break;
-      default:
-    }
+    newActions[id].media = {
+      ...newActions[id].media,
+      [name]: value,
+    };
     setActions(newActions);
   };
 
@@ -219,24 +177,23 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
         />
       );
     }
-    if (action.typeAction === actionsConstant.SEND_MAIL) {
-      return (
-        <ActionSendMail
-          actionId={id}
-          item={action}
-          handleChangeMailInfoItem={handleChangeMailInfoItem}
-          handleDeleteSendMailItem={handleDeleteItem}
-        />
-      );
-    }
     if (action.typeAction === actionsConstant.MEDIA) {
+      if (action.media.typeMedia === actionsConstant.MEDIA_IMAGE) {
+        return (
+          <ActionSendImage
+            actionId={id}
+            item={action}
+            handleChangeMediaInfoItem={handleChangeMediaInfoItem}
+            handleDeleteSendImageItem={handleDeleteItem}
+          />
+        );
+      }
       return (
         <ActionMedia
           title={
-            action.media.attachment.typeMedia === actionsConstant.MEDIA_AUDIO
+            action.media.typeMedia === actionsConstant.MEDIA_AUDIO
               ? 'audio'
-              : action.media.attachment.typeMedia ===
-                actionsConstant.MEDIA_VIDEO
+              : action.media.typeMedia === actionsConstant.MEDIA_VIDEO
               ? 'video'
               : ''
           }
@@ -244,16 +201,6 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
           item={action}
           handleChangeMediaInfoItem={handleChangeMediaInfoItem}
           handleDeleteMediaItem={handleDeleteItem}
-        />
-      );
-    }
-    if (action.typeAction === actionsConstant.IMAGE) {
-      return (
-        <ActionSendImage
-          actionId={id}
-          item={action}
-          handleChangeSendImageInfoItem={handleChangeSendImageInfoItem}
-          handleDeleteSendImageItem={handleDeleteItem}
         />
       );
     }
@@ -272,11 +219,6 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       event: handleAddImage,
     },
     {
-      heading: 'Mail',
-      icon: '',
-      event: handleAddSendMail,
-    },
-    {
       heading: 'Audio',
       icon: '',
       event: handleAddAudio,
@@ -285,6 +227,11 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       heading: 'Video',
       icon: '',
       event: handleAddVideo,
+    },
+    {
+      heading: 'Option',
+      icon: '',
+      event: handleAddSendMail,
     },
   ];
 

@@ -1,6 +1,5 @@
 import ActionText from './Text';
-import ActionSendImage from './SendImage';
-import ActionSendMail from './SendMail';
+import ActionImage from './Media/Image';
 import ActionMedia from './Media';
 
-export { ActionText, ActionSendImage, ActionSendMail, ActionMedia };
+export { ActionText, ActionImage, ActionMedia };
