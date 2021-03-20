@@ -10,15 +10,16 @@ function ActionMapping() {
   const [actions, setActions] = useState([]);
 
   const fetchActions = async () => {
-    const { results } = await apis.action.getActions();
+    const { result } = await apis.action.getActions();
+
     if (results) {
       setActions(results.actions);
     }
   };
 
   useEffect(() => {
-    fetchActions();
-  },[]);
+    //fetchActions();
+  }, []);
   return (
     <Grid container>
       <Grid item xs={4}>

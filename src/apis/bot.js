@@ -1,9 +1,11 @@
 import api from './authApi';
+import { renderQueryAll } from '../utils/query';
 
-export async function getbots(name) {
+export async function getBots(query) {
+  const newQuery = renderQueryAll(query);
   const response = await api({
     method: 'GET',
-    url: `/bots?name=${name}`,
+    url: `/bots?${newQuery}`,
   });
   return response;
 }
@@ -16,11 +18,11 @@ export async function getBotById(id) {
   return response;
 }
 
-export async function createBot(Bot) {
+export async function createBot(bot) {
   const response = await api({
     method: 'POST',
     url: '/bots',
-    data: Bot,
+    data: bot,
   });
   return response;
 }

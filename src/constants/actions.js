@@ -1,0 +1,10 @@
+export default {
+  TEXT: 'TEXT',
+  MEDIA: 'MEDIA',
+  MEDIA_IMAGE: 'MEDIA_IMAGE',
+  MEDIA_AUDIO: 'MEDIA_AUDIO',
+  MEDIA_VIDEO: 'MEDIA_VIDEO',
+  OPTION: 'OPTION',
+  API: 'API',
+  LOOP: 'LOOP',
+};

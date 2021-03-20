@@ -14,7 +14,7 @@ import {
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchBox from '../../../../components/SearchBox';
-import { text } from '../../../../enums';
+import textDefault from '../../../../constants/textDefault';
 import useStyles from './index.style';
 
 function TranningPhrases(props) {
@@ -34,7 +34,7 @@ function TranningPhrases(props) {
       </Grid>
       <Grid item xs={8} container justify="flex-end">
         <SearchBox
-          placeholder={text.SEARCH_TRANNING_PHRASES}
+          placeholder={textDefault.SEARCH_TRANNING_PHRASES}
           isStartPositionIcon={false}
           handleOnChange={handleChangeSearch}
         />
@@ -43,7 +43,7 @@ function TranningPhrases(props) {
         <TextField
           fullWidth
           className={classes.margin}
-          placeholder={text.ADD_USER_EXPRESSION}
+          placeholder={textDefault.ADD_USER_EXPRESSION}
           size="medium"
           name="usersay"
           value={userExpression}

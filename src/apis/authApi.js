@@ -12,8 +12,9 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(async (config) => {
   const accessToken = getCookie('accessToken');
+  const botId = getCookie('bot-id');
   config.headers.Authorization = `Bearer ${accessToken}`;
-  config.headers['bot-id'] = getCookie('bot-id');
+  config.headers['bot-id'] = botId;
   return config;
 });
 

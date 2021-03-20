@@ -13,6 +13,7 @@ export default () => {
   const dispatch = useDispatch();
   const [isFirstTime, setIsFirstTime] = useState(true);
   const { accessToken, verifying } = useSelector((state) => state.auth);
+
   useEffect(() => {
     if (!accessToken) {
       const accessTokenFromCookie = getCookie('accessToken');
@@ -52,7 +53,7 @@ export default () => {
               isLayout={el.isLayout}
             />
           ))}
-          <Redirect to={routes.INTENT} />
+          <Redirect to={routes.DASHBOARD} />
         </Switch>
       </Switch>
     </BrowserRouter>

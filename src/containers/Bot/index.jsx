@@ -1,100 +1,134 @@
-import React, { useEffect } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { Grid, Box, Typography } from '@material-ui/core';
-import { getCookie, setCookie } from '../../utils/cookie';
+import { useDispatch } from 'react-redux';
+import { useSnackbar } from 'notistack';
+import { Box } from '@material-ui/core';
+import { setCookie } from '../../utils/cookie';
 
 import ListBot from './ListBot';
-import CreateBotModal from './Modal';
-import SearchBox from '../../components/SearchBox';
+import CreateBotModal from './CreateBot';
+import SearchBox from './SearchBox';
 import apis from '../../apis';
+import useStyles from './index.styles';
 import actions from '../../redux/actions';
-import { text } from '../../enums';
 
-function Bot() {
-  // const classes = useStyles();
+let searchId = null;
+
+const Bot = () => {
+  const classes = useStyles();
   // const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const { accessToken } = useSelector((state) => state.auth);
-  useEffect(() => {
-    if (!accessToken) {
-      const accessTokenFromCookie = getCookie('accessToken');
-      if (accessTokenFromCookie) {
-        dispatch(actions.auth.verifyToken(accessTokenFromCookie));
-      }
-    }
-  }, []);
   const history = useHistory();
-  const methods = useForm({
-    defaultValues: {},
-    mode: 'all',
+  const [keySearch, setKeySearch] = useState('');
+  const [pagination, setPagination] = useState({
+    page: 0,
+    rowsPerPage: 6,
+    count: 100,
   });
+  const [openModal, setOpenModal] = useState(false);
+  const [bots, setBots] = useState([]);
 
-  const [open, setOpen] = React.useState(false);
-  const [bots, setBots] = React.useState();
-
-  const handleOpen = () => {
-    setOpen(true);
+  const handleToggleModal = () => {
+    setOpenModal((prev) => !prev);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const fetchBots = async () => {
-    const { results } = await apis.bot.getbots('', accessToken);
-    setBots(results.bots);
-  };
-
-  useEffect(() => {
-    fetchBots();
-  }, []);
-
-  const handleOnChange = async (e) => {
-    const { value } = e.target;
-    const { result } = await apis.bot.getbots(value, accessToken);
-    setBots(result.bots);
-  };
-  const onSubmit = async (data) => {
-    const bot = {
-      name: data.name,
-    };
-    const response = await apis.bot.createBot(bot, accessToken);
-    if (response && response.status === 1) {
-      history.push('/');
+  const fetchBots = async (query) => {
+    const data = await apis.bot.getBots(query);
+    if (data.status) {
+      setBots(data.result.bots);
+      setPagination({
+        ...pagination,
+        count: data.result.metadata.count,
+        page: Math.floor(query.offset / query.limit),
+      });
+    } else {
+      enqueueSnackbar('Cannot fetch data', {
+        variant: 'error',
+      });
     }
   };
 
-  const handleOnClick = (data) => {
-    setCookie('bot-id', data.id);
-    history.push('/');
+  useEffect(() => {
+    fetchBots({
+      limit: pagination.rowsPerPage,
+      offset: 0,
+    });
+  }, []);
+
+  const handleChangePage = async (event, newPage) => {
+    fetchBots({
+      key: keySearch,
+      searchFields: 'name',
+      limit: pagination.rowsPerPage,
+      offset: newPage * pagination.rowsPerPage,
+    });
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination({
+      ...pagination,
+      rowsPerPage: parseInt(event.target.value, 10),
+    });
+  };
+
+  const handleSearch = async (e) => {
+    const { value } = e.target;
+    setKeySearch(value);
+    clearTimeout(searchId);
+    searchId = setTimeout(
+      () =>
+        fetchBots({
+          key: value,
+          searchFields: 'name',
+          limit: pagination.rowsPerPage,
+          offset: 0,
+        }),
+      1000,
+    );
+  };
+
+  const handleCreate = async (value) => {
+    const data = await apis.bot.createBot(value);
+    if (data && data.status) {
+      const { id } = data.result;
+      setCookie('bot-id', id);
+      dispatch(actions.bot.changeBot(id));
+      history.push(`/bot/${id}/dashboard`);
+    } else {
+      enqueueSnackbar('Create failed', {
+        variant: 'error',
+      });
+    }
+  };
+
+  const handleView = (id) => {
+    setCookie('bot-id', id);
+    dispatch(actions.bot.changeBot(id));
+    history.push(`/bot/${id}/dashboard`);
   };
 
   return (
-    <Box>
-      <Typography variant="h5">CHATBOT LIST</Typography>
-      <Grid container justify="space-between">
-        <Grid item xs={6}>
-          <SearchBox
-            handleOnChange={handleOnChange}
-            placeholder={text.SEARCH}
-            isStartPositionIcon
-          />
-        </Grid>
-        <FormProvider {...methods}>
-          <CreateBotModal
-            open={open}
-            handleOpen={handleOpen}
-            handleClose={handleClose}
-            onSubmit={onSubmit}
-            methods={methods}
-          />
-        </FormProvider>
-      </Grid>
-      <ListBot handleOnClick={handleOnClick} bots={bots} />
+    <Box className={classes.root}>
+      <SearchBox
+        keySearch={keySearch}
+        handleSearch={handleSearch}
+        handleToggleModal={handleToggleModal}
+      />
+      <CreateBotModal
+        openModal={openModal}
+        handleToggleModal={handleToggleModal}
+        handleCreate={handleCreate}
+      />
+      <ListBot
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        handleView={handleView}
+        items={bots}
+        pagination={pagination}
+      />
     </Box>
   );
-}
+};
 
 export default Bot;

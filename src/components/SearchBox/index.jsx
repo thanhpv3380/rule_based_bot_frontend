@@ -1,46 +1,16 @@
 import React from 'react';
-import { TextField, InputAdornment } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import useStyles from './index.style';
+import { TextField } from '@material-ui/core';
 
-function SearchBox(props) {
-  const classes = useStyles();
-  const { handleOnChange, placeholder, isStartPositionIcon } = props;
+const SearchBox = ({ handleSearch, size = 'small' }) => {
   return (
-    <div>
-      {isStartPositionIcon ? (
-        <TextField
-          className={classes.margin}
-          placeholder={placeholder}
-          id="input-with-icon-textfield"
-          onChange={handleOnChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            classes: { underline: classes.underline },
-          }}
-        />
-      ) : (
-        <TextField
-          className={classes.margin}
-          placeholder={placeholder}
-          id="input-with-icon-textfield"
-          onChange={handleOnChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            classes: { underline: classes.underline },
-          }}
-        />
-      )}
-    </div>
+    <TextField
+      fullWidth
+      id="outlined-basic"
+      placeholder="Search"
+      variant="outlined"
+      size={size}
+      onChange={handleSearch}
+    />
   );
-}
-
+};
 export default SearchBox;

@@ -1,7 +1,9 @@
 import routes from '../constants/route';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
-import Dashboards from '../pages/Bot';
+import Bot from '../pages/Bot';
+import Dictionary from '../pages/Dictionary';
+import Action from '../pages/Action';
 import Intent from '../pages/Intent';
 
 export default [
@@ -14,7 +16,15 @@ export default [
     isLayout: false,
   },
   {
-    path: routes.HOME,
+    path: routes.DASHBOARD,
+    component: Bot,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: false,
+  },
+  {
+    path: routes.DASHBOARD_BOT,
     component: Home,
     exact: true,
     restricted: false,
@@ -22,15 +32,23 @@ export default [
     isLayout: true,
   },
   {
-    path: routes.DASHBOARDS,
-    component: Dashboards,
+    path: routes.DICTIONARY_BOT,
+    component: Dictionary,
     exact: true,
     restricted: false,
     isPrivate: true,
-    isLayout: false,
+    isLayout: true,
   },
   {
-    path: routes.INTENT,
+    path: routes.ACTION_BOT.ACTION,
+    component: Action,
+    exact: false,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+  },
+  {
+    path: routes.INTENT_BOT.INTENT,
     component: Intent,
     exact: true,
     restricted: false,

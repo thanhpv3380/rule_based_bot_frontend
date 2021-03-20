@@ -143,7 +143,7 @@ function GroupItem(props) {
           </ListItem>
           <Divider className={classes.divider} />
           <Collapse in={group.open} timeout="auto" unmountOnExit>
-            {group[title].map((item) => {
+            {group.children.map((item) => {
               return (
                 <Card className={classes.groupRoot} elevation={5}>
                   <ListItem

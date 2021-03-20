@@ -1,18 +1,10 @@
-import api from './api';
+import api from './authApi';
 
-export async function getGroupActions() {
-  const response = await api({
-    method: 'GET',
-    url: '/groupActions',
-  });
-  return response;
-}
-
-export async function getGroupAndItems({ keyword }) {
+export async function getGroupAndItems(keyword) {
   const response = await api({
     method: 'POST',
     url: '/groupActions/getGroupAndItems',
-    data: { keyword },
+    data: { keyword: keyword || '' },
   });
   return response;
 }

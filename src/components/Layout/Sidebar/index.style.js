@@ -8,6 +8,9 @@ export default makeStyles((theme) => ({
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxShadow: theme.palette.boxShadow,
+    position: 'fixed',
+    zIndex: 2,
+    overflow: 'auto',
   },
   drawerMobile: {
     width: sidebarWidth,

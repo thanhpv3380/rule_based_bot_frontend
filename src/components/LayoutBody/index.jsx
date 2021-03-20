@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
   Grid,
   Box,
@@ -25,7 +26,7 @@ function LayoutBody(props) {
   const {
     children,
     title,
-    noneGroups,
+    singleGroups,
     groups,
     handleSearch,
     handleClickGroup,
@@ -41,7 +42,7 @@ function LayoutBody(props) {
   } = props;
   const classes = useStyles();
   const history = useHistory();
-
+  const botId = useSelector((state) => state.bot.bot);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
   // const [isHovering, setIsHovering] = useState(false);
@@ -57,7 +58,7 @@ function LayoutBody(props) {
   // };
 
   const handleClickItem = (data) => {
-    history.push(`/${title}/detail/${data.id}`);
+    history.push(`/bot/${botId}/${title}/detail/${data.id}`);
   };
 
   const handleClickOption = (e) => {
@@ -86,7 +87,7 @@ function LayoutBody(props) {
     handleCreateItem();
     handleCloseOption();
   };
-  console.log(noneGroups);
+
   return (
     <Box>
       <Grid container spacing={1}>
@@ -146,9 +147,9 @@ function LayoutBody(props) {
               />
             </ListItem>
           )}
-          {noneGroups &&
-            noneGroups[title] &&
-            noneGroups[title].map((item) => (
+          {singleGroups &&
+            singleGroups.children &&
+            singleGroups.children.map((item) => (
               <Card className={classes.groupRoot} elevation={5}>
                 <ListItem button>
                   <ListItemIcon onClick={() => handleClickItem(item)}>
@@ -159,7 +160,7 @@ function LayoutBody(props) {
                     onClick={() => handleClickItem(item)}
                   />
                   <DeleteIcon
-                    onClick={() => handleDeleteItem(item.id, noneGroups)}
+                    onClick={() => handleDeleteItem(item.id, singleGroups)}
                   />
                 </ListItem>
               </Card>
