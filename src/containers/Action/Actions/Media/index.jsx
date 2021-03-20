@@ -77,11 +77,7 @@ const ActionText = ({
       <form noValidate autoComplete="off">
         <Box mb={1.5} mt={1.5}>
           <source
-            src={
-              item.media.attachment.payload.url
-                ? item.media.attachment.payload.url
-                : ''
-            }
+            src={item.media ? (item.media.url ? item.media.url : '') : ''}
             type="video/mp4"
             height="100px"
           />
@@ -113,11 +109,7 @@ const ActionText = ({
             label={`Enter ${title} file URL`}
             fullWidth
             name="url"
-            value={
-              item.media.attachment.payload.url
-                ? item.media.attachment.payload.url
-                : ''
-            }
+            value={item.media.url ? item.media.url : ''}
             onChange={(e) =>
               handleChangeMediaInfoItem(actionId, e.target.name, e.target.value)
             }
@@ -129,8 +121,8 @@ const ActionText = ({
             variant="outlined"
             size="small"
             fullWidth
-            name="text"
-            value={item.media.text ? item.media.text : ''}
+            name="description"
+            value={item.media.description ? item.media.description : ''}
             onChange={(e) =>
               handleChangeMediaInfoItem(actionId, e.target.name, e.target.value)
             }

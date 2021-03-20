@@ -7,12 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { ListItem, ListItemText, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
-import {
-  ActionText,
-  ActionSendImage,
-  ActionSendMail,
-  ActionMedia,
-} from '../Actions';
+import { ActionText, ActionImage, ActionMedia } from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
@@ -180,7 +175,7 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     if (action.typeAction === actionsConstant.MEDIA) {
       if (action.media.typeMedia === actionsConstant.MEDIA_IMAGE) {
         return (
-          <ActionSendImage
+          <ActionImage
             actionId={id}
             item={action}
             handleChangeMediaInfoItem={handleChangeMediaInfoItem}
@@ -231,7 +226,7 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     {
       heading: 'Option',
       icon: '',
-      event: handleAddSendMail,
+      event: handleAddVideo,
     },
   ];
 

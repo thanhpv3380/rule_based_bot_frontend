@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { ListItem, ListItemText, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
-import { ActionText, ActionSendMail, ActionMedia } from '../Actions';
+import { ActionText, ActionImage, ActionMedia } from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
@@ -37,12 +37,16 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
     ]);
   };
 
-  const handleAddSendMail = () => {
+  const handleAddImage = () => {
     setActions([
       ...actions,
       {
-        typeAction: actionsConstant.SEND_MAIL,
-        email: {},
+        typeAction: actionsConstant.MEDIA,
+        media: {
+          typeMedia: actionsConstant.MEDIA_IMAGE,
+          description: '',
+          url: '',
+        },
       },
     ]);
   };
@@ -53,14 +57,9 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
       {
         typeAction: actionsConstant.MEDIA,
         media: {
-          text: null,
-          attachment: {
-            typeMedia: actionsConstant.MEDIA_AUDIO,
-            payload: {
-              url: null,
-              elements: [],
-            },
-          },
+          typeMedia: actionsConstant.MEDIA_AUDIO,
+          description: '',
+          url: '',
         },
       },
     ]);
@@ -72,14 +71,9 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
       {
         typeAction: actionsConstant.MEDIA,
         media: {
-          text: null,
-          attachment: {
-            typeMedia: actionsConstant.MEDIA_VIDEO,
-            payload: {
-              url: null,
-              elements: [],
-            },
-          },
+          typeMedia: actionsConstant.MEDIA_VIDEO,
+          description: '',
+          url: '',
         },
       },
     ]);
@@ -116,26 +110,12 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
     setActions(newActions);
   };
 
-  const handleChangeMailInfoItem = (id, name, value) => {
-    const newActions = [...actions];
-    newActions[id].email = {
-      ...newActions[id].email,
-      [name]: value,
-    };
-    setActions(newActions);
-  };
-
   const handleChangeMediaInfoItem = (id, name, value) => {
     const newActions = [...actions];
-    switch (name) {
-      case 'text':
-        newActions[id].media.text = value;
-        break;
-      case 'url':
-        newActions[id].media.attachment.payload.url = value;
-        break;
-      default:
-    }
+    newActions[id].media = {
+      ...newActions[id].media,
+      [name]: value,
+    };
     setActions(newActions);
   };
 
@@ -170,24 +150,23 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
         />
       );
     }
-    if (action.typeAction === actionsConstant.SEND_MAIL) {
-      return (
-        <ActionSendMail
-          actionId={id}
-          item={action}
-          handleChangeMailInfoItem={handleChangeMailInfoItem}
-          handleDeleteSendMailItem={handleDeleteItem}
-        />
-      );
-    }
     if (action.typeAction === actionsConstant.MEDIA) {
+      if (action.media.typeMedia === actionsConstant.MEDIA_IMAGE) {
+        return (
+          <ActionImage
+            actionId={id}
+            item={action}
+            handleChangeMediaInfoItem={handleChangeMediaInfoItem}
+            handleDeleteSendImageItem={handleDeleteItem}
+          />
+        );
+      }
       return (
         <ActionMedia
           title={
-            action.media.attachment.typeMedia === actionsConstant.MEDIA_AUDIO
+            action.media.typeMedia === actionsConstant.MEDIA_AUDIO
               ? 'audio'
-              : action.media.attachment.typeMedia ===
-                actionsConstant.MEDIA_VIDEO
+              : action.media.typeMedia === actionsConstant.MEDIA_VIDEO
               ? 'video'
               : ''
           }
@@ -208,9 +187,9 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
       event: handleAddText,
     },
     {
-      heading: 'Mail',
+      heading: 'Image',
       icon: '',
-      event: handleAddSendMail,
+      event: handleAddImage,
     },
     {
       heading: 'Audio',
@@ -219,6 +198,11 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
     },
     {
       heading: 'Video',
+      icon: '',
+      event: handleAddVideo,
+    },
+    {
+      heading: 'Option',
       icon: '',
       event: handleAddVideo,
     },

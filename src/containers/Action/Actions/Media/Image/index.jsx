@@ -17,13 +17,13 @@ import {
   CloudUpload as CloudUploadIcon,
 } from '@material-ui/icons';
 import useStyles from './index.style';
-import apis from '../../../../apis';
+import apis from '../../../../../apis';
 
 const ActionSendImage = ({
   actionId,
   item,
   handleDeleteSendImageItem,
-  handleChangeSendImageInfoItem,
+  handleChangeMediaInfoItem,
 }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -34,7 +34,7 @@ const ActionSendImage = ({
     formData.append('file', file);
     const data = await apis.upload.uploadFile({ formData });
     if (data && data.status) {
-      handleChangeSendImageInfoItem(actionId, 'url', data.result.link);
+      handleChangeMediaInfoItem(actionId, 'url', data.result.link);
     } else {
       enqueueSnackbar('Upload failed', {
         variant: 'error',
@@ -72,7 +72,7 @@ const ActionSendImage = ({
       <form noValidate autoComplete="off">
         <Box mb={1.5} mt={1.5}>
           <img
-            src={(item.image && item.image.url) || ''}
+            src={(item.media && item.media.url) || ''}
             className={classes.prevImage}
           />
         </Box>
@@ -105,19 +105,15 @@ const ActionSendImage = ({
             name="url"
             value={
               item
-                ? item.image
-                  ? item.image.url
-                    ? item.image.url
+                ? item.media
+                  ? item.media.url
+                    ? item.media.url
                     : ''
                   : ''
                 : ''
             }
             onChange={(e) =>
-              handleChangeSendImageInfoItem(
-                actionId,
-                e.target.name,
-                e.target.value,
-              )
+              handleChangeMediaInfoItem(actionId, e.target.name, e.target.value)
             }
           />
         </Box>
@@ -130,19 +126,15 @@ const ActionSendImage = ({
             name="description"
             value={
               item
-                ? item.image
-                  ? item.image.description
-                    ? item.image.description
+                ? item.media
+                  ? item.media.description
+                    ? item.media.description
                     : ''
                   : ''
                 : ''
             }
             onChange={(e) =>
-              handleChangeSendImageInfoItem(
-                actionId,
-                e.target.name,
-                e.target.value,
-              )
+              handleChangeMediaInfoItem(actionId, e.target.name, e.target.value)
             }
           />
         </Box>
