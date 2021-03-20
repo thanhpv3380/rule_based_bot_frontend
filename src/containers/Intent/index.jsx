@@ -23,7 +23,7 @@ const Intent = () => {
 
   const fetchGroupIntents = async (keyword) => {
     const data = await apis.groupIntent.getGroupAndItems({ keyword });
-    if (data.status) {
+    if (data && data.status) {
       const { result } = data;
       const singleGroup = result.groupIntents.find(
         (el) => el.groupType === groupConstant.GROUP_SINGLE,
@@ -67,7 +67,7 @@ const Intent = () => {
 
   const handleOpenEditGroup = (data) => {
     const newGroups = [...groups];
-    const pos = newGroups.map((item) => item.id === data.id);
+    const pos = newGroups.findIndex((item) => item.id === data.id);
     newGroups[pos] = {
       ...newGroups[pos],
       openEdit: true,

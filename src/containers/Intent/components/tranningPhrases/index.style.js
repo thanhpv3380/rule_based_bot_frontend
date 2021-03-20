@@ -27,6 +27,34 @@ const useStyles = makeStyles(() => ({
       border: '0px solid #fff',
     },
   },
+  margin: {
+    marginBottom: '1%',
+    // width: '30%',
+  },
+  underlineSearch: {
+    '&::after': {
+      border: '2px solid #000000',
+    },
+  },
+  test: {
+    backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+  },
+  testContent: {
+    // '[contenteditable]': {
+    //   outline: '0px solid transparent',
+    // },
+    '[contenteditable="true"]: focus': {
+      border: 'none',
+      outline: 'none',
+    },
+    '& .content-editable:focus': {
+      background: '#fcf8e1',
+      outline: 'none',
+    },
+    '& .content-editable:hover': {
+      background: '#f7f7f7',
+    },
+  },
 }));
 
 export default useStyles;

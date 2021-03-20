@@ -4,22 +4,28 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import useStyles from './index.style';
 import apis from '../../../../apis';
 
-function ActionMapping() {
+function ActionMapping(props) {
   const classes = useStyles();
 
+  const {
+    action,
+    isMappingAction,
+    handleChangeIsMappingAction,
+    handleChangeAction,
+  } = props;
   const [actions, setActions] = useState([]);
 
   const fetchActions = async () => {
     const { result } = await apis.action.getActions();
-
-    if (results) {
-      setActions(results.actions);
+    if (result) {
+      setActions(result.actions);
     }
   };
 
   useEffect(() => {
-    //fetchActions();
+    fetchActions();
   }, []);
+
   return (
     <Grid container>
       <Grid item xs={4}>
@@ -31,8 +37,11 @@ function ActionMapping() {
           that the mapped action will always be executed
         </Typography>
       </Grid>
-      <Grid item xs={12} style={{ marginTop: 5 }}>
+      <Grid item xs={12} className={classes.gridItem}>
         <Autocomplete
+          onChange={(event, newValue) => {
+            handleChangeAction(newValue);
+          }}
           options={actions}
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (
@@ -46,10 +55,14 @@ function ActionMapping() {
               }}
             />
           )}
+          value={action || {}}
         />
       </Grid>
-      <Grid item style={{ marginTop: 5 }}>
-        <Switch />
+      <Grid item className={classes.gridItem}>
+        <Switch
+          checked={isMappingAction || false}
+          onChange={handleChangeIsMappingAction}
+        />
         <Typography variant="h7">Enable action mapping this intent</Typography>
       </Grid>
     </Grid>

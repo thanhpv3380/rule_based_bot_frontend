@@ -24,7 +24,6 @@ import InputGroupName from '../inputGroupName';
 function GroupItem(props) {
   const classes = useStyles();
   const {
-    title,
     handleClickGroup,
     handleClickItem,
     group,
@@ -44,7 +43,7 @@ function GroupItem(props) {
   };
 
   const handleClickOpenEditGroup = async (data) => {
-    await handleCloseOptionGroup(data);
+    // await handleCloseOptionGroup(data);
     await handleOpenEditGroup(data);
   };
 

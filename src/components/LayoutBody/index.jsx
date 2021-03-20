@@ -168,7 +168,6 @@ function LayoutBody(props) {
           {groups &&
             groups.map((group) => (
               <GroupItem
-                title={title}
                 handleClickGroup={handleClickGroup}
                 handleClickItem={handleClickItem}
                 group={group}

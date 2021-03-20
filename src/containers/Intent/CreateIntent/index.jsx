@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -19,20 +20,18 @@ function CreateIntent() {
     mode: 'all',
   });
   const { enqueueSnackbar } = useSnackbar();
+  const botId = useSelector((state) => state.bot.bot);
   const [intent, setIntent] = useState({});
   const [groupSelect, setGroupSelect] = useState({});
   const [groups, setGroups] = useState();
 
   const fetchGroupIntents = async () => {
-    const { results } = await apis.groupIntent.getGroupIntents();
-    if (results.groupIntents) {
-      const notIsGroup = results.groupIntents.find((group) => !group.isGroup);
-      const isGroups = results.groupIntents.filter((group) => group.isGroup);
-      if (notIsGroup) {
-        notIsGroup.name = 'Not is group';
-        isGroups.push(notIsGroup);
-      }
-      setGroups(isGroups);
+    const data = await apis.groupIntent.getGroupAndItems({ keyword: '' });
+    console.log(data, 'create');
+    if (data.status) {
+      const { result } = data;
+      console.log(result);
+      setGroups(result.groupIntents);
     }
   };
 
@@ -48,16 +47,14 @@ function CreateIntent() {
   const handleKeyDown = async (e) => {
     if (e.keyCode === 13) {
       const { value } = e.target;
-      intent.patterns = [value];
+      intent.patterns = [{ usersay: value }];
       intent.groupIntentId = groupSelect.id;
-      const { result, status, message } = await apis.intent.createIntent(
-        intent,
-      );
-      if (status === 1) {
-        history.push(`/intents/detail/${result.id}`);
-        // fetchIntent();
+      const data = await apis.intent.createIntent(intent);
+      if (data.status) {
+        const { result } = data;
+        history.push(`/bot/${botId}/intents/detail/${result.id}`);
       } else {
-        enqueueSnackbar(message, {
+        enqueueSnackbar('Create intent failed', {
           variant: 'error',
         });
       }
@@ -114,17 +111,17 @@ function CreateIntent() {
     const newIntent = {
       name: intent.name,
       patterns: intent.patterns,
-      isMappingAction: intent.isMappingAction,
+      isMappingAction: intent.isMappingAction ? intent.isMappingAction : false,
       parameters: intent.parameters,
       groupIntentId: groupSelect.id ? groupSelect.id : null,
+      mappingAction: intent.mappingAction && intent.mappingAction.id,
     };
     const { status, result } = await apis.intent.createIntent(newIntent);
     if (status === 1) {
       enqueueSnackbar('Create intent success', {
         variant: 'success',
       });
-      // fetchIntent();
-      history.push(`/intents/${result.id}`);
+      history.push(`/bot/${botId}/intents/${result.id}`);
       fetchIntent(result.id);
     } else {
       enqueueSnackbar('Cannot fetch data', {
