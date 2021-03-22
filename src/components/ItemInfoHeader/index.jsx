@@ -45,9 +45,6 @@ const ItemInfoHeader = ({ name, groupId, groupItems, handleSave }) => {
             value={groupSelected}
             onChange={(e) => setGroupSelected(e.target.value)}
           >
-            <MenuItem value={null}>
-              <em>Not in Group</em>
-            </MenuItem>
             {groupItems &&
               groupItems.map((el) => (
                 <MenuItem key={el.id} value={el.id}>

@@ -3,6 +3,8 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import { useSnackbar } from 'notistack';
+import ReactAudioPlayer from 'react-audio-player';
+// import ReactPlayer from 'react-player';
 import {
   Typography,
   Box,
@@ -13,11 +15,13 @@ import {
 } from '@material-ui/core';
 import {
   Delete as DeleteIcon,
-  Mail as MailIcon,
+  Speaker as SpeakerIcon,
+  Movie as MovieIcon,
   CloudUpload as CloudUploadIcon,
 } from '@material-ui/icons';
 import useStyles from './index.style';
 import apis from '../../../../apis';
+import textDefault from '../../../../constants/textDefault';
 
 const ActionText = ({
   title,
@@ -50,7 +54,8 @@ const ActionText = ({
         <Box display="flex" flexGrow={1}>
           <Box display="flex">
             <Box mr={0.5}>
-              <MailIcon />
+              {title === textDefault.ACTIONS.AUDIO && <SpeakerIcon />}
+              {title === textDefault.ACTIONS.VIDEO && <MovieIcon />}
             </Box>
             <Box ml={0.5}>
               <Typography variant="button" display="block" gutterBottom>
@@ -76,11 +81,15 @@ const ActionText = ({
       <Divider />
       <form noValidate autoComplete="off">
         <Box mb={1.5} mt={1.5}>
-          <source
-            src={item.media ? (item.media.url ? item.media.url : '') : ''}
-            type="video/mp4"
-            height="100px"
-          />
+          {title === textDefault.ACTIONS.AUDIO && item.media.url && (
+            <ReactAudioPlayer
+              src={item.media.url ? item.media.url : ''}
+              controls
+            />
+          )}
+          {/* {title === textDefault.ACTIONS.VIDEO && item.media.url && (
+            <ReactPlayer url={item.media.url ? item.media.url : ''} />
+          )} */}
         </Box>
         <Box mb={1.5} display="flex">
           <div className={classes.uploadBtn}>

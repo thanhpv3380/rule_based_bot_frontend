@@ -7,7 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { ListItem, ListItemText, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
-import { ActionText, ActionImage, ActionMedia } from '../Actions';
+import {
+  ActionText,
+  ActionImage,
+  ActionMedia,
+  ActionCategory,
+} from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
@@ -85,6 +90,16 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     ]);
   };
 
+  const handleAddCategory = () => {
+    setActions([
+      ...actions,
+      {
+        typeAction: actionsConstant.CATEGORY,
+        options: [],
+      },
+    ]);
+  };
+
   const handleAddVideo = () => {
     setActions([
       ...actions,
@@ -111,22 +126,39 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     }
   };
 
+  const handleAddCategoryItem = (id, data) => {
+    const newActions = [...actions];
+    newActions[id].options.push({ ...data });
+    setActions(newActions);
+  };
+
   const handleDeleteTextItem = (id, index) => {
     const newActions = [...actions];
-
     newActions[id].text = [
       ...newActions[id].text.slice(0, index),
       ...newActions[id].text.slice(index + 1, newActions[id].text.length),
     ];
+    setActions(newActions);
+  };
 
+  const handleDeleteCategoryItem = (id, index) => {
+    const newActions = [...actions];
+    newActions[id].options = [
+      ...newActions[id].options.slice(0, index),
+      ...newActions[id].options.slice(index + 1, newActions[id].options.length),
+    ];
     setActions(newActions);
   };
 
   const handleEditTextItem = (id, index, value) => {
     const newActions = [...actions];
-
     newActions[id].text[index] = value;
+    setActions(newActions);
+  };
 
+  const handleEditCategoryItem = (id, index, data) => {
+    const newActions = [...actions];
+    newActions[id].options[index] = { ...data };
     setActions(newActions);
   };
 
@@ -169,6 +201,18 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
           handleDeleteTextItem={handleDeleteTextItem}
           handleEditTextItem={handleEditTextItem}
           handleAddTextItem={handleAddTextItem}
+        />
+      );
+    }
+    if (action.typeAction === actionsConstant.CATEGORY) {
+      return (
+        <ActionCategory
+          actionId={id}
+          item={action}
+          handleDeleteCategory={handleDeleteItem}
+          handleDeleteCategoryItem={handleDeleteCategoryItem}
+          handleEditCategoryItem={handleEditCategoryItem}
+          handleAddCategoryItem={handleAddCategoryItem}
         />
       );
     }
@@ -224,9 +268,9 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       event: handleAddVideo,
     },
     {
-      heading: 'Option',
+      heading: 'Category',
       icon: '',
-      event: handleAddVideo,
+      event: handleAddCategory,
     },
   ];
 

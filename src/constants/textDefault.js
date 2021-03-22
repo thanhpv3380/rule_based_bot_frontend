@@ -2,8 +2,14 @@ export default {
   INTENTS: {
     INTENTS_TITLE: 'intents',
   },
+  ACTIONS: {
+    AUDIO: 'audio',
+    VIDEO: 'video',
+    NAME_OF_OPTION: 'Name of option',
+    VALUE: 'Value',
+  },
   SEARCH: 'Search',
-  SEARCH_TRANNING_PHRASES: 'Search tranning phrases',
+  SEARCH_TRAINING_PHRASES: 'Search training phrases',
   ADD_USER_EXPRESSION: 'Add user expression',
   FETCH_DATA_FAILED: 'Fetch data failed',
   UPDATE_FAILED: 'Update failed',
