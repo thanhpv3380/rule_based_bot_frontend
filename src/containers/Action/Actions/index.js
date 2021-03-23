@@ -1,5 +1,6 @@
 import ActionText from './Text';
-import ActionImage from './Media/Image';
+import ActionImage from './Image';
 import ActionMedia from './Media';
+import ActionCategory from './Category';
 
-export { ActionText, ActionImage, ActionMedia };
+export { ActionText, ActionImage, ActionMedia, ActionCategory };

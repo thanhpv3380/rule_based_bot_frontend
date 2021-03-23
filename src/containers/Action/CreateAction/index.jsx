@@ -7,7 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { ListItem, ListItemText, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
-import { ActionText, ActionImage, ActionMedia } from '../Actions';
+import {
+  ActionText,
+  ActionImage,
+  ActionMedia,
+  ActionCategory,
+} from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
@@ -79,6 +84,16 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
     ]);
   };
 
+  const handleAddCategory = () => {
+    setActions([
+      ...actions,
+      {
+        typeAction: actionsConstant.CATEGORY,
+        options: [],
+      },
+    ]);
+  };
+
   const handleAddTextItem = (id, value) => {
     const newActions = [...actions];
     if (value.length <= 0) {
@@ -89,6 +104,12 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
       newActions[id].text.push(value);
       setActions(newActions);
     }
+  };
+
+  const handleAddCategoryItem = (id, data) => {
+    const newActions = [...actions];
+    newActions[id].options.push({ ...data });
+    setActions(newActions);
   };
 
   const handleDeleteTextItem = (id, index) => {
@@ -102,11 +123,26 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
     setActions(newActions);
   };
 
+  const handleDeleteCategoryItem = (id, index) => {
+    const newActions = [...actions];
+    newActions[id].options = [
+      ...newActions[id].options.slice(0, index),
+      ...newActions[id].options.slice(index + 1, newActions[id].options.length),
+    ];
+    setActions(newActions);
+  };
+
   const handleEditTextItem = (id, index, value) => {
     const newActions = [...actions];
 
     newActions[id].text[index] = value;
 
+    setActions(newActions);
+  };
+
+  const handleEditCategoryItem = (id, index, data) => {
+    const newActions = [...actions];
+    newActions[id].options[index] = { ...data };
     setActions(newActions);
   };
 
@@ -150,6 +186,18 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
         />
       );
     }
+    if (action.typeAction === actionsConstant.CATEGORY) {
+      return (
+        <ActionCategory
+          actionId={id}
+          item={action}
+          handleDeleteCategory={handleDeleteItem}
+          handleDeleteCategoryItem={handleDeleteCategoryItem}
+          handleEditCategoryItem={handleEditCategoryItem}
+          handleAddCategoryItem={handleAddCategoryItem}
+        />
+      );
+    }
     if (action.typeAction === actionsConstant.MEDIA) {
       if (action.media.typeMedia === actionsConstant.MEDIA_IMAGE) {
         return (
@@ -165,9 +213,9 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
         <ActionMedia
           title={
             action.media.typeMedia === actionsConstant.MEDIA_AUDIO
-              ? 'audio'
+              ? textDefault.ACTIONS.AUDIO
               : action.media.typeMedia === actionsConstant.MEDIA_VIDEO
-              ? 'video'
+              ? textDefault.ACTIONS.VIDEO
               : ''
           }
           actionId={id}
@@ -202,9 +250,9 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
       event: handleAddVideo,
     },
     {
-      heading: 'Option',
+      heading: 'Category',
       icon: '',
-      event: handleAddVideo,
+      event: handleAddCategory,
     },
   ];
 
@@ -214,7 +262,7 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
         name={generateTitleItem('Action')}
         groupItems={groupItems}
         handleSave={handleSave}
-        groupActionId={groupActionId}
+        groupId={groupActionId}
       />
       <div className={classes.content}>
         {actions.map((action, index) => (
