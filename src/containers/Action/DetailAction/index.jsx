@@ -23,8 +23,23 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const [actionId, setActionId] = useState();
-  const [actionData, setActionData] = useState();
+  const [actionData, setActionData] = useState({});
   const [actions, setActions] = useState([]);
+
+  const handleChangeInfoHeader = (e) => {
+    if (e.target.name === 'groupId') {
+      setActionData({
+        ...actionData,
+        groupAction: e.target.value,
+      });
+    }
+    if (e.target.name === 'name') {
+      setActionData({
+        ...actionData,
+        name: e.target.value,
+      });
+    }
+  };
 
   const fetchAction = async (id) => {
     const data = await apis.action.getAction(id);
@@ -171,11 +186,12 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     setActions(newActions);
   };
 
-  const handleSave = async (name, groupAction) => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     const data = await apis.action.updateAction(actionId, {
-      name,
+      name: actionData.name,
       actions,
-      groupAction,
+      groupAction: actionData.groupAction,
     });
     if (data.status) {
       handleUpdate(data.result.action, actionData.groupAction);
@@ -278,9 +294,10 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     <>
       <ItemInfoHeader
         name={actionData && actionData.name}
+        groupId={actionData && actionData.groupAction}
         groupItems={groupItems}
         handleSave={handleSave}
-        groupId={actionData && actionData.groupAction}
+        handleChange={handleChangeInfoHeader}
       />
       <div className={classes.content}>
         {actions.map((action, index) => (
