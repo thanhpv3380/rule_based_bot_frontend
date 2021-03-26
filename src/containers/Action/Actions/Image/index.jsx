@@ -13,11 +13,11 @@ import {
 } from '@material-ui/core';
 import {
   Delete as DeleteIcon,
-  Mail as MailIcon,
+  Image as ImageIcon,
   CloudUpload as CloudUploadIcon,
 } from '@material-ui/icons';
 import useStyles from './index.style';
-import apis from '../../../../../apis';
+import apis from '../../../../apis';
 
 const ActionSendImage = ({
   actionId,
@@ -48,7 +48,7 @@ const ActionSendImage = ({
         <Box display="flex" flexGrow={1}>
           <Box display="flex">
             <Box mr={0.5}>
-              <MailIcon />
+              <ImageIcon />
             </Box>
             <Box ml={0.5}>
               <Typography variant="button" display="block" gutterBottom>

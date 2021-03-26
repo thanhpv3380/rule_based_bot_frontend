@@ -12,6 +12,11 @@ export default {
   INTENT_BOT: {
     INTENT: '/bot/:id/intents',
     CREATE_INTENT: '/bot/:id/intents/create',
-    DETAIL_INTENT: '/bot/:id/intents/detail/:id',
+    DETAIL_INTENT: '/bot/:id/intents/detail/:intentId',
+  },
+  ENTITY_BOT: {
+    ENTITY: '/bot/:id/entities',
+    CREATE_ENTITY: '/bot/:id/entities/create',
+    DETAIL_ENTITY: '/bot/:id/entities/detail/:entityId',
   },
 };

@@ -2,8 +2,14 @@ export default {
   INTENTS: {
     INTENTS_TITLE: 'intents',
   },
+  ACTIONS: {
+    AUDIO: 'audio',
+    VIDEO: 'video',
+    NAME_OF_OPTION: 'Name of option',
+    VALUE: 'Value',
+  },
   SEARCH: 'Search',
-  SEARCH_TRANNING_PHRASES: 'Search tranning phrases',
+  SEARCH_TRAINING_PHRASES: 'Search training phrases',
   ADD_USER_EXPRESSION: 'Add user expression',
   FETCH_DATA_FAILED: 'Fetch data failed',
   UPDATE_FAILED: 'Update failed',
@@ -15,4 +21,11 @@ export default {
   ACTION_ASK_AGAIN: 'Action ask again',
   NUMBER_OF_LOOP: 'Number of loop',
   ACTION_BREAK: 'Action when too number loop',
+  REGEX_FUNCTION: 'Regex Function',
+  ADD: 'Add',
+  DELETE: 'Delete',
+  EDIT: 'Edit',
+  ENTER_VALUE: 'Enter value',
+  ENTER_SYNONYMS: 'Enter Synonyms',
+  ENTER_TO_INPUT_OTHER_ENTITY: 'Enter @ to input other entity',
 };

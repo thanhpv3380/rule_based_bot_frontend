@@ -14,17 +14,16 @@ import useStyles from './index.style';
 
 function IntentDetail(props) {
   const classes = useStyles();
-  const { id } = useParams();
+  const { intentId } = useParams();
   const { groupItems, handleUpdate } = props;
   const { enqueueSnackbar } = useSnackbar();
   const [intent, setIntent] = useState({});
   // const [groupSelect, setGroupSelect] = useState();
   const [patterns, setPatterns] = useState();
-  const [userExpression, setUserExpression] = useState();
   const [actions, setActions] = useState([]);
 
   const fetchIntent = async () => {
-    const data = await apis.intent.getIntent(id);
+    const data = await apis.intent.getIntent(intentId);
     if (data.status) {
       setIntent({ ...data.result, parameters: data.result.parameters || [] });
       setPatterns(data.result.patterns);
@@ -42,7 +41,7 @@ function IntentDetail(props) {
   useEffect(() => {
     fetchIntent();
     fetchActions();
-  }, [id]);
+  }, [intentId]);
 
   // function component itemInfoHeader
   const handleSave = async (name, groupIntent) => {
@@ -72,7 +71,7 @@ function IntentDetail(props) {
       mappingAction: intent.mappingAction && intent.mappingAction.id,
     };
     console.log(newIntent);
-    const data = await apis.intent.updateIntent(id, newIntent);
+    const data = await apis.intent.updateIntent(intentId, newIntent);
     if (data.status) {
       const { result } = data;
       enqueueSnackbar('Update intent success', {
@@ -89,7 +88,7 @@ function IntentDetail(props) {
 
   // Component TranningPhrases
   const handleKeyDown = async (value) => {
-    const data = await apis.intent.addUsersay(id, value);
+    const data = await apis.intent.addUsersay(intentId, value);
     if (data.status) {
       const newPatterns = [...patterns];
       newPatterns.push(value);
@@ -100,7 +99,7 @@ function IntentDetail(props) {
   };
 
   const handleDeleteUsersay = async (usersay) => {
-    const data = await apis.intent.removeUsersay(id, usersay);
+    const data = await apis.intent.removeUsersay(intentId, usersay);
     if (data.status) {
       const newIntent = { ...intent };
       const newPatterns = newIntent.patterns.filter((el) => el !== usersay);
@@ -189,7 +188,6 @@ function IntentDetail(props) {
         <TranningPhrases
           intent={intent}
           patterns={patterns}
-          userExpression={userExpression}
           handleKeyDown={handleKeyDown}
           handleDelete={handleDeleteUsersay}
           handleChangeSearch={handleSearchPattern}

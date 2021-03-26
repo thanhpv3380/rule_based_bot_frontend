@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   AppBar,
   Toolbar,
@@ -10,19 +10,14 @@ import {
 } from '@material-ui/core';
 import useStyles from './index.style';
 
-const ItemInfoHeader = ({ name, groupId, groupItems, handleSave }) => {
+const ItemInfoHeader = ({
+  name,
+  groupId,
+  groupItems,
+  handleSave,
+  handleChange,
+}) => {
   const classes = useStyles();
-  const [input, setInput] = useState();
-  const [groupSelected, setGroupSelected] = useState(null);
-
-  useEffect(() => {
-    setInput(name);
-  }, [name]);
-
-  useEffect(() => {
-    setGroupSelected(groupId);
-  }, [groupId]);
-
   return (
     <AppBar position="static">
       <Toolbar>
@@ -34,16 +29,18 @@ const ItemInfoHeader = ({ name, groupId, groupItems, handleSave }) => {
           classes={{
             root: classes.textField,
           }}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          name="name"
+          value={name}
+          onChange={handleChange}
         />
         <FormControl className={classes.formControl}>
           <Select
             displayEmpty
             className={classes.selectEmpty}
             inputProps={{ 'aria-label': 'Without label' }}
-            value={groupSelected || {}}
-            onChange={(e) => setGroupSelected(e.target.value)}
+            name="groupId"
+            value={`${groupId}`}
+            onChange={handleChange}
           >
             {groupItems &&
               groupItems.map((el) => (
@@ -53,11 +50,7 @@ const ItemInfoHeader = ({ name, groupId, groupItems, handleSave }) => {
               ))}
           </Select>
         </FormControl>
-        <Button
-          size="large"
-          variant="contained"
-          onClick={() => handleSave(input, groupSelected)}
-        >
+        <Button size="large" variant="contained" onClick={handleSave}>
           Save
         </Button>
       </Toolbar>

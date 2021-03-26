@@ -100,7 +100,6 @@ const LayoutListGroup = ({
   const calcPagination = (newGroups, newGroupsSingle) => {
     const start = pagination.page * pagination.rowsPerPage;
     const end = start + pagination.rowsPerPage;
-    console.log({ start, end });
     let startGroupSingle = 0;
     let endGroupSingle = 0;
     let startGroup = 0;
@@ -119,7 +118,10 @@ const LayoutListGroup = ({
         endGroupSingle = end;
       } else {
         endGroupSingle = groupSingleLength;
-        endGroup = groupLength > end ? end - endGroupSingle : groupLength;
+        endGroup =
+          groupLength > end - endGroupSingle
+            ? end - endGroupSingle
+            : groupLength;
       }
     } else {
       startGroup = start - groupSingleLength;
@@ -128,7 +130,6 @@ const LayoutListGroup = ({
           ? startGroup + pagination.rowsPerPage
           : groupLength;
     }
-    console.log({ startGroupSingle, endGroupSingle, startGroup, endGroup });
     return {
       startGroupSingle,
       endGroupSingle,
@@ -166,7 +167,7 @@ const LayoutListGroup = ({
       startGroup,
       endGroup,
     } = calcPagination(newGroups, newGroupsSingle);
-
+    console.log({ startGroupSingle, endGroupSingle, startGroup, endGroup });
     setGroupsSingle({
       ...groupsSingle,
       data: newGroupsSingle,
@@ -306,7 +307,7 @@ const LayoutListGroup = ({
           <TablePagination
             component="div"
             rowsPerPageOptions={[5]}
-            count={pagination.count}
+            count={pagination.count || 0}
             page={pagination.page}
             rowsPerPage={pagination.rowsPerPage}
             onChangePage={handleChangePage}

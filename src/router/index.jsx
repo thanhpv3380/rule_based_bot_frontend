@@ -31,7 +31,6 @@ export default () => {
   const publicRoutes = appRoutes.filter((route) => !route.isPrivate);
 
   const privateRoutes = appRoutes.filter((route) => route.isPrivate);
-
   return (
     <BrowserRouter>
       <Switch>

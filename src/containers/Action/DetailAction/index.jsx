@@ -7,7 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { ListItem, ListItemText, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
-import { ActionText, ActionImage, ActionMedia } from '../Actions';
+import {
+  ActionText,
+  ActionImage,
+  ActionMedia,
+  ActionCategory,
+} from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
@@ -18,8 +23,23 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const [actionId, setActionId] = useState();
-  const [actionData, setActionData] = useState();
+  const [actionData, setActionData] = useState({});
   const [actions, setActions] = useState([]);
+
+  const handleChangeInfoHeader = (e) => {
+    if (e.target.name === 'groupId') {
+      setActionData({
+        ...actionData,
+        groupAction: e.target.value,
+      });
+    }
+    if (e.target.name === 'name') {
+      setActionData({
+        ...actionData,
+        name: e.target.value,
+      });
+    }
+  };
 
   const fetchAction = async (id) => {
     const data = await apis.action.getAction(id);
@@ -85,6 +105,16 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     ]);
   };
 
+  const handleAddCategory = () => {
+    setActions([
+      ...actions,
+      {
+        typeAction: actionsConstant.CATEGORY,
+        options: [],
+      },
+    ]);
+  };
+
   const handleAddVideo = () => {
     setActions([
       ...actions,
@@ -111,22 +141,39 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     }
   };
 
+  const handleAddCategoryItem = (id, data) => {
+    const newActions = [...actions];
+    newActions[id].options.push({ ...data });
+    setActions(newActions);
+  };
+
   const handleDeleteTextItem = (id, index) => {
     const newActions = [...actions];
-
     newActions[id].text = [
       ...newActions[id].text.slice(0, index),
       ...newActions[id].text.slice(index + 1, newActions[id].text.length),
     ];
+    setActions(newActions);
+  };
 
+  const handleDeleteCategoryItem = (id, index) => {
+    const newActions = [...actions];
+    newActions[id].options = [
+      ...newActions[id].options.slice(0, index),
+      ...newActions[id].options.slice(index + 1, newActions[id].options.length),
+    ];
     setActions(newActions);
   };
 
   const handleEditTextItem = (id, index, value) => {
     const newActions = [...actions];
-
     newActions[id].text[index] = value;
+    setActions(newActions);
+  };
 
+  const handleEditCategoryItem = (id, index, data) => {
+    const newActions = [...actions];
+    newActions[id].options[index] = { ...data };
     setActions(newActions);
   };
 
@@ -139,11 +186,12 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     setActions(newActions);
   };
 
-  const handleSave = async (name, groupAction) => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     const data = await apis.action.updateAction(actionId, {
-      name,
+      name: actionData.name,
       actions,
-      groupAction,
+      groupAction: actionData.groupAction,
     });
     if (data.status) {
       handleUpdate(data.result.action, actionData.groupAction);
@@ -169,6 +217,18 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
           handleDeleteTextItem={handleDeleteTextItem}
           handleEditTextItem={handleEditTextItem}
           handleAddTextItem={handleAddTextItem}
+        />
+      );
+    }
+    if (action.typeAction === actionsConstant.CATEGORY) {
+      return (
+        <ActionCategory
+          actionId={id}
+          item={action}
+          handleDeleteCategory={handleDeleteItem}
+          handleDeleteCategoryItem={handleDeleteCategoryItem}
+          handleEditCategoryItem={handleEditCategoryItem}
+          handleAddCategoryItem={handleAddCategoryItem}
         />
       );
     }
@@ -224,9 +284,9 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       event: handleAddVideo,
     },
     {
-      heading: 'Option',
+      heading: 'Category',
       icon: '',
-      event: handleAddVideo,
+      event: handleAddCategory,
     },
   ];
 
@@ -234,9 +294,10 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
     <>
       <ItemInfoHeader
         name={actionData && actionData.name}
+        groupId={actionData && actionData.groupAction}
         groupItems={groupItems}
         handleSave={handleSave}
-        groupId={actionData && actionData.groupAction}
+        handleChange={handleChangeInfoHeader}
       />
       <div className={classes.content}>
         {actions.map((action, index) => (

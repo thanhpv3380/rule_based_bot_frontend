@@ -8,7 +8,7 @@ export async function getEntities() {
   return response;
 }
 
-export async function getEntityById(id) {
+export async function getEntity(id) {
   const response = await api({
     method: 'GET',
     url: `/entities/${id}`,
