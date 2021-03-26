@@ -18,4 +18,11 @@ export default {
   CREATE_SUCCESS: 'Create success',
   DELETE_FAILED: ' Delete failed',
   DELETE_SUCCESS: 'Delete success',
+  REGEX_FUNCTION: 'Regex Function',
+  ADD: 'Add',
+  DELETE: 'Delete',
+  EDIT: 'Edit',
+  ENTER_VALUE: 'Enter value',
+  ENTER_SYNONYMS: 'Enter Synonyms',
+  ENTER_TO_INPUT_OTHER_ENTITY: 'Enter @ to input other entity',
 };

@@ -5,6 +5,7 @@ import Bot from '../pages/Bot';
 import Dictionary from '../pages/Dictionary';
 import Action from '../pages/Action';
 import Intent from '../pages/Intent';
+import Entity from '../pages/Entity';
 
 export default [
   {
@@ -50,7 +51,15 @@ export default [
   {
     path: routes.INTENT_BOT.INTENT,
     component: Intent,
-    exact: true,
+    exact: false,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+  },
+  {
+    path: routes.ENTITY_BOT.ENTITY,
+    component: Entity,
+    exact: false,
     restricted: false,
     isPrivate: true,
     isLayout: true,

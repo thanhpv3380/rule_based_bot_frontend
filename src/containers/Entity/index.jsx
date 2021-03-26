@@ -6,15 +6,15 @@ import { useSnackbar } from 'notistack';
 import EmptyPage from '../../components/EmptyPage';
 import LayoutListGroup from '../../components/LayoutListGroup';
 import routes from '../../constants/route';
-import CreateAction from './CreateAction';
-import ActionDetail from './DetailAction';
+import CreateEntity from './CreateEntity';
+import EntityDetail from './DetailEntity';
 import apis from '../../apis';
 import textDefault from '../../constants/textDefault';
 import groupConstant from '../../constants/group';
 
 let timeOutId = null;
 
-function Action() {
+const Entity = () => {
   const { t } = useTranslation();
   const match = useRouteMatch();
   const history = useHistory();
@@ -26,9 +26,9 @@ function Action() {
   const [groupAndItems, setGroupAndItems] = useState([]);
 
   const fetchGroupAndItems = async (keyword) => {
-    const data = await apis.groupAction.getGroupAndItems(keyword);
-    if (data.status) {
-      setGroupAndItems(data.result.groupActions);
+    const data = await apis.groupEntity.getGroupAndItems(keyword);
+    if (data && data.status) {
+      setGroupAndItems(data.result.groupEntities);
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
@@ -57,35 +57,31 @@ function Action() {
 
   const handleCreateItem = (data) => {
     const newGroupAndItems = [...groupAndItems];
-    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupAction);
+    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupEntity);
     newGroupAndItems[pos].children.unshift({
       id: data.id,
       name: data.name,
-      groupAction: data.groupAction,
-      actions: data.actions,
+      groupEntity: data.groupEntity,
     });
     newGroupAndItems[pos].status = true;
     setGroupAndItems(newGroupAndItems);
-    history.push(`/bot/${botId}/actions/detail/${data.id}`);
+    history.push(`/bot/${botId}/entities/detail/${data.id}`);
   };
 
-  const handleUpdateItem = (data, oldGroupAction) => {
+  const handleUpdateItem = (data, prevGroup) => {
     const newGroupAndItems = [...groupAndItems];
-    const actionData = {
+    const entityData = {
       id: data.id,
       name: data.name,
-      groupAction: data.groupAction,
-      actions: data.actions,
+      groupEntity: data.groupEntity,
     };
-    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupAction);
+    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupEntity);
     newGroupAndItems[pos].status = true;
     const childrenPos = newGroupAndItems[pos].children.findIndex(
       (el) => el.id === data.id,
     );
     if (childrenPos < 0) {
-      const tempPos = newGroupAndItems.findIndex(
-        (el) => el.id === oldGroupAction,
-      );
+      const tempPos = newGroupAndItems.findIndex((el) => el.id === prevGroup);
       const newItems = newGroupAndItems[tempPos].children.filter(
         (el) => el.id !== data.id,
       );
@@ -93,19 +89,19 @@ function Action() {
         ...newGroupAndItems[tempPos],
         children: [...newItems],
       };
-      newGroupAndItems[pos].children.unshift(actionData);
+      newGroupAndItems[pos].children.unshift(entityData);
     } else {
-      newGroupAndItems[pos].children[childrenPos] = actionData;
+      newGroupAndItems[pos].children[childrenPos] = entityData;
     }
     setGroupAndItems(newGroupAndItems);
   };
 
   const handleCreateGroup = async (value) => {
-    const data = await apis.groupAction.createGroupAction({ name: value });
+    const data = await apis.groupEntity.createGroupEntity({ name: value });
     if (data.status) {
       const newGroupAndItems = [...groupAndItems];
       newGroupAndItems.unshift({
-        ...data.result.groupAction,
+        ...data.result.groupEntity,
         children: [],
       });
       setGroupAndItems(newGroupAndItems);
@@ -120,7 +116,7 @@ function Action() {
   };
 
   const handleChangeNameGroup = async (groupId, value) => {
-    const data = await apis.groupAction.updateGroupAction(groupId, {
+    const data = await apis.groupEntity.updateGroupEntity(groupId, {
       name: value,
     });
     if (data.status) {
@@ -128,8 +124,8 @@ function Action() {
       const pos = newGroupAndItems.findIndex((el) => el.id === groupId);
       newGroupAndItems[pos] = {
         ...newGroupAndItems[pos],
-        updatedAt: data.result.groupAction.updatedAt,
-        name: data.result.groupAction.name,
+        updatedAt: data.result.groupEntity.updatedAt,
+        name: data.result.groupEntity.name,
       };
       setGroupAndItems(newGroupAndItems);
       enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
@@ -143,7 +139,7 @@ function Action() {
   };
 
   const handleDeleteGroup = async (id) => {
-    const data = await apis.groupAction.deleteGroupAction(id);
+    const data = await apis.groupEntity.deleteGroupEntity(id);
     if (data.status) {
       const newGroupAndItems = groupAndItems.filter((el) => el.id !== id);
       setGroupAndItems(newGroupAndItems);
@@ -158,7 +154,7 @@ function Action() {
   };
 
   const handleDeleteItem = async (groupId, itemId) => {
-    const data = await apis.action.deleteAction(itemId);
+    const data = await apis.entity.deleteEntity(itemId);
     if (data.status) {
       const newGroupAndItems = [...groupAndItems];
       const pos = newGroupAndItems.findIndex((el) => el.id === groupId);
@@ -191,13 +187,13 @@ function Action() {
   };
 
   const handleClickItem = (id) => {
-    history.push(`/bot/${botId}/actions/detail/${id}`);
+    history.push(`/bot/${botId}/entities/detail/${id}`);
   };
 
   return (
     <LayoutListGroup
       groupItems={groupAndItems}
-      title="action"
+      title="entity"
       handleSearch={handleSearch}
       handleCreateItem={handleOpenCreateItem}
       handleDeleteItem={handleDeleteItem}
@@ -208,15 +204,15 @@ function Action() {
       handleToggleGroup={handleToggleGroup}
       handleClickItem={handleClickItem}
     >
-      <Route exact path={routes.ACTION_BOT.DETAIL_ACTION}>
-        <ActionDetail
+      <Route exact path={routes.ENTITY_BOT.DETAIL_ENTITY}>
+        <EntityDetail
           groupItems={groupAndItems}
           handleUpdate={handleUpdateItem}
         />
       </Route>
-      <Route exact path={routes.ACTION_BOT.ACTION} component={EmptyPage} />
-      <Route exact path={routes.ACTION_BOT.CREATE_ACTION}>
-        <CreateAction
+      <Route exact path={routes.ENTITY_BOT.ENTITY} component={EmptyPage} />
+      <Route exact path={routes.ENTITY_BOT.CREATE_ENTITY}>
+        <CreateEntity
           groupItems={groupAndItems}
           groupId={groupIdSelected}
           handleCreate={handleCreateItem}
@@ -224,6 +220,6 @@ function Action() {
       </Route>
     </LayoutListGroup>
   );
-}
+};
 
-export default Action;
+export default Entity;

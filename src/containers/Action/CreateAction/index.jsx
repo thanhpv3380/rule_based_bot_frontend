@@ -2,7 +2,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/jsx-indent */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { ListItem, ListItemText, Paper } from '@material-ui/core';
@@ -18,12 +18,56 @@ import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
 import { generateTitleItem } from '../../../utils/generateTitle';
+import groupConstant from '../../../constants/group';
 
-const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
+const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const [actionData, setActionData] = useState({
+    name: '',
+    groupAction: '',
+  });
   const [actions, setActions] = useState([]);
+
+  useEffect(() => {
+    setActionData({
+      name: generateTitleItem('Action'),
+      groupAction: groupId,
+    });
+  }, []);
+
+  useEffect(() => {
+    const temp = groupItems.find(
+      (el) => el.groupType === groupConstant.GROUP_SINGLE,
+    );
+    setActionData({
+      name: generateTitleItem('Action'),
+      groupAction: groupId || (temp && temp.id),
+    });
+  }, [groupItems]);
+
+  useEffect(() => {
+    setActionData({
+      name: generateTitleItem('Action'),
+      groupAction: groupId,
+    });
+  }, [groupId]);
+
+  const handleChangeInfoHeader = (e) => {
+    if (e.target.name === 'groupId') {
+      setActionData({
+        ...actionData,
+        groupAction: e.target.value,
+      });
+    }
+    if (e.target.name === 'name') {
+      setActionData({
+        ...actionData,
+        name: e.target.value,
+      });
+    }
+  };
 
   const handleDeleteItem = (id) => {
     setActions([
@@ -155,11 +199,12 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
     setActions(newActions);
   };
 
-  const handleSave = async (name, groupAction) => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     const data = await apis.action.createAction({
-      name,
+      name: actionData.name,
       actions,
-      groupAction,
+      groupAction: actionData.groupAction,
     });
     if (data.status) {
       handleCreate(data.result.action);
@@ -259,10 +304,11 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
   return (
     <>
       <ItemInfoHeader
-        name={generateTitleItem('Action')}
+        name={actionData.name || ''}
+        groupId={actionData.groupAction}
         groupItems={groupItems}
         handleSave={handleSave}
-        groupId={groupActionId}
+        handleChange={handleChangeInfoHeader}
       />
       <div className={classes.content}>
         {actions.map((action, index) => (
