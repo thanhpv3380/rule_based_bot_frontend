@@ -58,6 +58,7 @@ function LayoutBody(props) {
   // };
 
   const handleClickItem = (data) => {
+    console.log(`/bot/${botId}/${title}/detail/${data.id}`);
     history.push(`/bot/${botId}/${title}/detail/${data.id}`);
   };
 

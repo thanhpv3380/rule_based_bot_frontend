@@ -50,7 +50,7 @@ export default [
   {
     path: routes.INTENT_BOT.INTENT,
     component: Intent,
-    exact: true,
+    exact: false,
     restricted: false,
     isPrivate: true,
     isLayout: true,

@@ -1,41 +1,34 @@
 /* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
-import { Route, useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import apis from '../../apis';
 import routes from '../../constants/route';
 import textDefault from '../../constants/textDefault';
-import groupConstant from '../../constants/group';
-import LayoutBody from '../../components/LayoutBody';
+import LayoutListGroup from '../../components/LayoutListGroup';
 import EmptyPage from '../../components/EmptyPage';
 import DetailIntent from './DetailIntent';
 import CreateIntent from './CreateIntent';
 
-const Intent = () => {
-  // const classes = useStyles();
-  const history = useHistory();
-  const botId = useSelector((state) => state.bot.bot);
-  const { enqueueSnackbar } = useSnackbar();
-  const [searchKey, setSearchKey] = useState();
-  const [singleGroups, setSingleGroup] = useState();
-  const [groups, setGroups] = useState();
+let timeOutId = null;
 
-  const fetchGroupIntents = async (keyword) => {
+const Intent = () => {
+  const { t } = useTranslation();
+  const match = useRouteMatch();
+  const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
+  const botId = useSelector((state) => state.bot.bot);
+  // eslint-disable-next-line no-unused-vars
+  const [searchKey, setSearchKey] = useState();
+  const [groupIdSelected, setGroupIdSelected] = useState(null);
+  const [groupAndItems, setGroupAndItems] = useState([]);
+
+  const fetchGroupAndItems = async (keyword) => {
     const data = await apis.groupIntent.getGroupAndItems({ keyword });
     if (data.status) {
-      const { result } = data;
-      const singleGroup = result.groupIntents.find(
-        (el) => el.groupType === groupConstant.GROUP_SINGLE,
-      );
-      const groupsFound = result.groupIntents
-        .filter((el) => el.groupType === groupConstant.GROUP)
-        .map((el) => ({
-          ...el,
-          open: false,
-        }));
-      setSingleGroup(singleGroup);
-      setGroups(groupsFound);
+      setGroupAndItems(data.result.groupIntents);
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
@@ -44,169 +37,189 @@ const Intent = () => {
   };
 
   useEffect(() => {
-    fetchGroupIntents();
+    fetchGroupAndItems();
   }, []);
 
-  const handleSearchIntent = async (e) => {
+  const handleSearch = (e) => {
     const { value } = e.target;
     setSearchKey(value);
-    fetchGroupIntents(value);
+    clearTimeout(timeOutId);
+    timeOutId = setTimeout(() => fetchGroupAndItems(value), 500);
   };
 
-  const handleClickGroup = (data) => {
-    const newGroups = [...groups];
-    const pos = newGroups.findIndex((el) => el.id === data.id);
-    if (newGroups[pos].children && newGroups[pos].children.length !== 0) {
-      newGroups[pos] = {
-        ...newGroups[pos],
-        open: !newGroups[pos].open,
+  const handleOpenCreateItem = (id) => {
+    setGroupIdSelected(id || null);
+    history.push(`${match.url}/create`);
+  };
+
+  const handleCreateItem = (data) => {
+    const newGroupAndItems = [...groupAndItems];
+    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
+    newGroupAndItems[pos].children.unshift({
+      id: data.id,
+      name: data.name,
+      groupIntent: data.groupIntent,
+      // intents: data.actions,
+    });
+    newGroupAndItems[pos].status = true;
+    setGroupAndItems(newGroupAndItems);
+    history.push(`/bot/${botId}/intents/detail/${data.id}`);
+  };
+
+  const handleUpdateItem = (data, oldGroupAction) => {
+    const newGroupAndItems = [...groupAndItems];
+    const intentData = {
+      id: data.id,
+      name: data.name,
+      groupIntent: data.groupIntent,
+      actions: data.actions,
+    };
+    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
+    newGroupAndItems[pos].status = true;
+    const childrenPos = newGroupAndItems[pos].children.findIndex(
+      (el) => el.id === data.id,
+    );
+    if (childrenPos < 0) {
+      const tempPos = newGroupAndItems.findIndex(
+        (el) => el.id === oldGroupAction,
+      );
+      const newItems = newGroupAndItems[tempPos].children.filter(
+        (el) => el.id !== data.id,
+      );
+      newGroupAndItems[tempPos] = {
+        ...newGroupAndItems[tempPos],
+        children: [...newItems],
       };
+      newGroupAndItems[pos].children.unshift(intentData);
+    } else {
+      newGroupAndItems[pos].children[childrenPos] = intentData;
     }
-    setGroups(newGroups);
+    setGroupAndItems(newGroupAndItems);
   };
 
-  const handleOpenEditGroup = (data) => {
-    const newGroups = [...groups];
-    const pos = newGroups.map((item) => item.id === data.id);
-    newGroups[pos] = {
-      ...newGroups[pos],
-      openEdit: true,
-      openOption: null,
-    };
-    setGroups(newGroups);
-  };
-
-  const handleCloseEditGroup = (data) => {
-    const newGroups = [...groups];
-    const pos = newGroups.findIndex((item) => item.id === data.id);
-    newGroups[pos] = {
-      ...newGroups[pos],
-      openEdit: false,
-    };
-
-    setGroups(newGroups);
-  };
-
-  const handleCreateGroup = async (name) => {
-    if (!name || !name.trim()) {
-      enqueueSnackbar('Name cannot be empty', {
-        variant: 'warning',
+  const handleCreateGroup = async (value) => {
+    const data = await apis.groupIntent.createGroupIntent({ name: value });
+    if (data.status) {
+      const newGroupAndItems = [...groupAndItems];
+      newGroupAndItems.unshift({
+        ...data.result.groupIntent,
+        children: [],
       });
-      return true;
-    }
-    const data = await apis.groupIntent.createGroupIntent({ name });
-    if (!data.status) {
-      enqueueSnackbar('Create group failed', {
-        variant: 'warning',
+      setGroupAndItems(newGroupAndItems);
+      enqueueSnackbar(textDefault.CREATE_SUCCESS, {
+        variant: 'success',
       });
-      return true;
+    } else {
+      enqueueSnackbar(textDefault.CREATE_FAILED, {
+        variant: 'error',
+      });
     }
-    const newGroups = [...groups];
-    newGroups.unshift({ ...data.result.groupIntent, open: false });
-    setGroups(newGroups);
-    return false;
   };
 
-  const handleCreateIntent = () => {
-    history.push(`/bot/${botId}/intents/createIntent`);
-  };
-
-  const handleOpenOptionGroup = (e, data) => {
-    const newGroups = [...groups];
-    const pos = newGroups.findIndex((item) => item.id === data.id);
-    newGroups[pos] = {
-      ...newGroups[pos],
-      openOption: e.currentTarget,
-    };
-    setGroups(newGroups);
-  };
-
-  const handleCloseOptionGroup = (data) => {
-    const newGroups = [...groups];
-    const pos = newGroups.findIndex((item) => item.id === data.id);
-    newGroups[pos] = {
-      ...newGroups[pos],
-      openOption: null,
-    };
-    setGroups(newGroups);
-  };
-
-  const handleUpdateGroupName = async (groupName, group) => {
-    const data = await apis.groupIntent.updateGroupIntent(group.id, {
-      name: groupName,
+  const handleChangeNameGroup = async (groupId, value) => {
+    const data = await apis.groupIntent.updateGroupAction(groupId, {
+      name: value,
     });
     if (data.status) {
-      const newGroups = [...groups];
-      const pos = newGroups.findIndex((item) => item.id === group.id);
-      newGroups[pos] = {
-        ...newGroups[pos],
-        name: groupName,
-        openEdit: false,
+      const newGroupAndItems = [...groupAndItems];
+      const pos = newGroupAndItems.findIndex((el) => el.id === groupId);
+      newGroupAndItems[pos] = {
+        ...newGroupAndItems[pos],
+        updatedAt: data.result.groupIntent.updatedAt,
+        name: data.result.groupIntent.name,
       };
-      setGroups(newGroups);
+      setGroupAndItems(newGroupAndItems);
+      enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
+        variant: 'success',
+      });
     } else {
-      enqueueSnackbar('Update group name failed', {
-        variant: 'warning',
+      enqueueSnackbar(textDefault.UPDATE_FAILED, {
+        variant: 'error',
       });
     }
   };
 
-  const handleDeleteGroup = async (group) => {
-    const data = await apis.groupIntent.deleteGroupIntent(group.id);
+  const handleDeleteGroup = async (id) => {
+    const data = await apis.groupIntent.deleteGroupIntent(id);
     if (data.status) {
-      const newGroup = groups.filter((item) => item.id !== group.id);
-      setGroups(newGroup);
+      const newGroupAndItems = groupAndItems.filter((el) => el.id !== id);
+      setGroupAndItems(newGroupAndItems);
+      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+        variant: 'success',
+      });
     } else {
-      enqueueSnackbar('Delete group failed', {
-        variant: 'warning',
+      enqueueSnackbar(textDefault.DELETE_FAILED, {
+        variant: 'error',
       });
     }
   };
 
-  const handleDeleteIntent = async (id, group) => {
-    const data = await apis.intent.deleteIntent(id);
+  const handleDeleteItem = async (groupId, itemId) => {
+    const data = await apis.intent.deleteIntent(itemId);
     if (data.status) {
-      const newGroups = [...groups];
-      const pos = newGroups.findIndex((el) => el.id === group.id);
-      const newItems = newGroups[pos].children.filter((el) => el.id !== id);
-      newGroups[pos].children = newItems;
-      setGroups(newGroups);
+      const newGroupAndItems = [...groupAndItems];
+      const pos = newGroupAndItems.findIndex((el) => el.id === groupId);
+      const newItems = newGroupAndItems[pos].children.filter(
+        (el) => el.id !== itemId,
+      );
+      newGroupAndItems[pos] = {
+        ...newGroupAndItems[pos],
+        children: [...newItems],
+      };
+      setGroupAndItems(newGroupAndItems);
+      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+        variant: 'success',
+      });
     } else {
-      enqueueSnackbar('Delete item failed', {
-        variant: 'warning',
+      enqueueSnackbar(textDefault.DELETE_FAILED, {
+        variant: 'error',
       });
     }
+  };
+
+  const handleToggleGroup = (id) => {
+    const newGroupAndItems = [...groupAndItems];
+    const pos = newGroupAndItems.findIndex((el) => el.id === id);
+    newGroupAndItems[pos] = {
+      ...newGroupAndItems[pos],
+      status: !newGroupAndItems[pos].status,
+    };
+    setGroupAndItems(newGroupAndItems);
+  };
+
+  const handleClickItem = (id) => {
+    history.push(`/bot/${botId}/intents/detail/${id}`);
   };
 
   return (
-    <LayoutBody
-      title={textDefault.INTENTS.INTENTS_TITLE}
-      singleGroups={singleGroups}
-      groups={groups}
-      handleClickGroup={handleClickGroup}
+    <LayoutListGroup
+      groupItems={groupAndItems}
+      title="intent"
+      handleSearch={handleSearch}
+      handleCreateItem={handleOpenCreateItem}
+      handleDeleteItem={handleDeleteItem}
       handleCreateGroup={handleCreateGroup}
-      handleCreateItem={handleCreateIntent}
-      handleSearch={handleSearchIntent}
-      handleOpenEditGroup={handleOpenEditGroup}
-      handleOpenOptionGroup={handleOpenOptionGroup}
-      handleCloseOptionGroup={handleCloseOptionGroup}
-      handleCloseEditGroup={handleCloseEditGroup}
-      handleUpdateGroupName={handleUpdateGroupName}
+      handleChangeNameGroup={handleChangeNameGroup}
       handleDeleteGroup={handleDeleteGroup}
-      handleDeleteItem={handleDeleteIntent}
+      handleAddItemInGroup={handleOpenCreateItem}
+      handleToggleGroup={handleToggleGroup}
+      handleClickItem={handleClickItem}
     >
-      <Route
-        exact
-        path={routes.INTENT_BOT.CREATE_INTENT}
-        component={CreateIntent}
-      />
-      <Route
-        exact
-        path={routes.INTENT_BOT.DETAIL_INTENT}
-        component={DetailIntent}
-      />
+      <Route exact path={routes.INTENT_BOT.CREATE_INTENT}>
+        <CreateIntent
+          groupItems={groupAndItems}
+          groupIntentId={groupIdSelected}
+          handleCreate={handleCreateItem}
+        />
+      </Route>
+      <Route exact path={routes.INTENT_BOT.DETAIL_INTENT}>
+        <DetailIntent
+          groupItems={groupAndItems}
+          handleUpdate={handleUpdateItem}
+        />
+      </Route>
       <Route exact path={routes.INTENT_BOT.INTENT} component={EmptyPage} />
-    </LayoutBody>
+    </LayoutListGroup>
   );
 };
 

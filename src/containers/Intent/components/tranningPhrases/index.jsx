@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react/no-array-index-key */
+import React, { useState } from 'react';
 import {
   Grid,
   TextField,
@@ -10,33 +11,49 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  InputBase,
 } from '@material-ui/core';
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
 import DeleteIcon from '@material-ui/icons/Delete';
-import SearchBox from '../../../../components/SearchBox';
+import SearchIcon from '@material-ui/icons/Search';
+
 import textDefault from '../../../../constants/textDefault';
 import useStyles from './index.style';
 
 function TranningPhrases(props) {
   const classes = useStyles();
   const {
-    userExpression,
+    // userExpression,
     handleKeyDown,
     handleDelete,
     patterns,
     handleChangeSearch,
+    handleChangePattern,
   } = props;
-
+  const [userExpression, setUserExpression] = useState('');
+  const test = (e) => {
+    handleKeyDown(e);
+    setUserExpression('');
+  };
   return (
     <Grid container>
       <Grid item xs={4}>
         <Typography variant="h6">Tranning phrases</Typography>
       </Grid>
       <Grid item xs={8} container justify="flex-end">
-        <SearchBox
+        <TextField
+          className={classes.margin}
           placeholder={textDefault.SEARCH_TRANNING_PHRASES}
-          isStartPositionIcon={false}
-          handleOnChange={handleChangeSearch}
+          id="input-with-icon-textfield"
+          onChange={handleChangeSearch}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+            classes: { underline: classes.underlineSearch },
+          }}
         />
       </Grid>
       <Grid item xs={12}>
@@ -45,16 +62,16 @@ function TranningPhrases(props) {
           className={classes.margin}
           placeholder={textDefault.ADD_USER_EXPRESSION}
           size="medium"
-          name="usersay"
-          value={userExpression}
-          onKeyDown={(e) => handleKeyDown(e)}
+          // name="usersay"
+          defaultValue={userExpression}
+          onChange={(e) => setUserExpression(e.target.value)}
+          onKeyDown={(e) => test(e)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <FormatQuoteIcon />
               </InputAdornment>
             ),
-            // classes: { underline: classes.underline },
           }}
           classes={{
             root: classes.textFieldItem,
@@ -65,32 +82,22 @@ function TranningPhrases(props) {
         component={Paper}
         classes={{ root: classes.tableContainer }}
       >
-        <Table size="small" classes={{ table: classes.table }}>
+        <Table key={1} size="small" classes={{ table: classes.table }}>
           <TableBody>
             {patterns &&
-              patterns.map((pattern) => (
-                <TableRow key={pattern}>
-                  <TableCell size="medium" align="left">
-                    <TextField
-                      fullWidth
-                      className={classes.margin}
+              patterns.map((pattern, index) => (
+                <TableRow key={index}>
+                  <TableCell
+                    size="medium"
+                    align="left"
+                    className={classes.tableCell}
+                  >
+                    <FormatQuoteIcon className={classes.formatQuoteIcon} />
+                    <InputBase
+                      className={classes.inputRow}
                       name={pattern}
-                      size="medium"
-                      defaultValue={pattern}
-                      // onChange={handleOnChange}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <FormatQuoteIcon />
-                          </InputAdornment>
-                        ),
-                        classes: { underline: classes.underline },
-                      }}
-                      classes={
-                        {
-                          // root: classes.textFieldItem,
-                        }
-                      }
+                      value={pattern}
+                      onInput={(e) => handleChangePattern(e, index)}
                     />
                   </TableCell>
                   <TableCell align="right">

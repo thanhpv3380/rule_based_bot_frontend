@@ -11,7 +11,7 @@ export default {
   },
   INTENT_BOT: {
     INTENT: '/bot/:id/intents',
-    CREATE_INTENT: '/bot/:id/intents/createIntent',
+    CREATE_INTENT: '/bot/:id/intents/create',
     DETAIL_INTENT: '/bot/:id/intents/detail/:id',
   },
 };

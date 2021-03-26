@@ -214,7 +214,7 @@ const CreateAction = ({ groupItems, groupActionId, handleCreate }) => {
         name={generateTitleItem('Action')}
         groupItems={groupItems}
         handleSave={handleSave}
-        groupActionId={groupActionId}
+        groupId={groupActionId}
       />
       <div className={classes.content}>
         {actions.map((action, index) => (

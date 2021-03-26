@@ -236,7 +236,7 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
         name={actionData && actionData.name}
         groupItems={groupItems}
         handleSave={handleSave}
-        groupActionId={actionData && actionData.groupAction}
+        groupId={actionData && actionData.groupAction}
       />
       <div className={classes.content}>
         {actions.map((action, index) => (

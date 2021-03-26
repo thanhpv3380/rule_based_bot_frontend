@@ -12,4 +12,7 @@ export default {
   CREATE_SUCCESS: 'Create success',
   DELETE_FAILED: ' Delete failed',
   DELETE_SUCCESS: 'Delete success',
+  ACTION_ASK_AGAIN: 'Action ask again',
+  NUMBER_OF_LOOP: 'Number of loop',
+  ACTION_BREAK: 'Action when too number loop',
 };

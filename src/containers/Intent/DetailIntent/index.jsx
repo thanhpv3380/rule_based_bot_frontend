@@ -1,173 +1,140 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable array-callback-return */
 /* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
-import { FormProvider, useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 import TranningPhrases from '../components/tranningPhrases';
 import Parameters from '../components/parameter';
 import ActionMapping from '../components/actionMapping';
-import ContentHeader from '../../../components/contentHeader';
+import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
 
-function IntentDetail() {
+// const parametersTest = [
+//   {
+//     id: 1,
+//     required: false,
+//     parameterName: 'Address',
+//     entity: {
+//       id: '604846064b55013ee876f670',
+//       name: 'Address',
+//     },
+//     response: {},
+//   },
+//   {
+//     id: 2,
+//     required: false,
+//     parameterName: 'Email',
+//     entity: {
+//       id: '604846064b55013ee876f670',
+//       name: 'Address',
+//     },
+//     response: {},
+//   },
+// ];
+
+function IntentDetail(props) {
   const classes = useStyles();
-  const methods = useForm({
-    defaultValues: {},
-    mode: 'all',
-  });
   const { id } = useParams();
+  const { groupItems, handleUpdate } = props;
   const { enqueueSnackbar } = useSnackbar();
   const [intent, setIntent] = useState({});
-  // const [currentGroup, setCurrentGroup] = useState(null);
-  const [groupSelect, setGroupSelect] = useState();
+  // const [groupSelect, setGroupSelect] = useState();
   const [patterns, setPatterns] = useState();
   const [userExpression, setUserExpression] = useState();
-  const [groups, setGroups] = useState();
+  const [actions, setActions] = useState([]);
 
-  const fetchGroupIntents = async () => {
-    const { results } = await apis.groupIntent.getGroupIntents('');
-    console.log(results);
-    if (results.groupIntents) {
-      results.groupIntents.find((group) => {
-        if (group.intents) {
-          group.intents.find((item) => {
-            if (item.id === id) {
-              setGroupSelect(group);
-            }
-          });
-        }
-      });
-      setGroups(results.groupIntents);
-      console.log(results.groupIntents);
+  const fetchIntent = async () => {
+    const data = await apis.intent.getIntent(id);
+    if (data.status) {
+      setIntent({ ...data.result, parameters: data.result.parameters || [] });
+      setPatterns(data.result.patterns);
     }
   };
 
-  const fetchIntent = async () => {
-    const { result, status } = await apis.intent.getIntent(id);
-    if (status === 1 && result) {
-      setIntent(result);
-      setPatterns(result.patterns);
-      console.log(result.patterns);
+  const fetchActions = async () => {
+    const data = await apis.action.getActions();
+
+    if (data.status) {
+      setActions(data.result.actions);
     }
   };
 
   useEffect(() => {
-    fetchGroupIntents();
     fetchIntent();
+    fetchActions();
   }, [id]);
 
-  const handleKeyDown = async (e) => {
-    if (e.keyCode === 13) {
-      const { value } = e.target;
-      await apis.intent.addUsersay(id, value);
-      fetchIntent();
-      setUserExpression('');
-    }
-  };
-
-  const handleDeleteUsersay = async (usersay) => {
-    const { status, code } = await apis.intent.removeUsersay(id, usersay);
-    if (status === 1 && !code) {
-      enqueueSnackbar('Delete usersay success', {
-        variant: 'success',
+  const handleSave = async (name, groupIntent) => {
+    console.log(intent.parameters);
+    const parameters =
+      intent.parameters &&
+      intent.parameters.map((el) => {
+        return {
+          parameterName: el.parameterName,
+          required: el.required,
+          entity: el.entity.id,
+          response: {
+            actionAskAgain:
+              el.response &&
+              el.response.actionAskAgain &&
+              el.response.actionAskAgain.id,
+            numberOfLoop: el.response.numberOfLoop,
+            actionBreak: el.response.actionBreak && el.response.actionBreak.id,
+          },
+        };
       });
-    } else {
-      enqueueSnackbar('Cannot fetch data', {
-        variant: 'error',
-      });
-    }
-    fetchIntent();
-  };
-
-  const handleChangeGroup = (e) => {
-    const { value } = e.target;
-    setGroupSelect(value);
-  };
-
-  const handleOnChangeNameIntent = (e) => {
-    const { value } = e.target;
-    setIntent({
-      ...intent,
-      name: value,
-    });
-  };
-
-  const handleChangeParameter = (e, field) => {
-    const { value, name } = e.target;
-    if (intent.parameters) {
-      if (field === 'name') {
-        const newParameter = intent.parameters.map((item) => {
-          if (item.name && item.name === name) {
-            item.name = value;
-            return item;
-          }
-          return item;
-        });
-        setIntent({
-          ...intent,
-          parameters: newParameter,
-        });
-      } else {
-        const newParameter = intent.parameters.map((item) => {
-          if (item.name === name) {
-            item.entity = value && value.id;
-            return item;
-          }
-          return item;
-        });
-        setIntent({
-          ...intent,
-          parameters: newParameter,
-        });
-      }
-    }
-  };
-
-  const handleDeleteParameter = async (parameter) => {
-    const { status } = await apis.intent.removeParameter(id, parameter);
-    if (status === 1) {
-      enqueueSnackbar('Remove parameter success', {
-        variant: 'success',
-      });
-    } else {
-      enqueueSnackbar('Cannot fetch data', {
-        variant: 'error',
-      });
-    }
-    fetchIntent();
-  };
-
-  const handleAddParameter = async (data) => {
-    const parameter = {
-      name: data.name,
-      entity: data.id,
-    };
-
-    const { status } = await apis.intent.addParameter(id, parameter);
-    if (status === 1) {
-      fetchIntent();
-      return true;
-    }
-    return false;
-  };
-
-  const handleSubmit = async () => {
     const newIntent = {
-      name: intent.name,
-      patterns: intent.patterns,
+      name,
+      patterns,
+      parameters,
       isMappingAction: intent.isMappingAction,
-      parameters: intent.parameters,
-      groupIntentId: groupSelect.id ? groupSelect.id : null,
+      groupIntent,
+      mappingAction: intent.mappingAction && intent.mappingAction.id,
     };
-    const { status } = await apis.intent.updateIntent(id, newIntent);
-    if (status === 1) {
+    console.log(newIntent);
+    const data = await apis.intent.updateIntent(id, newIntent);
+    if (data.status) {
+      const { result } = data;
       enqueueSnackbar('Update intent success', {
         variant: 'success',
       });
-      fetchIntent();
+      handleUpdate(result, intent.groupIntent);
+    } else {
+      const { code } = data;
+      enqueueSnackbar(`Cannot fetch data  ${code}`, {
+        variant: 'error',
+      });
+    }
+  };
+
+  // Component TranningPhrases
+  const handleKeyDown = async (e) => {
+    if (e.keyCode === 13) {
+      const { value } = e.target;
+      const data = await apis.intent.addUsersay(id, value);
+      if (data.status) {
+        const newPatterns = [...patterns];
+        newPatterns.push(value);
+        setPatterns(newPatterns);
+      }
+    }
+    // setUserExpression();
+  };
+
+  const handleDeleteUsersay = async (usersay) => {
+    const data = await apis.intent.removeUsersay(id, usersay);
+    if (data.status) {
+      const newIntent = { ...intent };
+      const newPatterns = newIntent.patterns.filter((el) => el !== usersay);
+      newIntent.patterns = newPatterns;
+      setIntent(newIntent);
+      setPatterns(newPatterns);
+      enqueueSnackbar('Delete usersay success', {
+        variant: 'success',
+      });
     } else {
       enqueueSnackbar('Cannot fetch data', {
         variant: 'error',
@@ -183,15 +150,65 @@ function IntentDetail() {
     setPatterns(newPattern);
   };
 
+  const handleChangePattern = (e, pos) => {
+    const { value } = e.target;
+    const newPatterns = [...patterns];
+    const newIntent = { ...intent };
+    newPatterns[pos] = value;
+    setPatterns(newPatterns);
+    setIntent(newIntent);
+  };
+
+  const handleChangeCheckBoxParameter = (position) => {
+    const newIntent = { ...intent };
+    newIntent.parameters[position].required = !newIntent.parameters[position]
+      .required;
+    setIntent(newIntent);
+  };
+
+  const handleAcceptEditParameter = (data, pos) => {
+    const newIntent = { ...intent };
+    newIntent.parameters[pos] = data;
+    setIntent(newIntent);
+  };
+
+  const handleAcceptAddParameter = (data) => {
+    const newIntent = { ...intent };
+    const newParameter = {
+      ...data,
+    };
+    newIntent.parameters.push(newParameter);
+    setIntent(newIntent);
+  };
+
+  const handleDeleteParameter = async (position) => {
+    const newIntent = { ...intent };
+    newIntent.parameters.splice(position, 1);
+    setIntent(newIntent);
+  };
+
+  // Function component actionMapping
+  const handleChangeIsMappingAction = (e) => {
+    setIntent({
+      ...intent,
+      isMappingAction: e.target.checked,
+    });
+  };
+
+  const handleChangeAction = (action) => {
+    setIntent({
+      ...intent,
+      mappingAction: action,
+    });
+    console.log(intent);
+  };
   return (
     <Card>
-      <ContentHeader
-        groups={groups}
-        item={intent}
-        handleChangeGroup={handleChangeGroup}
-        handleOnChangeName={handleOnChangeNameIntent}
-        groupSelect={groupSelect}
-        handleSubmit={handleSubmit}
+      <ItemInfoHeader
+        name={intent && intent.name}
+        groupItems={groupItems}
+        handleSave={handleSave}
+        groupId={intent && intent.groupIntent}
       />
       <CardContent className={classes.cardContent}>
         <TranningPhrases
@@ -201,22 +218,29 @@ function IntentDetail() {
           handleKeyDown={handleKeyDown}
           handleDelete={handleDeleteUsersay}
           handleChangeSearch={handleSearchPattern}
+          handleChangePattern={handleChangePattern}
         />
         <br />
         <Divider />
         <br />
-        <FormProvider {...methods}>
-          <Parameters
-            intent={intent}
-            handleChange={handleChangeParameter}
-            handleDelete={handleDeleteParameter}
-            handleAddParameter={handleAddParameter}
-          />
-        </FormProvider>
+        <Parameters
+          intent={intent}
+          actions={actions}
+          handleDelete={handleDeleteParameter}
+          handleChangeCheckBox={handleChangeCheckBoxParameter}
+          handleAcceptEdit={handleAcceptEditParameter}
+          handleAcceptAddParameter={handleAcceptAddParameter}
+        />
         <br />
         <Divider />
         <br />
-        <ActionMapping />
+        <ActionMapping
+          actions={actions}
+          actionData={intent && intent.mappingAction}
+          isMappingAction={intent && intent.isMappingAction}
+          handleChangeIsMappingAction={handleChangeIsMappingAction}
+          handleChangeAction={handleChangeAction}
+        />
       </CardContent>
     </Card>
   );

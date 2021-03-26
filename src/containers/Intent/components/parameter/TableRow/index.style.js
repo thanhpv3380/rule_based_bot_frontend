@@ -1,6 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
+  formControl: {
+    marginTop: theme.spacing(2),
+  },
   modal: {
     display: 'flex',
     marginTop: '10%',
@@ -17,13 +20,13 @@ const useStyles = makeStyles((theme) => ({
     outline: 'none',
     borderRadius: 10,
   },
-  formControl: {
-    '& .MuiOutlinedInput-root': {
-      borderRadius: 10,
-      backgroundColor: 'white',
-    },
-    marginTop: '4%',
-  },
+  //   formControl: {
+  //     '& .MuiOutlinedInput-root': {
+  //       borderRadius: 10,
+  //       backgroundColor: 'white',
+  //     },
+  //     marginTop: '4%',
+  //   },
   mutiInput: {
     '& .MuiOutlinedInput-root': {
       borderRadius: 10,
@@ -37,10 +40,6 @@ const useStyles = makeStyles((theme) => ({
     borderLeftColor: '#fff',
     borderRightColor: '#fff',
   },
-  textFieldModal: {
-    width: '100%',
-    marginTop: '4%',
-  },
   gridButtonModal: {
     marginTop: '1%',
   },
@@ -48,13 +47,19 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#e6e6e6',
   },
   iconTableCell: {
-    marginRight: '3%',
+    marginLeft: 10,
+  },
+  tableCell: {
+    width: '30%',
   },
   textInput: {
     '& .MuiOutlinedInput-root': {
       borderRadius: 10,
       fontSize: 20,
     },
+  },
+  borderRadius: {
+    borderRadius: 10,
   },
 }));
 

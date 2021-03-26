@@ -14,19 +14,30 @@ const useStyles = makeStyles(() => ({
   tableContainer: {
     minHeight: 300,
   },
-  underline: {
-    '&::after': {
-      border: '0px solid #fff',
-      content: '#fff',
-    },
-    '&::before': {
-      border: '0px solid #fff',
-      content: '#fff',
-    },
-    '&:hover': {
-      border: '0px solid #fff',
-    },
+  tableCell: {
+    position: 'relative',
   },
+  formatQuoteIcon: {
+    position: 'relative',
+    top: 7,
+    right: 10,
+  },
+  inputRow: {
+    width: '90%',
+  },
+  // underline: {
+  //   '&::after': {
+  //     border: '0px solid #fff',
+  //     content: '#fff',
+  //   },
+  //   '&::before': {
+  //     border: '0px solid #fff',
+  //     content: '#fff',
+  //   },
+  //   '&:hover': {
+  //     border: '0px solid #fff',
+  //   },
+  // },
 }));
 
 export default useStyles;
