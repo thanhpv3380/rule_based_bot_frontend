@@ -12,29 +12,6 @@ import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
 
-// const parametersTest = [
-//   {
-//     id: 1,
-//     required: false,
-//     parameterName: 'Address',
-//     entity: {
-//       id: '604846064b55013ee876f670',
-//       name: 'Address',
-//     },
-//     response: {},
-//   },
-//   {
-//     id: 2,
-//     required: false,
-//     parameterName: 'Email',
-//     entity: {
-//       id: '604846064b55013ee876f670',
-//       name: 'Address',
-//     },
-//     response: {},
-//   },
-// ];
-
 function IntentDetail(props) {
   const classes = useStyles();
   const { id } = useParams();
@@ -67,8 +44,8 @@ function IntentDetail(props) {
     fetchActions();
   }, [id]);
 
+  // function component itemInfoHeader
   const handleSave = async (name, groupIntent) => {
-    console.log(intent.parameters);
     const parameters =
       intent.parameters &&
       intent.parameters.map((el) => {
@@ -111,16 +88,14 @@ function IntentDetail(props) {
   };
 
   // Component TranningPhrases
-  const handleKeyDown = async (e) => {
-    if (e.keyCode === 13) {
-      const { value } = e.target;
-      const data = await apis.intent.addUsersay(id, value);
-      if (data.status) {
-        const newPatterns = [...patterns];
-        newPatterns.push(value);
-        setPatterns(newPatterns);
-      }
+  const handleKeyDown = async (value) => {
+    const data = await apis.intent.addUsersay(id, value);
+    if (data.status) {
+      const newPatterns = [...patterns];
+      newPatterns.push(value);
+      setPatterns(newPatterns);
     }
+
     // setUserExpression();
   };
 
@@ -159,6 +134,7 @@ function IntentDetail(props) {
     setIntent(newIntent);
   };
 
+  // function component Parameter
   const handleChangeCheckBoxParameter = (position) => {
     const newIntent = { ...intent };
     newIntent.parameters[position].required = !newIntent.parameters[position]
@@ -200,7 +176,6 @@ function IntentDetail(props) {
       ...intent,
       mappingAction: action,
     });
-    console.log(intent);
   };
   return (
     <Card>

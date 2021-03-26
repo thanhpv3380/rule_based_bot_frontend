@@ -30,10 +30,12 @@ function TranningPhrases(props) {
     handleChangeSearch,
     handleChangePattern,
   } = props;
-  const [userExpression, setUserExpression] = useState('');
-  const test = (e) => {
-    handleKeyDown(e);
-    setUserExpression('');
+  const [userExpression, setUserExpression] = useState();
+  const test = async (e) => {
+    if (e.keyCode === 13) {
+      await handleKeyDown(e.target.value);
+      setUserExpression('');
+    }
   };
   return (
     <Grid container>
@@ -63,9 +65,9 @@ function TranningPhrases(props) {
           placeholder={textDefault.ADD_USER_EXPRESSION}
           size="medium"
           // name="usersay"
-          defaultValue={userExpression}
+          value={userExpression}
           onChange={(e) => setUserExpression(e.target.value)}
-          onKeyDown={(e) => test(e)}
+          onKeyDown={test}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
