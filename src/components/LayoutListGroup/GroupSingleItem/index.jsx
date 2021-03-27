@@ -10,14 +10,15 @@ import useStyles from './index.style';
 const GroupItem = ({
   groupItem,
   pagination,
+  itemSelected,
   handleDeleteItem,
   handleClickItem,
 }) => {
   const classes = useStyles();
-  const [isHovering, setIsHovering] = useState(false);
+  const [hoveringItemId, setHoveringItemId] = useState();
 
-  const handleToggleHover = () => {
-    setIsHovering((prev) => !prev);
+  const handleToggleHover = (id) => {
+    setHoveringItemId(id);
   };
 
   const handlePrevDeleteItem = (e, id) => {
@@ -42,20 +43,20 @@ const GroupItem = ({
               key={item.id}
               className={[
                 classes.groupRoot,
-                // itemSelected === item.id && classes.itemSelected,
+                itemSelected === item.id && classes.itemSelected,
               ]}
               elevation={5}
             >
               <ListItem
                 onClick={() => handleClickItem(item.id)}
-                onMouseEnter={handleToggleHover}
-                onMouseLeave={handleToggleHover}
+                onMouseEnter={() => handleToggleHover(item.id)}
+                onMouseLeave={() => handleToggleHover()}
               >
                 <ListItemIcon>
                   <NotesIcon />
                 </ListItemIcon>
                 <ListItemText primary={item.name} />
-                {isHovering && (
+                {hoveringItemId === item.id && (
                   <MenuToggle
                     id={item.id}
                     icon={<MoreVertIcon />}
