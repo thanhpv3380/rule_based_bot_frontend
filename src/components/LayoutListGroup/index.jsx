@@ -220,7 +220,7 @@ const LayoutListGroup = ({
     <Grid container spacing={3}>
       <Grid item xs={12} md={4} lg={4} xl={4}>
         <>
-          <SearchBox handleSearch={handleSearch} size="large" />
+          <SearchBox handleSearch={handleSearch} size="medium" />
           <Box component="span" display="block" bgcolor="background.paper" />
           <div>
             <Button
