@@ -80,7 +80,7 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
   return (
     <div className={classes.root}>
       <List dense={dense} className={classes.list}>
-        <ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText>
             <Grid container spacing={2}>
               <Grid item xs={3}>
@@ -172,7 +172,6 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                       {inputEdit.map((elEdit, ind) => (
                         <Chip
                           size="small"
-                          color="primary"
                           label={elEdit}
                           onDelete={() => handleDeleteSynonymInputEdit(ind)}
                         />

@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
   content: {
-    padding: 20,
+    padding: theme.spacing(3),
   },
   margin: {
     margin: theme.spacing(0.5),
@@ -20,7 +20,5 @@ export default makeStyles((theme) => ({
   item: {
     textAlign: 'center',
   },
-  contentItem: {
-    padding: theme.spacing(2),
-  },
+  contentItem: {},
 }));

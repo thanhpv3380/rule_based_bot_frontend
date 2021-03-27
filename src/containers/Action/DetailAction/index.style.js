@@ -23,7 +23,8 @@ export default makeStyles((theme) => ({
     textAlign: 'center',
   },
   contentItem: {
-    background: '#fffcfc',
-    padding: theme.spacing(2),
+    // background: '#fffcfc',
+    padding: theme.spacing(3),
+    borderRadius: theme.spacing(0.5),
   },
 }));

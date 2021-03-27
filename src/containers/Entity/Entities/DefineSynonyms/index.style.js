@@ -15,6 +15,9 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     height: '100%',
   },
+  listItem: {
+    margin: 0,
+  },
 }));
 
 export default useStyles;

@@ -2,10 +2,10 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
   content: {
-    padding: 20,
+    padding: theme.spacing(5),
   },
-
-  contentDetail: {
-    padding: theme.spacing(2),
+  contentDetail: {},
+  formControl: {
+    display: 'flex',
   },
 }));

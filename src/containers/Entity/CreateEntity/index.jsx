@@ -91,7 +91,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     e.preventDefault();
     const data = await apis.entity.createEntity({
       name: entityData.name,
-      type: entityData.entityType,
+      type: entityData.type,
       pattern: entityData.pattern,
       synonyms: [...entityData.synonyms],
       patterns: [...entityData.patterns],
@@ -180,12 +180,12 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
       <div className={classes.content}>
         <Grid container spacing={3}>
           <Grid item xs={6}>
-            <FormControl component="fieldset">
+            <FormControl component="fieldset" className={classes.formControl}>
               <FormLabel component="legend">Entity Type</FormLabel>
               <RadioGroup
                 aria-label="entity"
                 name="entity1"
-                value={entityData.entityType}
+                value={entityData.type}
                 onChange={handleChangeEntityType}
               >
                 {menus.map((el) => (
