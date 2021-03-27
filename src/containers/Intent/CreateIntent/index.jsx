@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import TranningPhrases from '../components/tranningPhrases';
 import Parameters from '../components/parameter';
 import ActionMapping from '../components/actionMapping';
@@ -16,15 +16,13 @@ function CreateIntent(props) {
   const classes = useStyles();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
-  const botId = useSelector((state) => state.bot.bot);
+  // const botId = useSelector((state) => state.bot.bot);
   const { groupItems, groupIntentId, handleCreate } = props;
-  const [intent, setIntent] = useState({});
+  const [intent, setIntent] = useState({
+    name: generateTitleItem('intent'),
+    groupIntent: groupIntentId,
+  });
   const [actions, setActions] = useState([]);
-
-  const fetchIntent = async (id) => {
-    const { result } = await apis.intent.getIntent(id);
-    setIntent(result);
-  };
 
   const fetchActions = async () => {
     const data = await apis.action.getActions();
@@ -34,26 +32,36 @@ function CreateIntent(props) {
     }
   };
 
-  useEffect(async () => {
-    await fetchActions();
+  useEffect(() => {
+    fetchActions();
   }, []);
 
   // Todo
-  const handleKeyDown = async (e) => {
-    if (e.keyCode === 13) {
-      const { value } = e.target;
-      intent.patterns = [value];
-      intent.groupIntent = '603749e98c2f9549282fcbe2';
-      intent.name = generateTitleItem('intent');
-      const data = await apis.intent.createIntent(intent);
-      if (data.status) {
-        history.push(`detail/${data.result.id}`);
-        // fetchIntent();
-      } else {
-        enqueueSnackbar(data.message, {
-          variant: 'error',
-        });
-      }
+  const handleKeyDown = async (value) => {
+    intent.patterns = [value];
+    const data = await apis.intent.createIntent(intent);
+    if (data.status) {
+      handleCreate(data.result);
+      // history.push(`detail/${data.result.id}`);
+    } else {
+      enqueueSnackbar(data.message, {
+        variant: 'error',
+      });
+    }
+  };
+
+  const handleChangeInfoHeader = (e) => {
+    if (e.target.name === 'groupId') {
+      setIntent({
+        ...intent,
+        groupIntent: e.target.value,
+      });
+    }
+    if (e.target.name === 'name') {
+      setIntent({
+        ...intent,
+        name: e.target.value,
+      });
     }
   };
 
@@ -101,9 +109,7 @@ function CreateIntent(props) {
       enqueueSnackbar('Create intent success', {
         variant: 'success',
       });
-      // fetchIntent();
       history.push(`/intents/${data.result.id}`);
-      fetchIntent(data.result.id);
     } else {
       enqueueSnackbar('Cannot fetch data', {
         variant: 'error',
@@ -156,10 +162,11 @@ function CreateIntent(props) {
   return (
     <Card>
       <ItemInfoHeader
-        name={generateTitleItem('intent')}
+        name={intent && intent.name}
         groupItems={groupItems}
         handleSave={handleSave}
-        groupId={groupIntentId}
+        groupId={intent && intent.groupIntent}
+        handleChange={handleChangeInfoHeader}
       />
       <CardContent className={classes.cardContent}>
         <TranningPhrases intent={intent} handleKeyDown={handleKeyDown} />
