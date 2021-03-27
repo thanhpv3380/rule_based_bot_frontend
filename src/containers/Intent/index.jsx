@@ -200,7 +200,7 @@ const Intent = () => {
   return (
     <LayoutListGroup
       groupItems={groupAndItems}
-      title="intent"
+      title="Intent"
       handleSearch={handleSearch}
       handleCreateItem={handleOpenCreateItem}
       handleDeleteItem={handleDeleteItem}
@@ -211,13 +211,6 @@ const Intent = () => {
       handleToggleGroup={handleToggleGroup}
       handleClickItem={handleClickItem}
     >
-      <Route exact path={routes.INTENT_BOT.CREATE_INTENT}>
-        <CreateIntent
-          groupItems={groupAndItems}
-          groupIntentId={groupIdSelected}
-          handleCreate={handleCreateItem}
-        />
-      </Route>
       <Route exact path={routes.INTENT_BOT.DETAIL_INTENT}>
         <DetailIntent
           groupItems={groupAndItems}
@@ -225,6 +218,13 @@ const Intent = () => {
         />
       </Route>
       <Route exact path={routes.INTENT_BOT.INTENT} component={EmptyPage} />
+      <Route exact path={routes.INTENT_BOT.CREATE_INTENT}>
+        <CreateIntent
+          groupItems={groupAndItems}
+          groupIntentId={groupIdSelected}
+          handleCreate={handleCreateItem}
+        />
+      </Route>
     </LayoutListGroup>
   );
 };

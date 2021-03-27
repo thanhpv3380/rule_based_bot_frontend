@@ -167,7 +167,6 @@ const LayoutListGroup = ({
       startGroup,
       endGroup,
     } = calcPagination(newGroups, newGroupsSingle);
-    console.log({ startGroupSingle, endGroupSingle, startGroup, endGroup });
     setGroupsSingle({
       ...groupsSingle,
       data: newGroupsSingle,

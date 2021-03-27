@@ -25,8 +25,7 @@ export default makeStyles((theme) => ({
     color: theme.palette.black, // '#000000',
   },
   groupRoot: {
-    height: theme.spacing(6),
-    width: '90%',
+    padding: '0 10px',
     borderRadius: 10,
     margin: '10px 10px 10px 20px',
     cursor: 'pointer',

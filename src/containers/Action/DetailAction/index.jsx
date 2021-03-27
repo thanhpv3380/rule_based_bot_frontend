@@ -302,7 +302,7 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
       <div className={classes.content}>
         {actions.map((action, index) => (
           <div className={classes.actionItem} key={index}>
-            <Paper className={classes.contentItem}>
+            <Paper className={classes.contentItem} elevation={3}>
               {renderAction(action, index)}
             </Paper>
           </div>

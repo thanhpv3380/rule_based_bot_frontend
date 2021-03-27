@@ -197,7 +197,7 @@ function Action() {
   return (
     <LayoutListGroup
       groupItems={groupAndItems}
-      title="action"
+      title="Action"
       handleSearch={handleSearch}
       handleCreateItem={handleOpenCreateItem}
       handleDeleteItem={handleDeleteItem}

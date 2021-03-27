@@ -115,7 +115,6 @@ const ActionCategory = ({
           </IconButton>
         </Box>
       </Box>
-      <Divider />
       <List dense={dense}>
         <ListItem>
           <Grid container spacing={3}>

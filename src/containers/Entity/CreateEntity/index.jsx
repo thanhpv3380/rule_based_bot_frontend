@@ -21,24 +21,7 @@ import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
 import { generateTitleItem } from '../../../utils/generateTitle';
 import groupConstant from '../../../constants/group';
-
-const menus = [
-  {
-    heading: 'Define synonyms',
-    icon: '',
-    value: 1,
-  },
-  {
-    heading: 'Regex Entity',
-    icon: '',
-    value: 2,
-  },
-  {
-    heading: 'Complex entity',
-    icon: '',
-    value: 3,
-  },
-];
+import menus from '../../../data/EntityType.json';
 
 const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   const { t } = useTranslation();
@@ -48,10 +31,14 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     entityType: 1,
     name: '',
     groupEntity: '',
+    pattern: '',
+    synonyms: [],
+    patterns: [],
   });
 
   useEffect(() => {
     setEntityData({
+      ...entityData,
       name: generateTitleItem('Entity'),
       groupEntity: groupId,
     });
@@ -63,6 +50,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     );
 
     setEntityData({
+      ...entityData,
       name: generateTitleItem('Entity'),
       groupEntity: groupId || (temp && temp.id),
     });
@@ -70,17 +58,11 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
 
   useEffect(() => {
     setEntityData({
+      ...entityData,
       name: generateTitleItem('Entity'),
       groupEntity: groupId,
     });
   }, [groupId]);
-
-  const [entity, setEntity] = useState({
-    type: '',
-    pattern: '',
-    synonyms: [],
-    patterns: [],
-  });
 
   const handleChangeInfoHeader = (e) => {
     if (e.target.name === 'groupId') {
@@ -110,9 +92,9 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     const data = await apis.entity.createEntity({
       name: entityData.name,
       type: entityData.entityType,
-      pattern: entity.pattern,
-      synonyms: [...entity.synonyms],
-      patterns: [...entity.patterns],
+      pattern: entityData.pattern,
+      synonyms: [...entityData.synonyms],
+      patterns: [...entityData.patterns],
       groupEntity: entityData.groupEntity,
     });
     if (data && data.status) {
@@ -128,24 +110,24 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   };
 
   const handleAddRowSynonymsEntity = (data) => {
-    setEntity({
-      ...entity,
-      synonyms: [{ ...data }, ...entity.synonyms],
+    setEntityData({
+      ...entityData,
+      synonyms: [{ ...data }, ...entityData.synonyms],
     });
   };
 
   const handleDeleteRowSynonymsEntity = (pos) => {
-    setEntity({
-      ...entity,
-      synonyms: [...entity.synonyms.filter((el, index) => index !== pos)],
+    setEntityData({
+      ...entityData,
+      synonyms: [...entityData.synonyms.filter((el, index) => index !== pos)],
     });
   };
 
   const handleChangeRowSynonymsEntity = (pos, data) => {
-    setEntity({
-      ...entity,
+    setEntityData({
+      ...entityData,
       synonyms: [
-        ...entity.synonyms.map((el, index) => {
+        ...entityData.synonyms.map((el, index) => {
           if (index === pos) return { ...data };
           return el;
         }),
@@ -154,24 +136,24 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   };
 
   const handleAddRowComplexEntity = (data) => {
-    setEntity({
-      ...entity,
-      patterns: [{ ...data }, ...entity.patterns],
+    setEntityData({
+      ...entityData,
+      patterns: [{ ...data }, ...entityData.patterns],
     });
   };
 
   const handleDeleteRowComplexEntity = (pos) => {
-    setEntity({
-      ...entity,
-      patterns: [...entity.patterns.filter((el, index) => index !== pos)],
+    setEntityData({
+      ...entityData,
+      patterns: [...entityData.patterns.filter((el, index) => index !== pos)],
     });
   };
 
   const handleChangeRowComplexEntity = (pos, data) => {
-    setEntity({
-      ...entity,
+    setEntityData({
+      ...entityData,
       patterns: [
-        ...entity.patterns.map((el, index) => {
+        ...entityData.patterns.map((el, index) => {
           if (index === pos) return { ...data };
           return el;
         }),
@@ -180,8 +162,8 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   };
 
   const handleChangeRowRegexEntity = (data) => {
-    setEntity({
-      ...entity,
+    setEntityData({
+      ...entityData,
       pattern: data,
     });
   };
@@ -222,7 +204,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
         <div className={classes.contentDetail}>
           {entityData.entityType === 1 && (
             <EntityDefineSynonyms
-              items={entity.synonyms}
+              items={entityData.synonyms}
               handleAdd={handleAddRowSynonymsEntity}
               handleDelete={handleDeleteRowSynonymsEntity}
               handleChange={handleChangeRowSynonymsEntity}
@@ -230,13 +212,13 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
           )}
           {entityData.entityType === 2 && (
             <EntityRegex
-              item={entity.pattern}
+              item={entityData.pattern}
               handleChange={handleChangeRowRegexEntity}
             />
           )}
           {entityData.entityType === 3 && (
             <EntityComplex
-              items={entity.patterns}
+              items={entityData.patterns}
               handleAdd={handleAddRowComplexEntity}
               handleDelete={handleDeleteRowComplexEntity}
               handleChange={handleChangeRowComplexEntity}
