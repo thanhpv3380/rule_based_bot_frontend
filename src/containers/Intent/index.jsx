@@ -11,6 +11,7 @@ import LayoutListGroup from '../../components/LayoutListGroup';
 import EmptyPage from '../../components/EmptyPage';
 import DetailIntent from './DetailIntent';
 import CreateIntent from './CreateIntent';
+import groupConstant from '../../constants/group';
 
 let timeOutId = null;
 
@@ -48,12 +49,16 @@ const Intent = () => {
   };
 
   const handleOpenCreateItem = (id) => {
-    setGroupIdSelected(id || null);
+    const temp = groupAndItems.find(
+      (el) => el.groupType === groupConstant.GROUP_SINGLE,
+    );
+    setGroupIdSelected(id || temp.id);
     history.push(`${match.url}/create`);
   };
 
   const handleCreateItem = (data) => {
     const newGroupAndItems = [...groupAndItems];
+    console.log(newGroupAndItems);
     const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
     newGroupAndItems[pos].children.unshift({
       id: data.id,
@@ -62,6 +67,7 @@ const Intent = () => {
       // intents: data.actions,
     });
     newGroupAndItems[pos].status = true;
+    console.log(newGroupAndItems);
     setGroupAndItems(newGroupAndItems);
     history.push(`/bot/${botId}/intents/detail/${data.id}`);
   };

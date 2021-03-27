@@ -42,9 +42,12 @@ function Parameter(props) {
     }
   };
 
-  const handleAcceptAdd = (data) => {
-    handleAcceptAddParameter(data);
-    setIsCreate(false);
+  const handleAcceptAdd = async (data) => {
+    const status = await handleAcceptAddParameter(data);
+    if (status) {
+      setIsCreate(false);
+    }
+    return status;
   };
 
   useEffect(() => {

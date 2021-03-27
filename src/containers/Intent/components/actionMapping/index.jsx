@@ -13,7 +13,6 @@ function ActionMapping(props) {
     handleChangeIsMappingAction,
   } = props;
 
-  console.log(actionData);
   return (
     <Grid container>
       <Grid item xs={4}>
@@ -25,12 +24,11 @@ function ActionMapping(props) {
           that the mapped action will always be executed
         </Typography>
       </Grid>
-      <Grid item xs={12} style={{ marginTop: 5 }}>
+      <Grid item xs={12} className={classes.gridItem}>
         <Autocomplete
           options={actions}
           // getOptionLabel={(option) => (option ? option.name : '')}
           getOptionLabel={(option) => {
-            console.log(option.name);
             return option.name;
           }}
           onChange={(event, newValue) => {
@@ -50,7 +48,7 @@ function ActionMapping(props) {
           )}
         />
       </Grid>
-      <Grid item style={{ marginTop: 5 }}>
+      <Grid item className={classes.gridItem}>
         <Switch
           checked={isMappingAction || false}
           onChange={handleChangeIsMappingAction}

@@ -81,9 +81,11 @@ function TableRowCustom(props) {
       : 1,
   );
 
-  const handleClickAccept = () => {
-    handleAccept(parameter, position);
-    setParameter({ ...parameter, isEdit: false });
+  const handleClickAccept = async () => {
+    const status = await handleAccept(parameter, position);
+    if (status) {
+      setParameter({ ...parameter, isEdit: false });
+    }
   };
 
   const handleChangeName = (e) => {

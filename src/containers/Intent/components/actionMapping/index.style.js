@@ -7,6 +7,9 @@ const useStyles = makeStyles(() => ({
       fontSize: 20,
     },
   },
+  gridItem: {
+    marginTop: 5,
+  },
 }));
 
 export default useStyles;

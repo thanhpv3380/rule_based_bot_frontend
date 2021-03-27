@@ -44,7 +44,7 @@ function IntentDetail(props) {
   }, [intentId]);
 
   // function component itemInfoHeader
-  const handleSave = async (name, groupIntent) => {
+  const handleSave = async () => {
     const parameters =
       intent.parameters &&
       intent.parameters.map((el) => {
@@ -63,11 +63,11 @@ function IntentDetail(props) {
         };
       });
     const newIntent = {
-      name,
+      name: intent.name,
       patterns,
       parameters,
       isMappingAction: intent.isMappingAction,
-      groupIntent,
+      groupIntent: intent.groupIntent,
       mappingAction: intent.mappingAction && intent.mappingAction.id,
     };
     console.log(newIntent);
@@ -82,6 +82,21 @@ function IntentDetail(props) {
       const { code } = data;
       enqueueSnackbar(`Cannot fetch data  ${code}`, {
         variant: 'error',
+      });
+    }
+  };
+
+  const handleChangeInfoHeader = (e) => {
+    if (e.target.name === 'groupId') {
+      setIntent({
+        ...intent,
+        groupIntent: e.target.value,
+      });
+    }
+    if (e.target.name === 'name') {
+      setIntent({
+        ...intent,
+        name: e.target.value,
       });
     }
   };
@@ -143,17 +158,65 @@ function IntentDetail(props) {
 
   const handleAcceptEditParameter = (data, pos) => {
     const newIntent = { ...intent };
+    let checkName = false;
+    let checkEntity = false;
+    for (let i = 0; i < newIntent.parameters.length; i++) {
+      const el = newIntent.parameters[i];
+      if (el.parameterName === data.parameterName) {
+        checkName = true;
+      }
+      if (el.entity.id === data.entity.id) {
+        checkEntity = true;
+      }
+    }
+    if (checkName) {
+      enqueueSnackbar('Parameter name existed', {
+        variant: 'error',
+      });
+      return false;
+    }
+    if (checkEntity) {
+      enqueueSnackbar('Entity existed', {
+        variant: 'error',
+      });
+      return false;
+    }
     newIntent.parameters[pos] = data;
     setIntent(newIntent);
+    return true;
   };
 
   const handleAcceptAddParameter = (data) => {
     const newIntent = { ...intent };
+    let checkName = false;
+    let checkEntity = false;
+    for (let i = 0; i < newIntent.parameters.length; i++) {
+      const el = newIntent.parameters[i];
+      if (el.parameterName === data.parameterName) {
+        checkName = true;
+      }
+      if (el.entity.id === data.entity.id) {
+        checkEntity = true;
+      }
+    }
+    if (checkName) {
+      enqueueSnackbar('Parameter name existed', {
+        variant: 'error',
+      });
+      return false;
+    }
+    if (checkEntity) {
+      enqueueSnackbar('Entity existed', {
+        variant: 'error',
+      });
+      return false;
+    }
     const newParameter = {
       ...data,
     };
     newIntent.parameters.push(newParameter);
     setIntent(newIntent);
+    return true;
   };
 
   const handleDeleteParameter = async (position) => {
@@ -164,6 +227,7 @@ function IntentDetail(props) {
 
   // Function component actionMapping
   const handleChangeIsMappingAction = (e) => {
+    e.preventDefault();
     setIntent({
       ...intent,
       isMappingAction: e.target.checked,
@@ -183,6 +247,7 @@ function IntentDetail(props) {
         groupItems={groupItems}
         handleSave={handleSave}
         groupId={intent && intent.groupIntent}
+        handleChange={handleChangeInfoHeader}
       />
       <CardContent className={classes.cardContent}>
         <TranningPhrases
