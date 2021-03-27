@@ -21,24 +21,7 @@ import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
 import { generateTitleItem } from '../../../utils/generateTitle';
 import groupConstant from '../../../constants/group';
-
-const menus = [
-  {
-    heading: 'Define synonyms',
-    icon: '',
-    value: 1,
-  },
-  {
-    heading: 'Regex Entity',
-    icon: '',
-    value: 2,
-  },
-  {
-    heading: 'Complex entity',
-    icon: '',
-    value: 3,
-  },
-];
+import menus from '../../../data/EntityType.json';
 
 const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   const { t } = useTranslation();

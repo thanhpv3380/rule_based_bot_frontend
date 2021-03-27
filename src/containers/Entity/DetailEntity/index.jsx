@@ -19,24 +19,7 @@ import { EntityDefineSynonyms, EntityComplex, EntityRegex } from '../Entities';
 import useStyles from './index.style';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
-
-const menus = [
-  {
-    heading: 'Define synonyms',
-    icon: '',
-    value: '1',
-  },
-  {
-    heading: 'Regex Entity',
-    icon: '',
-    value: '2',
-  },
-  // {
-  //   heading: 'Complex entity',
-  //   icon: '',
-  //   value: '3',
-  // },
-];
+import menus from '../../../data/EntityType.json';
 
 const DetailEntity = ({ groupItems, handleUpdate }) => {
   const { t } = useTranslation();

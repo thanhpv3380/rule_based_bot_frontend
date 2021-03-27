@@ -101,7 +101,6 @@ const ActionText = ({
           </IconButton>
         </Box>
       </Box>
-      <Divider />
 
       <List dense={dense}>
         {item &&

@@ -256,7 +256,7 @@ const LayoutListGroup = ({
                         onKeyDown={handleListKeyDown}
                       >
                         <MenuItem onClick={handleOpenCreateSingle}>
-                          Create Action
+                          Create {title}
                         </MenuItem>
                         <MenuItem onClick={handleOpenCreateGroup}>
                           Create Group

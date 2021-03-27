@@ -97,7 +97,6 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                 <Box display="flex">
                   {input.map((el, index) => (
                     <Chip
-                      variant="outlined"
                       size="small"
                       label={el}
                       onDelete={() => handleDeleteSynonymInput(index)}
@@ -136,8 +135,11 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                   </Grid>
                   <Grid item xs={7}>
                     {item.input &&
-                      item.input.map((el) => (
-                        <span onClick={() => handleClickRow(index)}>{el}</span>
+                      item.input.map((el, ind) => (
+                        <span onClick={() => handleClickRow(index)}>
+                          {el}
+                          {ind !== item.input.length - 1 && ', '}
+                        </span>
                       ))}
                   </Grid>
                   <Grid item xs={2}>
@@ -169,8 +171,8 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                     <Box display="flex">
                       {inputEdit.map((elEdit, ind) => (
                         <Chip
-                          variant="outlined"
                           size="small"
+                          color="primary"
                           label={elEdit}
                           onDelete={() => handleDeleteSynonymInputEdit(ind)}
                         />

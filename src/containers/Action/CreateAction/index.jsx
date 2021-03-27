@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
-import { ListItem, ListItemText, Paper } from '@material-ui/core';
+import { ListItem, ListItemText, Paper, Box } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import {
   ActionText,
@@ -313,7 +313,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
       <div className={classes.content}>
         {actions.map((action, index) => (
           <div className={classes.actionItem} key={index}>
-            <Paper className={classes.contentItem}>
+            <Paper className={classes.contentItem} elevation={3}>
               {renderAction(action, index)}
             </Paper>
           </div>

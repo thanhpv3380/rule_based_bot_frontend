@@ -193,7 +193,7 @@ const Entity = () => {
   return (
     <LayoutListGroup
       groupItems={groupAndItems}
-      title="entity"
+      title="Entity"
       handleSearch={handleSearch}
       handleCreateItem={handleOpenCreateItem}
       handleDeleteItem={handleDeleteItem}
