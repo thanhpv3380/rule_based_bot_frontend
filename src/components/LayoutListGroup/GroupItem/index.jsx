@@ -35,7 +35,7 @@ const GroupItem = ({
 }) => {
   //  console.log(groupItem);
   const classes = useStyles();
-  const [isHovering, setIsHovering] = useState(false);
+  const [hoveringItemId, setHoveringItemId] = useState();
   const [isChange, setIsChange] = useState(false);
   const [nameGroup, setNameGroup] = useState('');
   const [pagination, setPagination] = useState({
@@ -43,6 +43,10 @@ const GroupItem = ({
     rowsPerPage: 5,
     count: 100,
   });
+
+  const handleToggleHover = (id) => {
+    setHoveringItemId(id);
+  };
 
   const handleChangePage = async (event, newPage) => {
     setPagination({
@@ -65,10 +69,6 @@ const GroupItem = ({
       count: groupItem.children.length,
     });
   }, [groupItem.children.length]);
-
-  const handleToggleHover = () => {
-    setIsHovering((prev) => !prev);
-  };
 
   const handleToggleGroup = (e) => {
     e.stopPropagation();
@@ -174,7 +174,7 @@ const GroupItem = ({
             }}
           >
             <ListItemIcon>
-              {groupItem.status ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+              {groupItem.status ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ListItemIcon>
             <ListItemText primary={groupItem.name} />
             <MenuToggle
@@ -198,20 +198,20 @@ const GroupItem = ({
                       key={item.id}
                       className={[
                         classes.groupRoot,
-                        // itemSelected === item.id && classes.itemSelected,
+                        itemSelected === item.id && classes.itemSelected,
                       ]}
                       elevation={5}
                     >
                       <ListItem
                         onClick={() => handleClickItem(item.id)}
-                        onMouseEnter={handleToggleHover}
-                        onMouseLeave={handleToggleHover}
+                        onMouseEnter={() => handleToggleHover(item.id)}
+                        onMouseLeave={() => handleToggleHover()}
                       >
                         <ListItemIcon>
                           <NotesIcon />
                         </ListItemIcon>
                         <ListItemText primary={item.name} />
-                        {isHovering && (
+                        {hoveringItemId === item.id && (
                           <MenuToggle
                             id={item.id}
                             icon={<MoreVertIcon />}

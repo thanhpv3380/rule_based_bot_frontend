@@ -34,8 +34,8 @@ function CreateIntent(props) {
     }
   };
 
-  useEffect(async () => {
-    await fetchActions();
+  useEffect(() => {
+    fetchActions();
   }, []);
 
   // Todo

@@ -15,12 +15,15 @@ export default makeStyles((theme) => ({
     boxShadow: theme.shadows[3],
   },
   actionItem: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(3),
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(2),
   },
   item: {
     textAlign: 'center',
   },
   contentItem: {
+    background: '#fffcfc',
     padding: theme.spacing(2),
   },
 }));

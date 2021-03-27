@@ -78,7 +78,6 @@ const ActionText = ({
       <Typography variant="button" gutterBottom>
         {example}
       </Typography>
-      <Divider />
       <form noValidate autoComplete="off">
         <Box mb={1.5} mt={1.5}>
           {title === textDefault.ACTIONS.AUDIO && item.media.url && (

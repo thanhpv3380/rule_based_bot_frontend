@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from 'react';
 import {
   List,
@@ -7,7 +8,10 @@ import {
   TextField,
   Button,
   Chip,
+  IconButton,
+  Box,
 } from '@material-ui/core';
+import { Delete as DeleteIcon } from '@material-ui/icons';
 import useStyles from './index.style';
 import textDefault from '../../../../constants/textDefault';
 
@@ -17,8 +21,11 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
   const [output, setOutput] = useState('');
   const [currentInput, setCurrentInput] = useState('');
   const [input, setInput] = useState([]);
+  const [rowEdit, setRowEdit] = useState();
+  const [outputEdit, setOutputEdit] = useState('');
+  const [currentInputEdit, setCurrentInputEdit] = useState('');
+  const [inputEdit, setInputEdit] = useState([]);
 
-  console.log(items);
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       setInput([...input, currentInput]);
@@ -26,6 +33,12 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
     }
   };
 
+  const handleKeyPressEdit = (e) => {
+    if (e.key === 'Enter') {
+      setInputEdit([...inputEdit, currentInputEdit]);
+      setCurrentInputEdit('');
+    }
+  };
   const handleAddSynonym = (e) => {
     e.preventDefault();
     handleAdd({ output, input: [...input] });
@@ -34,8 +47,34 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
     setCurrentInput('');
   };
 
+  const handleChangeSynonym = (index) => {
+    handleChange(index, { output: outputEdit, input: [...inputEdit] });
+    setOutputEdit('');
+    setInputEdit([]);
+    setCurrentInputEdit('');
+    setRowEdit();
+  };
+
   const handleDeleteSynonymInput = (pos) => {
     setInput([...input.slice(0, pos), ...input.slice(pos + 1, input.length)]);
+  };
+
+  const handleDeleteSynonymInputEdit = (pos) => {
+    setInputEdit([
+      ...inputEdit.slice(0, pos),
+      ...inputEdit.slice(pos + 1, inputEdit.length),
+    ]);
+  };
+
+  const handleClickRow = (pos) => {
+    setOutputEdit(items[pos].output);
+    setInputEdit([...items[pos].input]);
+    setCurrentInputEdit('');
+    setRowEdit(pos);
+  };
+
+  const handleFocus = () => {
+    setRowEdit();
   };
 
   return (
@@ -44,32 +83,35 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
         <ListItem>
           <ListItemText>
             <Grid container spacing={2}>
-              <Grid item xs={5}>
+              <Grid item xs={3}>
                 <TextField
                   id="standard-required"
                   className={classes.input}
                   placeholder={textDefault.ENTER_VALUE}
                   value={output}
+                  onFocus={handleFocus}
                   onChange={(e) => setOutput(e.target.value)}
                 />
               </Grid>
-              <Grid item xs={5}>
-                {input.map((el, index) => (
-                  <Chip
-                    variant="outlined"
-                    size="small"
-                    label={el}
-                    onDelete={() => handleDeleteSynonymInput(index)}
+              <Grid item xs={7}>
+                <Box display="flex">
+                  {input.map((el, index) => (
+                    <Chip
+                      size="small"
+                      label={el}
+                      onDelete={() => handleDeleteSynonymInput(index)}
+                    />
+                  ))}
+                  <TextField
+                    id="standard-required"
+                    className={classes.input}
+                    placeholder={textDefault.ENTER_SYNONYMS}
+                    value={currentInput}
+                    onChange={(e) => setCurrentInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    onFocus={handleFocus}
                   />
-                ))}
-                <TextField
-                  id="standard-required"
-                  className={classes.input}
-                  placeholder={textDefault.ENTER_SYNONYMS}
-                  value={currentInput}
-                  onChange={(e) => setCurrentInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                />
+                </Box>
               </Grid>
               <Grid item xs={2}>
                 <Button color="primary" fullWidth onClick={handleAddSynonym}>
@@ -81,30 +123,84 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
         </ListItem>
       </List>
       <List dense={dense} className={classes.list}>
-        {items.map((item) => (
-          <ListItem>
-            <ListItemText>
-              <Grid container spacing={2}>
-                <Grid item xs={5}>
-                  <TextField
-                    id="standard-required"
-                    className={classes.input}
-                    placeholder={textDefault.ENTER_VALUE}
-                    value={item.output}
-                  />
+        {items.map((item, index) =>
+          index !== rowEdit ? (
+            <ListItem>
+              <ListItemText>
+                <Grid container spacing={2}>
+                  <Grid item xs={3}>
+                    <span onClick={() => handleClickRow(index)}>
+                      {item.output}
+                    </span>
+                  </Grid>
+                  <Grid item xs={7}>
+                    {item.input &&
+                      item.input.map((el, ind) => (
+                        <span onClick={() => handleClickRow(index)}>
+                          {el}
+                          {ind !== item.input.length - 1 && ', '}
+                        </span>
+                      ))}
+                  </Grid>
+                  <Grid item xs={2}>
+                    <IconButton
+                      aria-label="delete"
+                      className={classes.margin}
+                      onClick={() => handleDelete(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Grid>
                 </Grid>
-                <Grid item xs={5}>
-                  {item.input && item.input.map((el) => <span>{el}, </span>)}
+              </ListItemText>
+            </ListItem>
+          ) : (
+            <ListItem>
+              <ListItemText>
+                <Grid container spacing={2}>
+                  <Grid item xs={3}>
+                    <TextField
+                      id="standard-required"
+                      className={classes.input}
+                      placeholder={textDefault.ENTER_VALUE}
+                      value={outputEdit}
+                      onChange={(e) => setOutputEdit(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Box display="flex">
+                      {inputEdit.map((elEdit, ind) => (
+                        <Chip
+                          size="small"
+                          color="primary"
+                          label={elEdit}
+                          onDelete={() => handleDeleteSynonymInputEdit(ind)}
+                        />
+                      ))}
+                      <TextField
+                        id="standard-required"
+                        className={classes.input}
+                        placeholder={textDefault.ENTER_SYNONYMS}
+                        value={currentInputEdit}
+                        onChange={(e) => setCurrentInputEdit(e.target.value)}
+                        onKeyPress={handleKeyPressEdit}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Button
+                      color="primary"
+                      fullWidth
+                      onClick={() => handleChangeSynonym(index)}
+                    >
+                      {textDefault.EDIT}
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item xs={2}>
-                  <Button color="primary" fullWidth onClick={handleAddSynonym}>
-                    {textDefault.ADD}
-                  </Button>
-                </Grid>
-              </Grid>
-            </ListItemText>
-          </ListItem>
-        ))}
+              </ListItemText>
+            </ListItem>
+          ),
+        )}
       </List>
     </div>
   );

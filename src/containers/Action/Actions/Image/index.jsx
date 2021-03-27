@@ -67,15 +67,16 @@ const ActionSendImage = ({
           </IconButton>
         </Box>
       </Box>
-      <Divider />
-
+      <Typography gutterBottom>Send an image link in the chat.</Typography>{' '}
       <form noValidate autoComplete="off">
-        <Box mb={1.5} mt={1.5}>
-          <img
-            src={(item.media && item.media.url) || ''}
-            className={classes.prevImage}
-          />
-        </Box>
+        {item.media.url && (
+          <Box mb={1.5} mt={1.5}>
+            <img
+              src={(item.media && item.media.url) || ''}
+              className={classes.prevImage}
+            />
+          </Box>
+        )}
         <Box mb={1.5} display="flex">
           <div className={classes.uploadBtn}>
             <input
