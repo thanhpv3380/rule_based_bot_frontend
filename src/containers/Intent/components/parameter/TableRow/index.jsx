@@ -90,9 +90,17 @@ function TableRowCustom(props) {
 
   const handleChangeName = (e) => {
     const { value } = e.target;
-    const newParameter = { ...parameter };
-    newParameter.parameterName = value;
-    setParameter(newParameter);
+    console.log(value);
+    const regex = new RegExp('^[a-zA-Z_]+$');
+    if (!regex.test(value)) {
+      enqueueSnackbar('Parameter name includes only letters and _', {
+        variant: 'error',
+      });
+    } else {
+      const newParameter = { ...parameter };
+      newParameter.parameterName = value;
+      setParameter(newParameter);
+    }
   };
 
   const handleOpenModal = () => {

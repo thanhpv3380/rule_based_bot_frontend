@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable no-plusplus */
 /* eslint-disable array-callback-return */
 /* eslint-disable no-param-reassign */
@@ -50,7 +51,7 @@ function IntentDetail(props) {
       intent.parameters.map((el) => {
         return {
           parameterName: el.parameterName,
-          required: el.required,
+          required: el.required || false,
           entity: el.entity.id,
           response: {
             actionAskAgain:
@@ -156,16 +157,19 @@ function IntentDetail(props) {
     setIntent(newIntent);
   };
 
-  const handleAcceptEditParameter = (data, pos) => {
-    const newIntent = { ...intent };
+  const checkParameterExisted = (newIntent, data, pos) => {
     let checkName = false;
     let checkEntity = false;
+    let checkExist = false;
     for (let i = 0; i < newIntent.parameters.length; i++) {
       const el = newIntent.parameters[i];
+      if (pos === i) {
+        continue;
+      }
       if (el.parameterName === data.parameterName) {
         checkName = true;
       }
-      if (el.entity.id === data.entity.id) {
+      if (el.entity && el.entity.id === data.entity.id) {
         checkEntity = true;
       }
     }
@@ -173,12 +177,44 @@ function IntentDetail(props) {
       enqueueSnackbar('Parameter name existed', {
         variant: 'error',
       });
-      return false;
+      checkExist = true;
     }
     if (checkEntity) {
       enqueueSnackbar('Entity existed', {
         variant: 'error',
       });
+      checkExist = true;
+    }
+    return checkExist;
+  };
+
+  const checkParameterNull = (data) => {
+    let checkNull = false;
+    if (!data.entity.id) {
+      enqueueSnackbar('Entity can not be empty!', {
+        variant: 'error',
+      });
+      checkNull = true;
+    }
+    if (!data.parameterName) {
+      enqueueSnackbar('Parameter name can not be empty!', {
+        variant: 'error',
+      });
+      checkNull = true;
+    }
+    return checkNull;
+  };
+
+  const handleAcceptEditParameter = (data, pos) => {
+    const newIntent = { ...intent };
+    const checkNull = checkParameterNull(data);
+
+    if (checkNull) {
+      return false;
+    }
+    const checkExist = checkParameterExisted(newIntent, data, pos);
+
+    if (checkExist) {
       return false;
     }
     newIntent.parameters[pos] = data;
@@ -203,14 +239,16 @@ function IntentDetail(props) {
       enqueueSnackbar('Parameter name existed', {
         variant: 'error',
       });
-      return false;
     }
     if (checkEntity) {
       enqueueSnackbar('Entity existed', {
         variant: 'error',
       });
+    }
+    if (checkName || checkEntity) {
       return false;
     }
+
     const newParameter = {
       ...data,
     };

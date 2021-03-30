@@ -16,6 +16,7 @@ import groupConstant from '../../constants/group';
 let timeOutId = null;
 
 const Intent = () => {
+  // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   const match = useRouteMatch();
   const history = useHistory();
@@ -176,6 +177,7 @@ const Intent = () => {
       enqueueSnackbar(textDefault.DELETE_SUCCESS, {
         variant: 'success',
       });
+      history.push(`/bot/${botId}/intents`);
     } else {
       enqueueSnackbar(textDefault.DELETE_FAILED, {
         variant: 'error',
