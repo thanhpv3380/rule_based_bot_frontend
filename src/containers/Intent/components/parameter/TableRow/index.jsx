@@ -90,7 +90,6 @@ function TableRowCustom(props) {
 
   const handleChangeName = (e) => {
     const { value } = e.target;
-    console.log(value);
     const regex = new RegExp('^[a-zA-Z_]+$');
     if (!regex.test(value)) {
       enqueueSnackbar('Parameter name includes only letters and _', {
