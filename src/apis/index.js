@@ -8,6 +8,7 @@ import * as entity from './entity';
 import * as groupEntity from './groupEntity';
 import * as dictionary from './dictionary';
 import * as upload from './upload';
+import * as chatbot from './chatbot';
 
 export default {
   auth,
@@ -20,4 +21,5 @@ export default {
   groupEntity,
   dictionary,
   upload,
+  chatbot,
 };

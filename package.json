@@ -16,6 +16,7 @@
     "@material-ui/styles": "^4.11.3",
     "axios": "^0.19.2",
     "camelcase-keys": "^6.2.2",
+    "chat-ui-react": "^0.2.13",
     "clsx": "^1.1.1",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",

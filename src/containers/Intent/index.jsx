@@ -59,7 +59,6 @@ const Intent = () => {
 
   const handleCreateItem = (data) => {
     const newGroupAndItems = [...groupAndItems];
-    console.log(newGroupAndItems);
     const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
     newGroupAndItems[pos].children.unshift({
       id: data.id,
@@ -68,7 +67,6 @@ const Intent = () => {
       // intents: data.actions,
     });
     newGroupAndItems[pos].status = true;
-    console.log(newGroupAndItems);
     setGroupAndItems(newGroupAndItems);
     history.push(`/bot/${botId}/intents/detail/${data.id}`);
   };

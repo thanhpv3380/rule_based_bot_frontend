@@ -110,8 +110,6 @@ function IntentDetail(props) {
       newPatterns.push(value);
       setPatterns(newPatterns);
     }
-
-    // setUserExpression();
   };
 
   const handleDeleteUsersay = async (usersay) => {
