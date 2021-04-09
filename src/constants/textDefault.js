@@ -28,4 +28,5 @@ export default {
   ENTER_VALUE: 'Enter value',
   ENTER_SYNONYMS: 'Enter Synonyms',
   ENTER_TO_INPUT_OTHER_ENTITY: 'Enter @ to input other entity',
+  TITLE: 'Title',
 };

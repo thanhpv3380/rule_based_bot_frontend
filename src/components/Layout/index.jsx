@@ -10,6 +10,8 @@ import {
   Code,
   SettingsInputComponent,
   MenuBook,
+  Description,
+  CallSplit,
 } from '@material-ui/icons';
 import { getCookie } from '../../utils/cookie';
 import actions from '../../redux/actions';
@@ -57,6 +59,17 @@ const Layout = ({ children, isLayout }) => {
           route: `/bot/${botId}/dictionary`,
           icon: <MenuBook />,
           heading: 'Dictionary',
+        },
+      ],
+    },
+    {
+      heading: 'Script',
+      icon: <Description />,
+      subMenus: [
+        {
+          route: `/bot/${botId}/workflows`,
+          icon: <CallSplit />,
+          heading: 'Workflow',
         },
       ],
     },

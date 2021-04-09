@@ -6,6 +6,7 @@ import Dictionary from '../pages/Dictionary';
 import Action from '../pages/Action';
 import Intent from '../pages/Intent';
 import Entity from '../pages/Entity';
+import Workflow from '../pages/Workflow';
 
 export default [
   {
@@ -59,6 +60,14 @@ export default [
   {
     path: routes.ENTITY_BOT.ENTITY,
     component: Entity,
+    exact: false,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+  },
+  {
+    path: routes.WORKFLOW_BOT.WORKFLOW,
+    component: Workflow,
     exact: false,
     restricted: false,
     isPrivate: true,

@@ -5,13 +5,14 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
-import { ListItem, ListItemText, Paper, Box } from '@material-ui/core';
+import { ListItem, ListItemText, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import {
   ActionText,
   ActionImage,
   ActionMedia,
   ActionCategory,
+  ActionJsonApi,
 } from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
@@ -138,6 +139,21 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     ]);
   };
 
+  const handleAddJsonApi = () => {
+    setActions([
+      ...actions,
+      {
+        typeAction: actionsConstant.JSON_API,
+        api: {
+          method: 'GET',
+          url: '',
+          headers: [],
+          body: [],
+        },
+      },
+    ]);
+  };
+
   const handleAddTextItem = (id, value) => {
     const newActions = [...actions];
     if (value.length <= 0) {
@@ -196,6 +212,89 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
       ...newActions[id].media,
       [name]: value,
     };
+    setActions(newActions);
+  };
+
+  const handleChangeJsonApiInfoItem = (id, name, value) => {
+    const newActions = [...actions];
+    newActions[id].api = {
+      ...newActions[id].api,
+      [name]: value,
+    };
+    setActions(newActions);
+  };
+
+  const handleAddHeaderApiItem = (id) => {
+    const newActions = [...actions];
+    const { headers } = newActions[id].api;
+    const lastHeaderItem = headers[headers.length - 1];
+    if (lastHeaderItem) {
+      const { title, value } = lastHeaderItem;
+      if (title.trim() === '' && value.trim() === '') {
+        enqueueSnackbar('There are empty field', {
+          variant: 'warning',
+        });
+        return;
+      }
+    }
+    newActions[id].api.headers.push({
+      title: '',
+      value: '',
+    });
+    setActions(newActions);
+  };
+
+  const handleChangeHeaderApiItem = (actionId, headerId, name, value) => {
+    const newActions = [...actions];
+    newActions[actionId].api.headers[headerId] = {
+      ...newActions[actionId].api.headers[headerId],
+      [name]: value,
+    };
+    setActions(newActions);
+  };
+
+  const handleDeleteHeaderApiItem = (actionId, headerId) => {
+    const newActions = [...actions];
+    newActions[actionId].api.headers = newActions[actionId].api.headers.filter(
+      (el, index) => index !== headerId,
+    );
+    setActions(newActions);
+  };
+
+  const handleAddBodyApiItem = (id) => {
+    const newActions = [...actions];
+    const { body } = newActions[id].api;
+    const lastBodyItem = body[body.length - 1];
+    if (lastBodyItem) {
+      const { title, value } = lastBodyItem;
+      if (title.trim() === '' && value.trim() === '') {
+        enqueueSnackbar('There are empty field', {
+          variant: 'warning',
+        });
+        return;
+      }
+    }
+    newActions[id].api.body.push({
+      title: '',
+      value: '',
+    });
+    setActions(newActions);
+  };
+
+  const handleChangeBodyApiItem = (actionId, bodyId, name, value) => {
+    const newActions = [...actions];
+    newActions[actionId].api.body[bodyId] = {
+      ...newActions[actionId].api.body[bodyId],
+      [name]: value,
+    };
+    setActions(newActions);
+  };
+
+  const handleDeleteBodyApiItem = (actionId, bodyId) => {
+    const newActions = [...actions];
+    newActions[actionId].api.body = newActions[actionId].api.body.filter(
+      (el, index) => index !== bodyId,
+    );
     setActions(newActions);
   };
 
@@ -270,6 +369,22 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
         />
       );
     }
+    if (action.typeAction === actionsConstant.JSON_API) {
+      return (
+        <ActionJsonApi
+          actionId={id}
+          item={action}
+          handleDeleteJsonApi={handleDeleteItem}
+          handleChange={handleChangeJsonApiInfoItem}
+          handleAddHeaderItem={handleAddHeaderApiItem}
+          handleChangeHeaderItem={handleChangeHeaderApiItem}
+          handleDeleteHeaderItem={handleDeleteHeaderApiItem}
+          handleAddBodyItem={handleAddBodyApiItem}
+          handleChangeBodyItem={handleChangeBodyApiItem}
+          handleDeleteBodyItem={handleDeleteBodyApiItem}
+        />
+      );
+    }
     return '';
   };
 
@@ -298,6 +413,11 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
       heading: 'Category',
       icon: '',
       event: handleAddCategory,
+    },
+    {
+      heading: 'JSON API',
+      icon: '',
+      event: handleAddJsonApi,
     },
   ];
 
