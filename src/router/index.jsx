@@ -31,6 +31,7 @@ export default () => {
   const publicRoutes = appRoutes.filter((route) => !route.isPrivate);
 
   const privateRoutes = appRoutes.filter((route) => route.isPrivate);
+
   return (
     <BrowserRouter>
       <Switch>
@@ -50,6 +51,7 @@ export default () => {
               Component={el.component}
               path={el.path}
               isLayout={el.isLayout}
+              isHeader={el.isHeader}
             />
           ))}
           <Redirect to={routes.DASHBOARD} />

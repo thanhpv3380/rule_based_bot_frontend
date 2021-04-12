@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
 import {
@@ -300,6 +301,76 @@ const ActionJsonApi = ({
             </pre>
           </div>
         )}
+      </Box>
+      <Box>
+        <Typography
+          display="block"
+          gutterBottom
+          className={classes.responseHint}
+        >
+          Set the value of the parameter corresponding to the json properties
+          you want to retrieve. Note, in "Value of Properties" column, the text
+          that appears in red means that the property of response json is
+          invalid.
+        </Typography>
+        <List dense={dense}>
+          <ListItem>
+            <Grid container spacing={3}>
+              <Grid item xs={4}>
+                {textDefault.ACTIONS.NAME_OF_SLOT}
+              </Grid>
+              <Grid item xs={4}>
+                {textDefault.ACTIONS.VALUE_OF_PROPERTIES}
+              </Grid>
+              <Grid item xs={4} />
+            </Grid>
+          </ListItem>
+        </List>
+        <List dense={dense}>
+          <ListItem>
+            <Grid container spacing={3}>
+              <Grid item xs={4}>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select-1"
+                  value={10}
+                  fullWidth
+                  size="medium"
+                >
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+              </Grid>
+              <Grid item xs={4}>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select-2"
+                  value={10}
+                  fullWidth
+                >
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+              </Grid>
+              <Grid item xs={4}>
+                <Box display="flex">
+                  <Box m={0.5}>
+                    <Button variant="outlined" color="primary">
+                      Add
+                    </Button>
+                  </Box>
+                  <Box m={0.5}>
+                    <Button variant="outlined" color="primary">
+                      Cancel
+                    </Button>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+          </ListItem>
+        </List>
       </Box>
     </div>
   );

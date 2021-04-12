@@ -7,6 +7,8 @@ export default {
     VIDEO: 'video',
     NAME_OF_OPTION: 'Name of option',
     VALUE: 'Value',
+    NAME_OF_SLOT: 'Name of Slot',
+    VALUE_OF_PROPERTIES: 'Value of Properties',
   },
   SEARCH: 'Search',
   SEARCH_TRAINING_PHRASES: 'Search training phrases',

@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1em',
     fontWeight: 'bold',
   },
+  responseHint: {
+    color: '#ccc',
+  },
 }));
 
 export default useStyles;
