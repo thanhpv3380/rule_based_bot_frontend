@@ -60,16 +60,10 @@ export class DefaultState extends State<DiagramEngine> {
 			new Action({
 				type: InputType.MOUSE_UP,
 				fire: (event: ActionEvent<MouseEvent>) => {
-					const model = this.engine.getMouseElement(event.event);
 					console.log("up");
-					if (!(model instanceof PortModel)) return;
+					const model = this.engine.getMouseElement(event.event);
 
-					// const targetPort = Object.values(model.getPorts())[0]; // just grabbing the first port of the node
-					// if (this.port.canLinkToPort(targetPort)) { 
-					//   this.link.setTargetPort(targetPort); 
-					//   targetPort.reportPosition(); 
-					//   this.engine.repaintCanvas();
-					// }
+					if (!(model instanceof PortModel)) return;
 				}
 			}
 			))

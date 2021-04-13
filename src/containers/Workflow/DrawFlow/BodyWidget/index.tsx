@@ -46,41 +46,27 @@ const BodyWidget = (props: BodyWidgetProps) => {
   };
 
   return (
-    <Box
-      style={{
-        flexGrow: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100%',
-      }}
-    >
-      <Box className={classes.content}>
-        <Box className={classes.layer}>
-          <Drawer
-            open={true}
-            anchor="left"
-            variant="permanent"
-            classes={{ paper: classes.sideBar }}
-          >
-            <Box className={classes.sideBarItem}>
-              <RecordVoiceOverIcon onClick={handleAddIntent} />
-            </Box>
-            <Box className={classes.sideBarItem}>
-              <DeviceHubSharpIcon onClick={handleAddCondition} />
-            </Box>
-            <Box className={classes.sideBarItem}>
-              <SmsIcon onClick={handleAddAction} />
-            </Box>
-            <Box className={classes.sideBarItem}>
-              <CloseIcon />
-            </Box>
-          </Drawer>
-          <DemoCanvasWidget>
-            <CanvasWidget engine={props.app.getDiagramEngine()} />
-          </DemoCanvasWidget>
+    <div className={classes.container}>
+      <div className={classes.sideBar}>
+        <Box className={classes.sideBarItem}>
+          <RecordVoiceOverIcon onClick={handleAddIntent} />
         </Box>
-      </Box>
-    </Box>
+        <Box className={classes.sideBarItem}>
+          <DeviceHubSharpIcon onClick={handleAddCondition} />
+        </Box>
+        <Box className={classes.sideBarItem}>
+          <SmsIcon onClick={handleAddAction} />
+        </Box>
+        <Box className={classes.sideBarItem}>
+          <CloseIcon />
+        </Box>
+      </div>
+
+      <CanvasWidget
+        className="diagram-container"
+        engine={props.app.getDiagramEngine()}
+      />
+    </div>
   );
 };
 

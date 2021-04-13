@@ -39,9 +39,9 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
     const pointX2 = points[1].getX();
     const pointY2 = points[1].getY();
     const averageY = Math.abs(pointY1 + pointY2) / 2;
-    console.log(pointY1);
-    console.log(pointY2);
-    console.log(averageY, 'average');
+    // console.log(pointY1);
+    // console.log(pointY2);
+    // console.log(averageY, 'average');
 
     const path =
       pointX1 === pointX2 || pointY2 === pointY1

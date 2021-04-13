@@ -29,6 +29,7 @@ export class CreateLinkState extends State<DiagramEngine> {
 					const ox = this.engine.getModel().getOffsetX();
 					const oy = this.engine.getModel().getOffsetY();
 
+					console.log(element);
 					const listPost = element['ports'];
 					const portCurrentPort = (listPost && listPost['in']) || null;
 
@@ -38,7 +39,7 @@ export class CreateLinkState extends State<DiagramEngine> {
 						const link = this.sourcePort.createLinkModel();
 						link.setSourcePort(this.sourcePort);
 						link.getFirstPoint().setPosition(clientX - ox, clientY - oy);
-						link.getLastPoint().setPosition(clientX - ox + 20, clientY - oy + 20);
+						// link.getLastPoint().setPosition(clientX - ox + 20, clientY - oy + 20);
 
 						this.link = this.engine.getModel().addLink(link);
 					} else if (portCurrentPort && portCurrentPort instanceof PortModel && this.sourcePort && portCurrentPort !== this.sourcePort) {

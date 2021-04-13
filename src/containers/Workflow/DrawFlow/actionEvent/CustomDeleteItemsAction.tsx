@@ -1,10 +1,10 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   CanvasWidget,
   Action,
   ActionEvent,
   InputType,
-} from "@projectstorm/react-canvas-core";
+} from '@projectstorm/react-canvas-core';
 
 interface CustomDeleteItemsActionOptions {
   keyCodes?: number[];
@@ -18,14 +18,14 @@ export class CustomDeleteItemsAction extends Action {
     super({
       type: InputType.KEY_DOWN,
       fire: (event: ActionEvent<React.KeyboardEvent>) => {
-        console.log(event.event.keyCode);
-        console.log(
-          options.keyCodes.indexOf(event.event.keyCode),
-          options.keyCodes
-        );
+        // console.log(event.event.keyCode);
+        // console.log(
+        //   options.keyCodes.indexOf(event.event.keyCode),
+        //   options.keyCodes,
+        // );
 
         if (options.keyCodes.indexOf(event.event.keyCode) >= 0) {
-          console.log("dosomething");
+          console.log('dosomething');
           // this.engine.repaintCanvas();
         }
       },

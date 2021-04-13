@@ -13,7 +13,7 @@ body {
 }
 
 .diagram-container {
-  background: #000;
+  background: rgb(63, 62, 62);
   width: 100%;
   height: 1000px;
 }
