@@ -19,11 +19,11 @@ import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
 
-const DetailAction = ({ groupItems, handleUpdate }) => {
+const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
-  const [actionId, setActionId] = useState();
+  const [currentActionId, setCurrentActionId] = useState();
   const [actionData, setActionData] = useState({});
   const [actions, setActions] = useState([]);
 
@@ -55,10 +55,15 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
   };
 
   useEffect(() => {
-    const listUrl = window.location.href.split('/');
-    const itemId = listUrl[listUrl.length - 1];
-    setActionId(itemId);
-    fetchAction(itemId);
+    if (flowActionId) {
+      setCurrentActionId(flowActionId);
+      fetchAction(flowActionId);
+    } else {
+      const listUrl = window.location.href.split('/');
+      const itemId = listUrl[listUrl.length - 1];
+      setCurrentActionId(itemId);
+      fetchAction(itemId);
+    }
   }, [window.location.href]);
 
   const handleDeleteItem = (id) => {
@@ -287,7 +292,7 @@ const DetailAction = ({ groupItems, handleUpdate }) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const data = await apis.action.updateAction(actionId, {
+    const data = await apis.action.updateAction(currentActionId, {
       name: actionData.name,
       actions,
       groupAction: actionData.groupAction,
