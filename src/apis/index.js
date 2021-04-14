@@ -9,6 +9,8 @@ import * as groupEntity from './groupEntity';
 import * as dictionary from './dictionary';
 import * as upload from './upload';
 import * as chatbot from './chatbot';
+import * as workflow from './workflow';
+import * as groupWorkflow from './groupWorkflow';
 
 export default {
   auth,
@@ -22,4 +24,6 @@ export default {
   dictionary,
   upload,
   chatbot,
+  groupWorkflow,
+  workflow,
 };

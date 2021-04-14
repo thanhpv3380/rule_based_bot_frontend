@@ -23,6 +23,6 @@ export default {
     WORKFLOW: '/bot/:id/workflows',
     CREATE_WORKFLOW: '/bot/:id/workflows/create',
     DETAIL_WORKFLOW: '/bot/:id/workflows/detail/:workflowId',
-    DRAW_FLOW: '/bot/:id/draw-workflows',
+    DRAW_FLOW: '/bot/:id/draw-workflows/:workflowId',
   },
 };
