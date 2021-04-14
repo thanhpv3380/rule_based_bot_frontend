@@ -1,29 +1,76 @@
-import * as React from 'react';
-import { MouseEvent } from 'react';
 import createEngine, {
   DefaultPortModel,
   DefaultLinkFactory,
   DefaultLinkModel,
   DefaultLinkWidget,
+  DefaultPortModelOptions,
 } from '@projectstorm/react-diagrams';
 import {
+  LinkModel,
   LinkWidget,
   PointModel,
   PointModelGenerics,
 } from '@projectstorm/react-diagrams-core';
+import {
+  AbstractModelFactory,
+  DeserializeEvent,
+} from '@projectstorm/react-canvas-core';
+import * as React from 'react';
+import { MouseEvent } from 'react';
 
 export class AdvancedLinkModel extends DefaultLinkModel {
+  protected sourcePort: AdvancedPortModel | null;
+  protected targetPort: AdvancedPortModel | null;
   constructor() {
     super({
       type: 'advanced',
       width: 4,
     });
   }
+  setSourcePort(port: AdvancedPortModel): void {
+    console.log(this, 'this');
+    if (port !== null) {
+      port.addLink(this);
+    }
+    if (this.sourcePort && this.sourcePort !== null) {
+      this.sourcePort.removeLink(this);
+    }
+    this.sourcePort = port;
+    this.fireEvent({ port }, 'sourcePortChanged');
+    if (port.reportedPosition) {
+      this.getPointForPort(port).setPosition(port.getCenter());
+    }
+  }
+  getSourcePort(): AdvancedPortModel {
+    return this.sourcePort;
+  }
+  getTargetPort(): AdvancedPortModel {
+    return this.targetPort;
+  }
+  setTargetPort(port: AdvancedPortModel): void {
+    if (port !== null) {
+      port.addLink(this);
+    }
+    if (this.targetPort && this.targetPort !== null) {
+      this.targetPort.removeLink(this);
+    }
+    this.targetPort = port;
+    this.fireEvent({ port }, 'targetPortChanged');
+    if (port.reportedPosition) {
+      this.getPointForPort(port).setPosition(port.getCenter());
+    }
+  }
 }
 
 export class AdvancedPortModel extends DefaultPortModel {
+  constructor(options: DefaultPortModelOptions) {
+    super(options);
+  }
   createLinkModel(): AdvancedLinkModel | null {
     return new AdvancedLinkModel();
+  }
+  removeLink(link: AdvancedLinkModel): void {
+    delete this.links[link.getID()];
   }
 }
 
@@ -39,9 +86,6 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
     const pointX2 = points[1].getX();
     const pointY2 = points[1].getY();
     const averageY = Math.abs(pointY1 + pointY2) / 2;
-    // console.log(pointY1);
-    // console.log(pointY2);
-    // console.log(averageY, 'average');
 
     const path =
       pointX1 === pointX2 || pointY2 === pointY1

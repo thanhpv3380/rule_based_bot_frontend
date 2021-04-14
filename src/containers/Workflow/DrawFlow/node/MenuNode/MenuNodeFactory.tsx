@@ -1,15 +1,16 @@
-import * as React from "react";
-import { MenuNodeModel } from "./MenuNodeModel";
-import { MenuNodeWidget } from "./MenuNodeWidget";
-import { AbstractReactFactory } from "@projectstorm/react-canvas-core";
-import { DiagramEngine } from "@projectstorm/react-diagrams-core";
+import * as React from 'react';
+import { MenuNodeModel } from './MenuNodeModel';
+import { MenuNodeWidget } from './MenuNodeWidget';
+import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
+import { DiagramEngine } from '@projectstorm/react-diagrams-core';
+import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 
 export class MenuNodeFactory extends AbstractReactFactory<
   MenuNodeModel,
-  DiagramEngine
+  AdvancedDiagramEngine
 > {
   constructor() {
-    super("menu-node");
+    super('menu-node');
   }
 
   generateModel(initialConfig) {
@@ -19,7 +20,7 @@ export class MenuNodeFactory extends AbstractReactFactory<
   generateReactWidget(event): JSX.Element {
     return (
       <MenuNodeWidget
-        engine={this.engine as DiagramEngine}
+        engine={this.engine as AdvancedDiagramEngine}
         node={event.model}
       />
     );

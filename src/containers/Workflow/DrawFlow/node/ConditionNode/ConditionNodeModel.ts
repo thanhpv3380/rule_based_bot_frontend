@@ -1,5 +1,6 @@
 import { NodeModel, DefaultPortModel } from '@projectstorm/react-diagrams';
-import { BaseModelOptions } from '@projectstorm/react-canvas-core';
+import { BaseModelOptions, DeserializeEvent } from '@projectstorm/react-canvas-core';
+import { AdvancedPortModel } from '../../customLink';
 
 export interface ConditionNodeModelOptions extends BaseModelOptions {
     color?: string;
@@ -7,6 +8,10 @@ export interface ConditionNodeModelOptions extends BaseModelOptions {
 
 export class ConditionNodeModel extends NodeModel {
     color: string;
+    protected ports: {
+        [s: string]: AdvancedPortModel;
+    };
+
 
     constructor(options: ConditionNodeModelOptions = {}) {
         super({
@@ -17,17 +22,30 @@ export class ConditionNodeModel extends NodeModel {
 
         // setup an in and out port
         this.addPort(
-            new DefaultPortModel({
+            new AdvancedPortModel({
                 in: true,
                 name: 'in'
             })
         );
         this.addPort(
-            new DefaultPortModel({
+            new AdvancedPortModel({
                 in: false,
-                name: 'out'
+                name: 'out',
             })
         );
+    }
+    addPort(port: AdvancedPortModel): AdvancedPortModel {
+
+
+        if (!this.ports) {
+            this.ports = {}
+        }
+        port.setParent(this);
+        this.ports[port.getName()] = port;
+        return port;
+    }
+    getPort(name: string): AdvancedPortModel {
+        return this.ports[name];
     }
 
     serialize() {
@@ -37,7 +55,7 @@ export class ConditionNodeModel extends NodeModel {
         };
     }
 
-    deserialize(event): void {
+    deserialize(event: DeserializeEvent<this>): void {
         super.deserialize(event);
         this.color = event.data.color;
     }
