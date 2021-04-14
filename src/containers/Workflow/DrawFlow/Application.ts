@@ -33,12 +33,6 @@ export class Application {
         this.diagramEngine.getNodeFactories().registerFactory(new MenuNodeFactory());
         this.diagramEngine.getLinkFactories().registerFactory(new AdvancedLinkFactory());
 
-        // //3-A) create a default node
-        const pathfinding = this.diagramEngine
-            .getLinkFactories()
-            .getFactory<PathFindingLinkFactory>(PathFindingLinkFactory.NAME);
-
-
         //Test action intent
         const node1 = new ConditionNodeModel({ color: "rgb(192,255,0)" });
         node1.setPosition(50, 50);

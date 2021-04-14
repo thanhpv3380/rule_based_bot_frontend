@@ -1,15 +1,16 @@
-import * as React from "react";
-import { ConditionNodeModel } from "./ConditionNodeModel";
-import ConditionNodeWidget from "./ConditionNodeWidget";
-import { AbstractReactFactory } from "@projectstorm/react-canvas-core";
-import { DiagramEngine } from "@projectstorm/react-diagrams-core";
+import * as React from 'react';
+import { ConditionNodeModel } from './ConditionNodeModel';
+import ConditionNodeWidget from './ConditionNodeWidget';
+import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
+import { DiagramEngine } from '@projectstorm/react-diagrams-core';
+import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 
 export class ConditionNodeFactory extends AbstractReactFactory<
   ConditionNodeModel,
-  DiagramEngine
+  AdvancedDiagramEngine
 > {
   constructor() {
-    super("node-condition");
+    super('node-condition');
   }
 
   generateModel(initialConfig) {
@@ -19,7 +20,7 @@ export class ConditionNodeFactory extends AbstractReactFactory<
   generateReactWidget(event): JSX.Element {
     return (
       <ConditionNodeWidget
-        engine={this.engine as DiagramEngine}
+        engine={this.engine as AdvancedDiagramEngine}
         node={event.model}
       />
     );

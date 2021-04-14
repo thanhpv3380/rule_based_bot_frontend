@@ -1,25 +1,26 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Button,
-} from "@material-ui/core";
+} from '@material-ui/core';
 import {
   RecordVoiceOver as RecordVoiceOverIcon,
   Sms as SmsIcon,
   Close as CloseIcon,
   DeviceHubSharp as DeviceHubSharpIcon,
-} from "@material-ui/icons";
-import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams-core";
-import { MenuNodeModel } from "./MenuNodeModel";
-import { ActionNodeModel } from "../ActionNode/ActionNodeModel";
-import { IntentNodeModel } from "../IntentNode/IntentNodeModel";
-import { ConditionNodeModel } from "../ConditionNode/ConditionNodeModel";
+} from '@material-ui/icons';
+import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
+import { MenuNodeModel } from './MenuNodeModel';
+import { ActionNodeModel } from '../ActionNode/ActionNodeModel';
+import { IntentNodeModel } from '../IntentNode/IntentNodeModel';
+import { ConditionNodeModel } from '../ConditionNode/ConditionNodeModel';
+import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 export interface MenuNodeWidgetProps {
   node: MenuNodeModel;
-  engine: DiagramEngine;
+  engine: AdvancedDiagramEngine;
 }
 
 export interface MenuNodeWidgetState {}
@@ -27,21 +28,21 @@ export interface MenuNodeWidgetState {}
 const items = [
   {
     id: 1,
-    heading: "Intent",
+    heading: 'Intent',
     icon: <RecordVoiceOverIcon />,
-    link: "",
+    link: '',
   },
   {
     id: 2,
-    heading: "Condition",
+    heading: 'Condition',
     icon: <DeviceHubSharpIcon />,
-    link: "",
+    link: '',
   },
   {
     id: 3,
-    heading: "Action",
+    heading: 'Action',
     icon: <SmsIcon />,
-    link: "",
+    link: '',
   },
 ];
 export class MenuNodeWidget extends React.Component<
@@ -83,10 +84,10 @@ export class MenuNodeWidget extends React.Component<
       model.addNode(node);
 
       // get port in of new node
-      const element_select_port = node.getPort("in");
+      const element_select_port = node.getPort('in');
 
       // get link from last node
-      const links = lastNode.getPorts()["in"]["links"];
+      const links = lastNode.getPorts()['in']['links'];
       const listKeysLink = Object.keys(links);
       const link = links[listKeysLink[listKeysLink.length - 1]];
 
@@ -109,17 +110,17 @@ export class MenuNodeWidget extends React.Component<
       <List
         component="nav"
         aria-label="main mailbox folders"
-        style={{ backgroundColor: "#ffff", borderRadius: 10 }}
+        style={{ backgroundColor: '#ffff', borderRadius: 10 }}
       >
         <PortWidget
           engine={this.props.engine}
-          port={this.props.node.getPort("in")}
+          port={this.props.node.getPort('in')}
         >
           <div className="circle-select-port" />
         </PortWidget>
         {items.map((el) => (
           <ListItem key={el.id} button onClick={() => this.handleClick(el.id)}>
-            <ListItemIcon style={{ color: "black" }}>{el.icon}</ListItemIcon>
+            <ListItemIcon style={{ color: 'black' }}>{el.icon}</ListItemIcon>
             <ListItemText>
               <ListItemText primary={el.heading} />
             </ListItemText>

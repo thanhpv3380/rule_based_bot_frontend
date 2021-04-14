@@ -10,8 +10,10 @@ import {
 import { PortModel, DiagramEngine, DragDiagramItemsState } from '@projectstorm/react-diagrams-core';
 import { CreateLinkState } from './CreateLinkState';
 import { MenuNodeModel } from '../node/MenuNode/MenuNodeModel';
+import { AdvancedDiagramEngine } from "../AdvancedDiagramEngine";
+import { AdvancedPortModel } from '../customLink';
 
-export class DefaultState extends State<DiagramEngine> {
+export class DefaultState extends State<AdvancedDiagramEngine> {
 	dragCanvas: DragCanvasState;
 	createLink: CreateLinkState;
 	dragItems: DragDiagramItemsState;
@@ -37,7 +39,7 @@ export class DefaultState extends State<DiagramEngine> {
 						this.transitionWithEvent(this.dragCanvas, event);
 					}
 					// click on Port
-					else if (element instanceof PortModel) {
+					else if (element instanceof AdvancedPortModel) {
 						console.log("2");
 						this.handleDeleteSelectNode();
 						this.transitionWithEvent(this.createLink, event);
@@ -60,10 +62,10 @@ export class DefaultState extends State<DiagramEngine> {
 			new Action({
 				type: InputType.MOUSE_UP,
 				fire: (event: ActionEvent<MouseEvent>) => {
-					console.log("up");
 					const model = this.engine.getMouseElement(event.event);
+					console.log("up");
+					if (!(model instanceof AdvancedPortModel)) return;
 
-					if (!(model instanceof PortModel)) return;
 				}
 			}
 			))
