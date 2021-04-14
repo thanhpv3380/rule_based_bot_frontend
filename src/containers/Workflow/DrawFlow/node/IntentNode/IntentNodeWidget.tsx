@@ -1,11 +1,11 @@
-import * as React from "react";
-import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams-core";
+import * as React from 'react';
+import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
 import {
   CanvasWidget,
   Action,
   ActionEvent,
   InputType,
-} from "@projectstorm/react-canvas-core";
+} from '@projectstorm/react-canvas-core';
 import {
   Button,
   Box,
@@ -16,22 +16,23 @@ import {
   IconButton,
   Typography,
   Grid,
-} from "@material-ui/core";
+} from '@material-ui/core';
 import {
   MoreVert as MoreVertIcon,
   Edit as Editcon,
   DeleteOutline as DeleteOutlineIcon,
   FileCopy as FileCopyIcon,
   RecordVoiceOver as RecordVoiceOverIcon,
-} from "@material-ui/icons";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { IntentNodeModel } from "./IntentNodeModel";
-import * as _ from "lodash";
-import IntentNodeDetail from "./NodeDetail";
+} from '@material-ui/icons';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { IntentNodeModel } from './IntentNodeModel';
+import * as _ from 'lodash';
+import IntentNodeDetail from './NodeDetail';
+import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 
 export interface IntentNodeWidgetProps {
   node: IntentNodeModel;
-  engine: DiagramEngine;
+  engine: AdvancedDiagramEngine;
 }
 
 export interface IntentNodeWidgetState {
@@ -39,17 +40,13 @@ export interface IntentNodeWidgetState {
 }
 
 const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
-  // constructor(props: IntentNodeWidgetProps) {
-  //   super(props);
-  //   this.state = { isHover: false };
-  // }
   const [isHover, setIsHover] = React.useState(false);
   const [open, setOpen] = React.useState<boolean>(false);
 
   const handleDeleteNode = (engine) => {
     const selectedEntities = engine.getModel().getSelectedEntities();
     if (selectedEntities.length > 0) {
-      const confirm = window.confirm("Are you sure you want to delete?");
+      const confirm = window.confirm('Are you sure you want to delete?');
 
       if (confirm) {
         _.forEach(selectedEntities, (model) => {
@@ -71,7 +68,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
     const newNode = new IntentNodeModel();
     newNode.setPosition(
       selectedEntities.getPosition().x + 20,
-      selectedEntities.getPosition().y + 20
+      selectedEntities.getPosition().y + 20,
     );
     props.engine.getModel().addNode(newNode);
     // engine.getModel().addNode(newNode);
@@ -80,7 +77,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
 
   return (
     <Box
-      style={{ width: 280, position: "relative" }}
+      style={{ width: 280, position: 'relative' }}
       // style={{ borderRadius: 10 }}
       onMouseOver={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
@@ -89,7 +86,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
         <Paper style={{ width: 100, height: 24, marginBottom: 5 }}>
           <Box style={{ marginLeft: 4 }}>
             <Editcon
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
               onClick={() => {
                 setOpen(true);
                 // props.engine
@@ -103,10 +100,10 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
             />
             <DeleteOutlineIcon
               onClick={() => handleDeleteNode(props.engine)}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
             />
             <FileCopyIcon onClick={() => handleDuplicateNode(props.engine)} />
-            <MoreVertIcon style={{ cursor: "pointer" }} />
+            <MoreVertIcon style={{ cursor: 'pointer' }} />
           </Box>
         </Paper>
       ) : (
@@ -119,18 +116,18 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
       <Paper style={{ borderRadius: 10 }}>
         <PortWidget
           engine={props.engine}
-          port={props.node.getPort("in")}
+          port={props.node.getPort('in')}
         ></PortWidget>
         <Grid container justify="center" style={{ paddingTop: 10 }}>
           <RecordVoiceOverIcon
-            style={{ position: "relative", marginRight: 10, bottom: 4 }}
+            style={{ position: 'relative', marginRight: 10, bottom: 4 }}
           />
           <Typography>Intent</Typography>
         </Grid>
 
         <Autocomplete
           style={{
-            margin: "0px 20px",
+            margin: '0px 20px',
           }}
           size="small"
           options={[]}
@@ -140,13 +137,13 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
             <TextField
               {...params}
               style={{
-                margin: "10px 0px 5px 0px",
+                margin: '10px 0px 5px 0px',
               }}
             />
           )}
         />
         <Grid container alignItems="center" justify="center">
-          <PortWidget engine={props.engine} port={props.node.getPort("out")}>
+          <PortWidget engine={props.engine} port={props.node.getPort('out')}>
             <div className="circle-port" />
           </PortWidget>
         </Grid>

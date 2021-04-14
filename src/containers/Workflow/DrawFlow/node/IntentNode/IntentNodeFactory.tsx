@@ -1,15 +1,16 @@
-import * as React from "react";
-import { IntentNodeModel } from "./IntentNodeModel";
-import IntentNodeWidget from "./IntentNodeWidget";
-import { AbstractReactFactory } from "@projectstorm/react-canvas-core";
-import { DiagramEngine } from "@projectstorm/react-diagrams-core";
+import * as React from 'react';
+import { IntentNodeModel } from './IntentNodeModel';
+import IntentNodeWidget from './IntentNodeWidget';
+import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
+import { DiagramEngine } from '@projectstorm/react-diagrams-core';
+import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 
 export class IntentNodeFactory extends AbstractReactFactory<
   IntentNodeModel,
-  DiagramEngine
+  AdvancedDiagramEngine
 > {
   constructor() {
-    super("ts-custom-node");
+    super('ts-custom-node');
   }
 
   generateModel(initialConfig) {
@@ -19,7 +20,7 @@ export class IntentNodeFactory extends AbstractReactFactory<
   generateReactWidget(event): JSX.Element {
     return (
       <IntentNodeWidget
-        engine={this.engine as DiagramEngine}
+        engine={this.engine as AdvancedDiagramEngine}
         node={event.model}
       />
     );

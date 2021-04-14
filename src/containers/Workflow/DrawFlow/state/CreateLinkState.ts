@@ -6,12 +6,15 @@ import { MenuNodeModel } from '../node/MenuNode/MenuNodeModel';
 import { ActionNodeModel } from '../node/ActionNode/ActionNodeModel'
 import { DefaultPortModel, PathFindingLinkModel } from '@projectstorm/react-diagrams';
 import { AdvancedLinkModel, AdvancedPortModel } from '../customLink';
+import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
 /**
  * This state is controlling the creation of a link.
  */
-export class CreateLinkState extends State<DiagramEngine> {
-	sourcePort: PortModel;
-	link: LinkModel;
+export class CreateLinkState extends State<AdvancedDiagramEngine> {
+	// sourcePort: PortModel;
+	// link: LinkModel;
+	sourcePort: AdvancedPortModel;
+	link: AdvancedLinkModel;
 
 	constructor() {
 		super({ name: 'create-new-link' });
@@ -26,30 +29,33 @@ export class CreateLinkState extends State<DiagramEngine> {
 						event: { clientX, clientY }
 					} = actionEvent;
 
+
 					const ox = this.engine.getModel().getOffsetX();
 					const oy = this.engine.getModel().getOffsetY();
 
-					console.log(element);
 					const listPost = element['ports'];
 					const portCurrentPort = (listPost && listPost['in']) || null;
 
-					if (element instanceof PortModel && !this.sourcePort) {
+					if (element instanceof AdvancedPortModel && !this.sourcePort) {
 						this.sourcePort = element;
 
 						const link = this.sourcePort.createLinkModel();
 						link.setSourcePort(this.sourcePort);
 						link.getFirstPoint().setPosition(clientX - ox, clientY - oy);
-						// link.getLastPoint().setPosition(clientX - ox + 20, clientY - oy + 20);
+						link.getLastPoint().setPosition(clientX - ox + 20, clientY - oy + 20);
 
 						this.link = this.engine.getModel().addLink(link);
-					} else if (portCurrentPort && portCurrentPort instanceof PortModel && this.sourcePort && portCurrentPort !== this.sourcePort) {
+					} else if (portCurrentPort && portCurrentPort instanceof AdvancedPortModel && this.sourcePort && portCurrentPort !== this.sourcePort) {
 						if (this.sourcePort.canLinkToPort(portCurrentPort)) {
 							this.link.setTargetPort(portCurrentPort);
 							portCurrentPort.reportPosition();
 							this.clearState();
 							this.eject();
 						}
-					} else if (element === this.link.getLastPoint()) {
+					} else if (element instanceof AdvancedLinkModel && element['points'][1] === this.link.getLastPoint()) {
+						console.log(element, "element");
+
+						console.log(this.link.getLastPoint());
 						const node4 = new MenuNodeModel({ color: 'rgb(0,192,255)' });
 						node4.setPosition(clientX - ox, clientY - oy);
 						const model = this.engine.getModel();
@@ -75,7 +81,6 @@ export class CreateLinkState extends State<DiagramEngine> {
 					console.log("link move");
 					if (!this.link) return;
 					const { event } = actionEvent;
-					console.log(event.pageX, event.pageY);
 
 					//console.log("move", event.clientX, event.clientY);
 					this.link.getLastPoint().setPosition(event.clientX, event.clientY);

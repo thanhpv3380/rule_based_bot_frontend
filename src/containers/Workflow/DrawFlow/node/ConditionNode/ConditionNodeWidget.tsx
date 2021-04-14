@@ -1,12 +1,12 @@
-import * as React from "react";
-import { useState } from "react";
-import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams-core";
+import * as React from 'react';
+import { useState } from 'react';
+import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
 import {
   CanvasWidget,
   Action,
   ActionEvent,
   InputType,
-} from "@projectstorm/react-canvas-core";
+} from '@projectstorm/react-canvas-core';
 import {
   Button,
   Box,
@@ -18,8 +18,8 @@ import {
   TableRow,
   TableContainer,
   Typography,
-} from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+} from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   MoreVert as MoreVertIcon,
   Edit as Editcon,
@@ -29,16 +29,17 @@ import {
   Close as CloseIcon,
   DeleteOutlineOutlined as DeleteOutlineOutlinedIcon,
   Add as AddIcon,
-} from "@material-ui/icons";
-import { makeStyles } from "@material-ui/styles";
-import { ConditionNodeModel } from "./ConditionNodeModel";
-import * as _ from "lodash";
-import ConditionNodeDetail from "./NodeDetail";
+} from '@material-ui/icons';
+import { makeStyles } from '@material-ui/styles';
+import { ConditionNodeModel } from './ConditionNodeModel';
+import * as _ from 'lodash';
+import ConditionNodeDetail from './NodeDetail';
+import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 
 const useStyle = makeStyles({
   table: {
-    "& .MuiTableCell-root": {
-      borderLeft: "1px solid rgba(224, 224, 224, 1)",
+    '& .MuiTableCell-root': {
+      borderLeft: '1px solid rgba(224, 224, 224, 1)',
     },
   },
   paddingMenu: {
@@ -46,7 +47,7 @@ const useStyle = makeStyles({
     paddingBottom: 2,
   },
   portout: {
-    position: "relative",
+    position: 'relative',
     left: 135,
   },
 });
@@ -82,7 +83,7 @@ export class CustomDeleteItemsAction extends Action {
         console.log(event.event.keyCode);
 
         if (options.keyCodes.indexOf(event.event.keyCode) >= 0) {
-          console.log("dosomething");
+          console.log('dosomething');
           // this.engine.repaintCanvas();
         }
       },
@@ -92,7 +93,7 @@ export class CustomDeleteItemsAction extends Action {
 
 export interface ConditionNodeWidgetProps {
   node: ConditionNodeModel;
-  engine: DiagramEngine;
+  engine: AdvancedDiagramEngine;
 }
 
 export interface ConditionNodeWidgetState {
@@ -123,7 +124,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   };
 
   const handleCloseMenuConnectCondition = (e, index) => {
-    console.log("test");
+    console.log('test');
 
     const newConditions = [...conditions];
     // console.log(newConditions[index]);
@@ -142,7 +143,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const handleDeleteNode = (engine) => {
     const selectedEntities = engine.getModel().getSelectedEntities();
     if (selectedEntities.length > 0) {
-      const confirm = window.confirm("Are you sure you want to delete?");
+      const confirm = window.confirm('Are you sure you want to delete?');
 
       if (confirm) {
         _.forEach(selectedEntities, (model) => {
@@ -157,7 +158,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   };
 
   const handleDuplicateNode = (engine) => {
-    console.log("duplidacate");
+    console.log('duplidacate');
 
     const selectedEntities = props.engine
       .getModel()
@@ -166,7 +167,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     const newNode = new ConditionNodeModel();
     newNode.setPosition(
       selectedEntities.getPosition().x + 20,
-      selectedEntities.getPosition().y + 20
+      selectedEntities.getPosition().y + 20,
     );
     props.engine.getModel().addNode(newNode);
     // engine.getModel().addNode(newNode);
@@ -187,17 +188,17 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
         <Paper style={{ width: 100, height: 24, marginBottom: 5 }}>
           <Box style={{ marginLeft: 4 }}>
             <Editcon
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
               onClick={() => {
                 setOpen(true);
               }}
             />
             <DeleteOutlineIcon
               onClick={() => handleDeleteNode(props.engine)}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
             />
             <FileCopyIcon onClick={() => handleDuplicateNode(props.engine)} />
-            <MoreVertIcon style={{ cursor: "pointer" }} />
+            <MoreVertIcon style={{ cursor: 'pointer' }} />
           </Box>
         </Paper>
       ) : (
@@ -206,14 +207,14 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
       <Paper
         elevation={5}
-        style={{ borderRadius: 10, backgroundColor: "#ffff" }}
+        style={{ borderRadius: 10, backgroundColor: '#ffff' }}
       >
         {/*  */}
         <Box display="flex" alignItems="center" flexDirection="column">
-          <PortWidget engine={props.engine} port={props.node.getPort("in")} />
+          <PortWidget engine={props.engine} port={props.node.getPort('in')} />
           <Grid container justify="center" style={{ paddingTop: 10 }}>
             <DeviceHubSharpIcon
-              style={{ position: "relative", marginRight: 5, bottom: 4 }}
+              style={{ position: 'relative', marginRight: 5, bottom: 4 }}
             />
             <Typography>Condition</Typography>
           </Grid>
@@ -224,7 +225,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
               elevation={0}
               style={{
                 width: 280,
-                borderLeft: "none",
+                borderLeft: 'none',
                 borderRadius: 10,
                 paddingBottom: 2,
               }}
@@ -235,29 +236,29 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                     conditions.map((condition, index) => (
                       <TableRow>
                         <TableCell
-                          style={{ borderBottom: "none" }}
+                          style={{ borderBottom: 'none' }}
                           component="th"
                           scope="row"
                         >
-                          {"@number"}
+                          {'@number'}
                         </TableCell>
                         <TableCell
-                          style={{ borderBottom: "none" }}
+                          style={{ borderBottom: 'none' }}
                           align="left"
                         >
-                          {">"}
+                          {'>'}
                         </TableCell>
                         <TableCell
-                          style={{ borderBottom: "none" }}
+                          style={{ borderBottom: 'none' }}
                           align="left"
                         >
-                          {"2"}
+                          {'2'}
                         </TableCell>
                         <TableCell
-                          style={{ borderBottom: "none" }}
+                          style={{ borderBottom: 'none' }}
                           align="left"
                         >
-                          {"and"}
+                          {'and'}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -272,7 +273,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
             <Grid container alignItems="center" justify="center">
               <PortWidget
                 engine={props.engine}
-                port={props.node.getPort("out")}
+                port={props.node.getPort('out')}
               >
                 <div className="circle-port" />
               </PortWidget>
