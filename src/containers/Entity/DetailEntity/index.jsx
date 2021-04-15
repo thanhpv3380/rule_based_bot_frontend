@@ -27,7 +27,7 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [entityId, setEntityId] = useState();
   const [entityData, setEntityData] = useState({
-    type: '1',
+    type: 1,
     name: '',
     groupEntity: '',
     pattern: '',
@@ -191,7 +191,7 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
         </Grid>
 
         <div className={classes.contentDetail}>
-          {entityData.type === '1' && (
+          {entityData.type === 1 && (
             <EntityDefineSynonyms
               items={entityData.synonyms}
               handleAdd={handleAddRowSynonymsEntity}
@@ -199,13 +199,13 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
               handleChange={handleChangeRowSynonymsEntity}
             />
           )}
-          {entityData.type === '2' && (
+          {entityData.type === 2 && (
             <EntityRegex
               item={entityData.pattern}
               handleChange={handleChangeRowRegexEntity}
             />
           )}
-          {entityData.type === '3' && (
+          {entityData.type === 3 && (
             <EntityComplex
               items={entityData.patterns}
               handleAdd={handleAddRowComplexEntity}

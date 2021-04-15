@@ -31,4 +31,7 @@ export default {
   ENTER_SYNONYMS: 'Enter Synonyms',
   ENTER_TO_INPUT_OTHER_ENTITY: 'Enter @ to input other entity',
   TITLE: 'Title',
+  NAME_OF_SLOT: 'Name of Slot',
+  VALUE: 'Value',
+  DATA_TYPE: 'Data Type',
 };

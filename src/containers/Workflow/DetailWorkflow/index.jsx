@@ -7,11 +7,12 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
-import { Button } from '@material-ui/core';
+import { Button, Box } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import useStyles from './index.style';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
+import ParametersModal from './ParametersModal';
 
 const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
   const botId = useSelector((state) => state.bot.bot);
+  const [openModal, setOpenModal] = useState(false);
   const [workflowData, setWorkflowData] = useState({
     name: '',
     groupWorkflow: '',
@@ -78,6 +80,15 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
     }
   };
 
+  const handleOpenParametersModal = (e) => {
+    e.preventDefault();
+    setOpenModal(true);
+  };
+
+  const handleCloseParametersModal = () => {
+    setOpenModal(false);
+  };
+
   const handleOpenDrawFlow = (e) => {
     e.preventDefault();
     history.push(`/bot/${botId}/draw-workflows/${workflowData.id}`);
@@ -93,9 +104,33 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
         handleChange={handleChangeInfoHeader}
       />
       <div className={classes.content}>
-        <Button variant="outlined" color="primary" onClick={handleOpenDrawFlow}>
-          Workflow
-        </Button>
+        <Box display="flex">
+          <Box mr={2}>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="large"
+              onClick={handleOpenParametersModal}
+            >
+              Parameters
+            </Button>
+          </Box>
+          <Box>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="large"
+              onClick={handleOpenDrawFlow}
+            >
+              Workflow
+            </Button>
+          </Box>
+        </Box>
+
+        <ParametersModal
+          open={openModal}
+          handleCloseModal={handleCloseParametersModal}
+        />
       </div>
     </>
   );
