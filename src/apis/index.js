@@ -11,6 +11,7 @@ import * as upload from './upload';
 import * as chatbot from './chatbot';
 import * as workflow from './workflow';
 import * as groupWorkflow from './groupWorkflow';
+import * as slot from './slot';
 
 export default {
   auth,
@@ -26,4 +27,5 @@ export default {
   chatbot,
   groupWorkflow,
   workflow,
+  slot,
 };

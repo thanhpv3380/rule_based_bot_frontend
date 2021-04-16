@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/no-array-index-key */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -25,6 +25,7 @@ import axios from 'axios';
 import { format } from 'json-string-formatter';
 import useStyles from './index.style';
 import textDefault from '../../../../constants/textDefault';
+import apis from '../../../../apis';
 
 const ActionJsonApi = ({
   actionId,
@@ -42,7 +43,22 @@ const ActionJsonApi = ({
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const [response, setResponse] = useState();
+  const [parameters, setParameters] = useState([]);
 
+  const fetchSlots = async () => {
+    const data = await apis.slot.getSlots();
+    if (data && data.status) {
+      setParameters(data.result.slots);
+    } else {
+      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+        variant: 'success',
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchSlots();
+  }, []);
   const handleTestApi = async (e) => {
     setResponse('');
     e.preventDefault();
@@ -302,76 +318,80 @@ const ActionJsonApi = ({
           </div>
         )}
       </Box>
-      <Box>
-        <Typography
-          display="block"
-          gutterBottom
-          className={classes.responseHint}
-        >
-          Set the value of the parameter corresponding to the json properties
-          you want to retrieve. Note, in "Value of Properties" column, the text
-          that appears in red means that the property of response json is
-          invalid.
-        </Typography>
-        <List dense={dense}>
-          <ListItem>
-            <Grid container spacing={3}>
-              <Grid item xs={4}>
-                {textDefault.ACTIONS.NAME_OF_SLOT}
+      {!response && (
+        <Box>
+          <Typography
+            display="block"
+            gutterBottom
+            className={classes.responseHint}
+          >
+            Set the value of the parameter corresponding to the json properties
+            you want to retrieve. Note, in "Value of Properties" column, the
+            text that appears in red means that the property of response json is
+            invalid.
+          </Typography>
+          <List dense={dense}>
+            <ListItem>
+              <Grid container spacing={3}>
+                <Grid item xs={4}>
+                  {textDefault.ACTIONS.NAME_OF_SLOT}
+                </Grid>
+                <Grid item xs={4}>
+                  {textDefault.ACTIONS.VALUE_OF_PROPERTIES}
+                </Grid>
+                <Grid item xs={4} />
               </Grid>
-              <Grid item xs={4}>
-                {textDefault.ACTIONS.VALUE_OF_PROPERTIES}
-              </Grid>
-              <Grid item xs={4} />
-            </Grid>
-          </ListItem>
-        </List>
-        <List dense={dense}>
-          <ListItem>
-            <Grid container spacing={3}>
-              <Grid item xs={4}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select-1"
-                  value={10}
-                  fullWidth
-                  size="medium"
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </Grid>
-              <Grid item xs={4}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select-2"
-                  value={10}
-                  fullWidth
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </Grid>
-              <Grid item xs={4}>
-                <Box display="flex">
-                  <Box m={0.5}>
-                    <Button variant="outlined" color="primary">
-                      Add
-                    </Button>
+            </ListItem>
+          </List>
+          <List dense={dense}>
+            <ListItem>
+              <Grid container spacing={3}>
+                <Grid item xs={4}>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select-1"
+                    value={10}
+                    fullWidth
+                    size="medium"
+                  >
+                    {parameters.map((el) => (
+                      <MenuItem key={el.id} value={el.id}>
+                        {el.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item xs={4}>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select-2"
+                    value={10}
+                    fullWidth
+                  >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                  </Select>
+                </Grid>
+                <Grid item xs={4}>
+                  <Box display="flex">
+                    <Box m={0.5}>
+                      <Button variant="outlined" color="primary">
+                        Add
+                      </Button>
+                    </Box>
+                    <Box m={0.5}>
+                      <Button variant="outlined" color="primary">
+                        Cancel
+                      </Button>
+                    </Box>
                   </Box>
-                  <Box m={0.5}>
-                    <Button variant="outlined" color="primary">
-                      Cancel
-                    </Button>
-                  </Box>
-                </Box>
+                </Grid>
               </Grid>
-            </Grid>
-          </ListItem>
-        </List>
-      </Box>
+            </ListItem>
+          </List>
+        </Box>
+      )}
     </div>
   );
 };

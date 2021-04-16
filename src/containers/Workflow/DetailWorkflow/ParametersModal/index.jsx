@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSnackbar } from 'notistack';
 import {
   Modal,
   TextField,
@@ -12,6 +13,8 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   TablePagination,
+  Select,
+  MenuItem,
 } from '@material-ui/core';
 import {
   Search as SearchIcon,
@@ -20,11 +23,44 @@ import {
 } from '@material-ui/icons';
 import useStyles from './index.style';
 import textDefault from '../../../../constants/textDefault';
+import slotTypeConstant from '../../../../constants/slotType';
 import MenuToggle from '../../../../components/MenuToggle';
+import apis from '../../../../apis';
+
+const listDataType = [
+  {
+    heading: 'TEXT',
+    value: 1,
+  },
+  {
+    heading: 'BOOLEAN',
+    value: 2,
+  },
+  {
+    heading: 'FLOAT',
+    value: 3,
+  },
+  {
+    heading: 'CATEGORY',
+    value: 4,
+  },
+  {
+    heading: 'LIST',
+    value: 5,
+  },
+  {
+    heading: 'UNFEATURIZED',
+    value: 6,
+  },
+];
+
+let listParameter = [];
 
 const Parameters = ({ handleCloseModal, open }) => {
   const classes = useStyles();
   const dense = false;
+  const { enqueueSnackbar } = useSnackbar();
+
   const [parameters, setParameters] = useState([]);
   const [editParameterId, setEditParameterId] = useState();
   const [isAdd, setIsAdd] = useState(false);
@@ -51,23 +87,46 @@ const Parameters = ({ handleCloseModal, open }) => {
     });
   };
 
-  const fetchParameters = () => {
-    setParameters([
-      {
-        id: '1',
-        name: 'test',
-        dataType: 'Number',
-        value: '',
-      },
-    ]);
+  const fetchParameters = async () => {
+    const data = await apis.slot.getSlots();
+    if (data && data.status) {
+      setParameters(data.result.slots);
+      listParameter = data.result.slots;
+      setPagination({
+        ...pagination,
+        count: data.result.slots.length,
+      });
+    } else {
+      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+        variant: 'success',
+      });
+    }
   };
 
   useEffect(() => {
     fetchParameters();
   }, []);
 
+  const handleSearch = (e) => {
+    const { value } = e.target;
+
+    const tempParameters = listParameter.filter((el) => {
+      const name = el.name.trim().toLowerCase();
+      return name.indexOf(value.trim().toLowerCase()) >= 0;
+    });
+    setParameters(tempParameters);
+    setPagination({
+      ...pagination,
+      page: 0,
+      count: tempParameters.length,
+    });
+  };
+
   const handleOpenAddParameter = () => {
     setEditParameterId(null);
+    setParameterData({
+      dataType: 1,
+    });
     setIsAdd(true);
   };
 
@@ -91,25 +150,77 @@ const Parameters = ({ handleCloseModal, open }) => {
     });
   };
 
-  const handleDeleteParameter = (e, id) => {
-    console.log(id);
+  const handleDeleteParameter = async (e, id) => {
+    const data = await apis.slot.deleteSlot(id);
+    if (data && data.status) {
+      const newParameters = [...parameters];
+      const tempParameters = newParameters.filter((el) => el.id !== id);
+      setParameters(tempParameters);
+      listParameter = tempParameters;
+      setPagination({
+        ...pagination,
+        count: pagination.count - 1,
+      });
+    } else {
+      enqueueSnackbar(data.message || textDefault.UPDATE_FAILED, {
+        variant: 'error',
+      });
+    }
   };
 
-  const handleSaveParameter = (e) => {
+  const handleSaveParameter = async (e) => {
     e.preventDefault();
-    const { name, dataType } = parameterData;
-    setEditParameterId(null);
-    setParameterData(null);
-    console.log({ name, dataType });
+    const { id, name, dataType, slotType } = parameterData;
+
+    const data = await apis.slot.updateSlot(id, {
+      name,
+      dataType,
+      customData: { values: [], conditions: [] },
+      slotType,
+    });
+    if (data && data.status) {
+      const { slot } = data.result;
+      const newParameters = [...parameters];
+      const pos = newParameters.findIndex((el) => el.id === slot.id);
+      newParameters[pos] = { ...slot };
+      setParameters(newParameters);
+      listParameter = newParameters;
+      setEditParameterId(null);
+      setParameterData(null);
+    } else {
+      enqueueSnackbar(data.message || textDefault.UPDATE_FAILED, {
+        variant: 'error',
+      });
+    }
   };
 
-  const handleAddParameter = (e) => {
+  const handleAddParameter = async (e) => {
     e.preventDefault();
     const { name, dataType } = parameterData;
-    setEditParameterId(null);
-    setParameterData(null);
-    setIsAdd(false);
-    console.log({ name, dataType });
+    const data = await apis.slot.createSlot({
+      name,
+      dataType,
+      customData: { values: [], conditions: [] },
+      slotType: slotTypeConstant.NOT_DEFAULT,
+    });
+    if (data && data.status) {
+      const { slot } = data.result;
+      const newParameters = [...parameters];
+      newParameters.push(slot);
+      setParameters(newParameters);
+      listParameter = newParameters;
+      setPagination({
+        ...pagination,
+        count: pagination.count + 1,
+      });
+      setEditParameterId(null);
+      setParameterData(null);
+      setIsAdd(false);
+    } else {
+      enqueueSnackbar(data.message || textDefault.CREATE_FAILED, {
+        variant: 'error',
+      });
+    }
   };
 
   const itemMenus = [
@@ -151,6 +262,7 @@ const Parameters = ({ handleCloseModal, open }) => {
                 </InputAdornment>
               ),
             }}
+            onChange={handleSearch}
           />
         </Box>
         <List dense={dense}>
@@ -170,79 +282,91 @@ const Parameters = ({ handleCloseModal, open }) => {
           </ListItem>
         </List>
         <List dense={dense}>
-          {parameters.map((el) => (
-            <ListItem>
-              {el.id === editParameterId ? (
-                <>
-                  <Grid container spacing={3}>
-                    <Grid item xs={3}>
-                      <TextField
-                        className={classes.input}
-                        name="name"
-                        value={parameterData && parameterData.name}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <TextField
-                        className={classes.input}
-                        name="dataType"
-                        value={parameterData && parameterData.dataType}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={3} />
-                    <Grid item xs={3}>
-                      <Box display="flex">
-                        <Box m={0.5}>
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={handleSaveParameter}
-                          >
-                            Save
-                          </Button>
-                        </Box>
-                        <Box m={0.5}>
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={handleCancelAdd}
-                          >
-                            Cancel
-                          </Button>
-                        </Box>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </>
-              ) : (
-                <>
-                  <ListItemText>
+          {parameters
+            .slice(
+              pagination.page * pagination.rowsPerPage,
+              (pagination.page + 1) * pagination.rowsPerPage,
+            )
+            .map((el) => (
+              <ListItem>
+                {el.id === editParameterId ? (
+                  <>
                     <Grid container spacing={3}>
                       <Grid item xs={3}>
-                        {el.name}
+                        <TextField
+                          className={classes.input}
+                          name="name"
+                          value={parameterData && parameterData.name}
+                          onChange={handleChange}
+                        />
                       </Grid>
                       <Grid item xs={3}>
-                        {el.dataType}
-                      </Grid>
-                      <Grid item xs={3}>
-                        {el.value}
+                        <Select
+                          labelId="demo-simple-select-label"
+                          name="dataType"
+                          fullWidth
+                          value={(parameterData && parameterData.dataType) || 1}
+                          onChange={handleChange}
+                        >
+                          {listDataType.map((ele) => (
+                            <MenuItem key={ele.value} value={ele.value}>
+                              {ele.heading}
+                            </MenuItem>
+                          ))}
+                        </Select>
                       </Grid>
                       <Grid item xs={3} />
+                      <Grid item xs={3}>
+                        <Box display="flex">
+                          <Box m={0.5}>
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              onClick={handleSaveParameter}
+                            >
+                              Save
+                            </Button>
+                          </Box>
+                          <Box m={0.5}>
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              onClick={handleCancelAdd}
+                            >
+                              Cancel
+                            </Button>
+                          </Box>
+                        </Box>
+                      </Grid>
                     </Grid>
-                  </ListItemText>
-                  <ListItemSecondaryAction>
-                    <MenuToggle
-                      id={el.id}
-                      icon={<MoreVertIcon />}
-                      menus={itemMenus}
-                    />
-                  </ListItemSecondaryAction>
-                </>
-              )}
-            </ListItem>
-          ))}
+                  </>
+                ) : (
+                  <>
+                    <ListItemText>
+                      <Grid container spacing={3}>
+                        <Grid item xs={3}>
+                          {el.name}
+                        </Grid>
+                        <Grid item xs={3}>
+                          {listDataType[(el.dataType || 1) - 1].heading}
+                        </Grid>
+                        <Grid item xs={3}>
+                          {el.value}
+                        </Grid>
+                        <Grid item xs={3} />
+                      </Grid>
+                    </ListItemText>
+                    <ListItemSecondaryAction>
+                      <MenuToggle
+                        id={el.id}
+                        icon={<MoreVertIcon />}
+                        menus={itemMenus}
+                      />
+                    </ListItemSecondaryAction>
+                  </>
+                )}
+              </ListItem>
+            ))}
           {isAdd && (
             <ListItem>
               <ListItemText>
@@ -256,12 +380,19 @@ const Parameters = ({ handleCloseModal, open }) => {
                     />
                   </Grid>
                   <Grid item xs={3}>
-                    <TextField
-                      className={classes.input}
+                    <Select
+                      labelId="demo-simple-select-label"
                       name="dataType"
-                      value={parameterData && parameterData.dataType}
+                      fullWidth
+                      value={(parameterData && parameterData.dataType) || 1}
                       onChange={handleChange}
-                    />
+                    >
+                      {listDataType.map((ele) => (
+                        <MenuItem key={ele.value} value={ele.value}>
+                          {ele.heading}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Grid>
                   <Grid item xs={3} />
                   <Grid item xs={3}>
@@ -301,7 +432,7 @@ const Parameters = ({ handleCloseModal, open }) => {
             <AddIcon />
           </Button>
         )}
-        {parameters.length < pagination.count && (
+        {parameters.length > pagination.rowsPerPage && (
           <TablePagination
             component="div"
             rowsPerPageOptions={[5]}
