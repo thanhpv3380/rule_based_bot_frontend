@@ -29,6 +29,10 @@ const useStyles = makeStyles((theme) => ({
   responseHint: {
     color: '#ccc',
   },
+  margin: {
+    margin: 0,
+    padding: 0,
+  },
 }));
 
 export default useStyles;
