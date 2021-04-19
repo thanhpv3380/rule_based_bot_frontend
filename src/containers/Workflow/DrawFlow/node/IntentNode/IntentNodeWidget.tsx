@@ -1,21 +1,15 @@
 import * as React from 'react';
-import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { PortWidget } from '@projectstorm/react-diagrams-core';
+import { Action, InputType } from '@projectstorm/react-canvas-core';
 import {
-  CanvasWidget,
-  Action,
-  ActionEvent,
-  InputType,
-} from '@projectstorm/react-canvas-core';
-import {
-  Button,
   Box,
   TextField,
   Paper,
-  ListItem,
-  ListItemText,
-  IconButton,
   Typography,
   Grid,
+  Divider,
 } from '@material-ui/core';
 import {
   MoreVert as MoreVertIcon,
@@ -24,11 +18,15 @@ import {
   FileCopy as FileCopyIcon,
   RecordVoiceOver as RecordVoiceOverIcon,
 } from '@material-ui/icons';
+import useStyle from './intentNodeWidget.style';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { IntentNodeModel } from './IntentNodeModel';
+import { IntentNodeModel } from './';
 import * as _ from 'lodash';
 import IntentNodeDetail from './NodeDetail';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
+import apis from '../../../../../apis';
+import { Intent, IntentsResponse, DataResponse } from './intentNodeWidget.type';
+import { BaseNodeModel } from '../BaseNodeModel';
 
 export interface IntentNodeWidgetProps {
   node: IntentNodeModel;
@@ -40,28 +38,72 @@ export interface IntentNodeWidgetState {
 }
 
 const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
-  const [isHover, setIsHover] = React.useState(false);
-  const [open, setOpen] = React.useState<boolean>(false);
+  const { node, engine } = props;
+  const { workflowId } = useParams();
+  const classes = useStyle();
+  const [isHover, setIsHover] = useState(false);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [actionMouseWheel, setActionMouseWheel] = useState<Action>();
+  const [intent, setIntent] = useState<IntentsResponse>();
+  const [intents, setIntents] = useState<IntentsResponse[]>();
 
-  const handleDeleteNode = (engine) => {
+  const fetchIntents = async () => {
+    const data: DataResponse = await apis.intent.getIntents();
+    if (data.status) {
+      setIntents(data.result);
+      if (node.itemId) {
+        setIntent(data.result.find((el) => el.id === node.itemId));
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchIntents();
+  }, []);
+
+  const handleOpenEdit = () => {
+    setOpenEdit(true);
+    const action: Action = engine
+      .getActionEventBus()
+      .getActionsForType(InputType.MOUSE_WHEEL)[0];
+    engine.getActionEventBus().deregisterAction(action);
+    engine.repaintCanvas();
+    setActionMouseWheel(action);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+    engine.getActionEventBus().registerAction(actionMouseWheel);
+    engine.repaintCanvas();
+  };
+
+  const handleDeleteNode = async () => {
     const selectedEntities = engine.getModel().getSelectedEntities();
     if (selectedEntities.length > 0) {
       const confirm = window.confirm('Are you sure you want to delete?');
 
       if (confirm) {
-        _.forEach(selectedEntities, (model) => {
+        _.forEach(selectedEntities, async (model) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
-            model.remove();
+            console.log('remove');
+            const data = await apis.workflow.removeNode(
+              workflowId,
+              (model as BaseNodeModel).id,
+            );
+            if (data.status) {
+              model.remove();
+              engine.repaintCanvas();
+            }
           }
         });
-        engine.repaintCanvas();
+        // engine.repaintCanvas();
       }
     }
   };
 
-  const handleDuplicateNode = (engine) => {
-    const selectedEntities = props.engine
+  const handleDuplicateNode = () => {
+    const selectedEntities = engine
       .getModel()
       .getSelectedEntities()[0] as IntentNodeModel;
 
@@ -70,75 +112,64 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
     );
-    props.engine.getModel().addNode(newNode);
-    // engine.getModel().addNode(newNode);
-    props.engine.repaintCanvas();
+    // props.engine.getModel().addNode(newNode);
+    engine.getModel().addNode(newNode);
+    engine.repaintCanvas();
   };
 
   return (
     <Box
-      style={{ width: 280, position: 'relative' }}
-      // style={{ borderRadius: 10 }}
+      className={classes.container}
       onMouseOver={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
       {isHover ? (
-        <Paper style={{ width: 100, height: 24, marginBottom: 5 }}>
-          <Box style={{ marginLeft: 4 }}>
-            <Editcon
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                setOpen(true);
-                // props.engine
-                //   .getActionEventBus()
-                //   .deregisterAction(
-                //     props.engine
-                //       .getActionEventBus()
-                //       .getActionsForType(InputType.MOUSE_WHEEL)[0]
-                //   );
-              }}
-            />
-            <DeleteOutlineIcon
-              onClick={() => handleDeleteNode(props.engine)}
-              style={{ cursor: 'pointer' }}
-            />
-            <FileCopyIcon onClick={() => handleDuplicateNode(props.engine)} />
-            <MoreVertIcon style={{ cursor: 'pointer' }} />
-          </Box>
-        </Paper>
+        <Box className={classes.iconMenu}>
+          <Editcon
+            fontSize="small"
+            className={classes.iconMenuItem}
+            onClick={handleOpenEdit}
+          />
+          <DeleteOutlineIcon
+            fontSize="small"
+            onClick={() => handleDeleteNode()}
+            className={classes.iconMenuItem}
+          />
+          <FileCopyIcon
+            onClick={() => handleDuplicateNode()}
+            className={classes.fileCopyIcon}
+          />
+          <MoreVertIcon fontSize="small" className={classes.iconMenuItem} />
+        </Box>
       ) : (
-        <div style={{ width: 100, height: 24, marginBottom: 5 }} />
+        <Box className={classes.noneIconMenu} />
       )}
-      {/* <RecordVoiceOverIcon
-        style={{ position: "absolute", top: 45, left: 12 }}
-      /> */}
 
       <Paper style={{ borderRadius: 10 }}>
         <PortWidget
           engine={props.engine}
           port={props.node.getPort('in')}
         ></PortWidget>
-        <Grid container justify="center" style={{ paddingTop: 10 }}>
-          <RecordVoiceOverIcon
-            style={{ position: 'relative', marginRight: 10, bottom: 4 }}
-          />
-          <Typography>Intent</Typography>
+        <Grid container justify="center" className={classes.header}>
+          <RecordVoiceOverIcon className={classes.headerIcon} />
+          <Typography variant="h6">Intent</Typography>
         </Grid>
-
         <Autocomplete
-          style={{
-            margin: '0px 20px',
-          }}
+          className={classes.autoComplete}
           size="small"
-          options={[]}
+          value={intent || null}
+          options={intents}
+          onChange={(e: React.ChangeEvent<{}>, value: any, reason: string) => {
+            node.itemId = (value && value.id) || null;
+            setIntent(value);
+          }}
           getOptionSelected={(option, value) => option.id === value.id}
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (
             <TextField
               {...params}
-              style={{
-                margin: '10px 0px 5px 0px',
-              }}
+              className={classes.textField}
+              placeholder="Search intent"
             />
           )}
         />
@@ -149,7 +180,11 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
         </Grid>
       </Paper>
 
-      <IntentNodeDetail open={open} setOpen={setOpen} />
+      <IntentNodeDetail
+        open={openEdit}
+        handleCloseEdit={handleCloseEdit}
+        intentId={intent?.id}
+      />
     </Box>
   );
 };

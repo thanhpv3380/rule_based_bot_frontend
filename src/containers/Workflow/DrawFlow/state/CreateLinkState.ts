@@ -1,12 +1,11 @@
 import { MouseEvent, KeyboardEvent } from 'react';
 import { Action, ActionEvent, InputType, State } from '@projectstorm/react-canvas-core';
-import { PortModel, LinkModel, DiagramEngine } from '@projectstorm/react-diagrams-core';
 
-import { MenuNodeModel } from '../node/MenuNode/MenuNodeModel';
-import { ActionNodeModel } from '../node/ActionNode/ActionNodeModel'
-import { DefaultPortModel, PathFindingLinkModel } from '@projectstorm/react-diagrams';
+import { MenuNodeModel } from '../node/MenuNode';
 import { AdvancedLinkModel, AdvancedPortModel } from '../customLink';
 import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
+import { BaseNodeModel } from '../node/BaseNodeModel';
+import { ConditionNodeModel, IntentNodeModel } from '../node';
 /**
  * This state is controlling the creation of a link.
  */
@@ -22,24 +21,20 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 		this.registerAction(
 			new Action({
 				type: InputType.MOUSE_UP,
-				fire: (actionEvent: ActionEvent<MouseEvent>) => {
+				fire: (actionEvent: ActionEvent<any>) => {
 					console.log("link down");
 					const element = this.engine.getActionEventBus().getModelForEvent(actionEvent);
 					const {
 						event: { clientX, clientY }
 					} = actionEvent;
-
 					const ox = this.engine.getModel().getOffsetX();
 					const oy = this.engine.getModel().getOffsetY();
 
-					console.log('offset', ox, oy);
-					console.log('toa do client up', clientX, clientY);
-					console.log('toa do offset up', ox, oy);
-					const listPost = element && element['ports'];
-					const portCurrentPort = (listPost && listPost['in']) || null;
-
+					console.log(element, "element");
 					if (element instanceof AdvancedPortModel && !this.sourcePort) {
 						this.sourcePort = element;
+						console.log(element, "source port");
+						console.log(this.sourcePort.getParent() instanceof IntentNodeModel, "instanof");
 
 						const link = this.sourcePort.createLinkModel();
 						link.setSourcePort(this.sourcePort);
@@ -47,18 +42,31 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 						//link.getLastPoint().setPosition(clientX - ox + 20, clientY - oy + 20);
 
 						this.link = this.engine.getModel().addLink(link);
-					} else if (portCurrentPort && portCurrentPort instanceof AdvancedPortModel && this.sourcePort && portCurrentPort !== this.sourcePort) {
-						if (this.sourcePort.canLinkToPort(portCurrentPort)) {
-							this.link.setTargetPort(portCurrentPort);
-							portCurrentPort.reportPosition();
-							this.clearState();
-							this.eject();
+					} else if (element instanceof BaseNodeModel) {
+						const listPort = element.getPorts();
+						const portCurrentPort = (listPort && listPort['in']) || null;
+						if (portCurrentPort && portCurrentPort instanceof AdvancedPortModel && this.sourcePort && portCurrentPort !== this.sourcePort) {
+							const sourceNode = this.link.getSourcePort().getParent();
+							if (this.sourcePort.canLinkToPort(portCurrentPort)) {
+								if (element instanceof ConditionNodeModel) {
+									console.log(element.itemId, "itemID");
+									if (sourceNode instanceof IntentNodeModel) {
+										element.intentId = sourceNode.itemId;
+									} else {
+										//Todo alert thôgn báo action không thể nối với condition
+										return;
+									}
+								}
+								this.link.setTargetPort(portCurrentPort);
+								portCurrentPort.reportPosition();
+								this.clearState();
+								this.eject();
+							}
 						}
-					} else if (element instanceof AdvancedLinkModel && element['points'][1] === this.link.getLastPoint()) {
-						console.log(element, "element");
-
-						console.log(this.link.getLastPoint());
-						const node4 = new MenuNodeModel({ color: 'rgb(0,192,255)' });
+					}
+					else if (element instanceof AdvancedLinkModel && element['points'][1] === this.link.getLastPoint()) {
+						const sourceNode = this.link.getSourcePort().getParent();
+						const node4 = new MenuNodeModel({ isIntent: sourceNode instanceof IntentNodeModel });
 						node4.setPosition(clientX - ox, clientY - oy);
 						const model = this.engine.getModel();
 						model.addNode(node4);
@@ -79,7 +87,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 		this.registerAction(
 			new Action({
 				type: InputType.MOUSE_MOVE,
-				fire: (actionEvent: ActionEvent<MouseEvent>) => {
+				fire: (actionEvent: ActionEvent<any>) => {
 					console.log("link move");
 					if (!this.link) return;
 					const { event } = actionEvent;
@@ -97,7 +105,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 		this.registerAction(
 			new Action({
 				type: InputType.KEY_UP,
-				fire: (actionEvent: ActionEvent<KeyboardEvent>) => {
+				fire: (actionEvent: ActionEvent<any>) => {
 					console.log("link up");
 					// on esc press remove any started link and pop back to default state
 					if (actionEvent.event.keyCode === 27) {

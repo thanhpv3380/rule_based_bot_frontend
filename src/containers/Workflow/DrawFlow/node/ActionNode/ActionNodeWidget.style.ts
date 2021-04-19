@@ -5,16 +5,27 @@ export default makeStyles((theme) => ({
     width: 280,
     position: 'relative'
   },
-  customPaper: {
-    width: 100,
-    height: 24,
-    marginBottom: 5
+  iconMenu: {
+    minWidth: 30,
+    maxWidth: 350,
+    display: 'inline-block',
+    padding: '6px 6px 0px 6px',
+    backgroundColor: 'white',
+    marginBottom: 8,
+    borderRadius: 10,
   },
-  customBox: {
-    marginLeft: 4
+  noneIconMenu: {
+    display: 'inline-block',
+    padding: '13px 0px',
+    marginBottom: 8,
   },
-  customCursor: {
-    cursor: 'pointer'
+  iconMenuItem: {
+    cursor: 'pointer',
+  },
+  fileCopyIcon: {
+    fontSize: '1.15rem',
+    marginLeft: 3,
+    cursor: 'pointer',
   },
   customRadius: {
     borderRadius: 10

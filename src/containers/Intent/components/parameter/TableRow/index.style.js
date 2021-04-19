@@ -61,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
   borderRadius: {
     borderRadius: 10,
   },
+  iconMargin: {
+    marginLeft: 8,
+  },
 }));
 
 export default useStyles;

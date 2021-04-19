@@ -1,178 +1,104 @@
-import * as React from "react";
-import { useState } from "react";
-import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams-core";
-import {
-  CanvasWidget,
-  Action,
-  ActionEvent,
-  InputType,
-} from "@projectstorm/react-canvas-core";
-import {
-  Button,
-  Box,
-  TextField,
-  Paper,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  TableContainer,
-  Drawer,
-  InputBase,
-  Select,
-  MenuItem,
-  Menu,
-  Typography,
-  Grid,
-  Divider,
-  Card,
-  CardContent,
-  Modal,
-} from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import {
-  MoreVert as MoreVertIcon,
-  Edit as Editcon,
-  DeleteOutline as DeleteOutlineIcon,
-  FileCopy as FileCopyIcon,
-  DeviceHubSharp as DeviceHubSharpIcon,
-  Close as CloseIcon,
-  DeleteOutlineOutlined as DeleteOutlineOutlinedIcon,
-  Add as AddIcon,
-} from "@material-ui/icons";
-import { makeStyles } from "@material-ui/styles";
-import ItemInfoHeader from "./components/ItemInfoHeader";
-import Patterns from "./components/patterns";
-import Parameters from "./components/parameter";
-import ActionMapping from "./components/actionMapping";
-
-const useStyle = makeStyles({
-  root: {
-    backgroundColor: "#eaeaea",
-    height: "80%",
-    width: "60%",
-    "@media (min-width: 1600px)": {
-      width: "45%",
-    },
-    overflow: "auto",
-    borderRadius: 10,
-  },
-  gridHeaderTiltle: {
-    margin: "16px 0px 30px",
-  },
-  gridHeaderIcon: {
-    margin: "16px 50px 30px",
-  },
-  table: {
-    "& .MuiTableCell-root": {
-      borderLeft: "1px solid rgba(224, 224, 224, 1)",
-    },
-  },
-  body: {
-    margin: "0px 40px",
-  },
-  tableRow: {
-    position: "relative",
-  },
-  menu: {
-    top: 40,
-    left: 3,
-  },
-  paddingMenu: {
-    paddingTop: 2,
-    paddingBottom: 2,
-  },
-  tableCellInput: {
-    width: 100,
-    backgroundColor: "#ffff",
-    borderBottom: "10px solid #eaeaea",
-  },
-  tableCellSelect: {
-    cursor: "pointer",
-    backgroundColor: "#ffff",
-    borderBottom: "10px solid #eaeaea",
-  },
-  tableCellIcon: {
-    cursor: "pointer",
-    borderBottom: "none",
-  },
-  iconDeleteButton: {
-    border: "1px solid",
-    borderRadius: 5,
-  },
-  tableRowButton: {
-    backgroundColor: "#ffff",
-  },
-  cardContent: { marginTop: "4%" },
-  modal: {
-    "& :focus": {
-      outline: "none",
-    },
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
-
-interface Condition {
-  openMenuConnectCondition: any;
-  openMenuOperator: any;
-}
-
-const menuOperator: string[] = ["=", "!=", ">", "<"];
-const menuConnectCondition: string[] = ["and", "or"];
-
-const rows: Condition[] = [
-  {
-    openMenuConnectCondition: null,
-    openMenuOperator: null,
-  },
-  {
-    openMenuConnectCondition: null,
-    openMenuOperator: null,
-  },
-];
-
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { Grid, Modal, Paper } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
+import IntentDetail from '../../../../../Intent/DetailIntent';
+import IntentCreate from '../../../../../Intent/CreateIntent';
+import apis from '../../../../../../apis';
+import useStyle from './index.style';
+import textDefault from '../../../../../../constants';
 interface IntentNodeDetail {
   open: boolean;
-  setOpen: Function;
+  handleCloseEdit: Function;
+  intentId?: string;
 }
 
 const IntentNodeDetail = (props: IntentNodeDetail) => {
   const classes = useStyle();
-  const { open, setOpen } = props;
+  const { enqueueSnackbar } = useSnackbar();
+  const { open, handleCloseEdit, intentId } = props;
+  const [groupAndItems, setGroupAndItems] = useState([]);
+  const [groupIdSelected, setGroupIdSelected] = useState();
 
-  const handleMouseEnterItem = (e) => {
-    e.target.style.backgroundColor = "#208ef0";
+  const fetchGroupAndItems = async (keyword) => {
+    const data = await apis.groupIntent.getGroupAndItems({ keyword });
+    if (data.status) {
+      setGroupAndItems(data.result.groupIntents);
+    } else {
+      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+        variant: 'error',
+      });
+    }
   };
-  const handleMouseLeaveItem = (e) => {
-    e.target.style.backgroundColor = "#ffff";
+
+  useEffect(() => {
+    fetchGroupAndItems('');
+  }, []);
+
+  const handleUpdate = (data, oldGroupAction) => {
+    const newGroupAndItems = [...groupAndItems];
+    const intentData = {
+      id: data.id,
+      name: data.name,
+      groupIntent: data.groupIntent,
+      actions: data.actions,
+    };
+    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
+    newGroupAndItems[pos].status = true;
+    const childrenPos = newGroupAndItems[pos].children.findIndex(
+      (el) => el.id === data.id,
+    );
+    if (childrenPos < 0) {
+      const tempPos = newGroupAndItems.findIndex(
+        (el) => el.id === oldGroupAction,
+      );
+      const newItems = newGroupAndItems[tempPos].children.filter(
+        (el) => el.id !== data.id,
+      );
+      newGroupAndItems[tempPos] = {
+        ...newGroupAndItems[tempPos],
+        children: [...newItems],
+      };
+      newGroupAndItems[pos].children.unshift(intentData);
+    } else {
+      newGroupAndItems[pos].children[childrenPos] = intentData;
+    }
+    setGroupAndItems(newGroupAndItems);
+  };
+  const handleCreateItem = (data) => {
+    const newGroupAndItems = [...groupAndItems];
+    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
+    newGroupAndItems[pos].children.unshift({
+      id: data.id,
+      name: data.name,
+      groupIntent: data.groupIntent,
+      // intents: data.actions,
+    });
+    newGroupAndItems[pos].status = true;
+    setGroupAndItems(newGroupAndItems);
+    // history.push(`/bot/${botId}/intents/detail/${data.id}`);
   };
   return (
     <Modal
       open={open}
       className={classes.modal}
-      onClose={() => {
-        setOpen(false);
-      }}
+      onClose={() => handleCloseEdit()}
     >
       <Paper className={classes.root}>
-        <Grid style={{ marginLeft: 40, marginRight: 40, marginTop: "3%" }}>
-          <ItemInfoHeader />
-          <CardContent className={classes.cardContent}>
-            <Patterns />
-            <br />
-            <Divider />
-            <br />
-            <Parameters setOpen={setOpen} />
-            <br />
-            <Divider />
-            <br />
-            <ActionMapping />
-          </CardContent>
+        <Grid className={classes.content}>
+          {intentId ? (
+            <IntentDetail
+              groupItems={groupAndItems}
+              flowIntentId={intentId}
+              handleUpdate={handleUpdate}
+            />
+          ) : (
+            <IntentCreate
+              groupItems={groupAndItems}
+              groupIntentId={groupIdSelected}
+              handleCreate={handleCreateItem}
+            />
+          )}
         </Grid>
       </Paper>
     </Modal>

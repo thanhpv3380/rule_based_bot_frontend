@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "src/*": ["src/containers/WorkFlow/*"],
+      "components/*": ["src/containers/WorkFlow/*"]
+    },
+    "suppressExcessPropertyErrors": true,
+    "declaration": false,
+    "outDir": "dist/@types",
+    "strictNullChecks": false,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "jsx": "react",
+    "target": "es6",
+    "module": "CommonJS",
+    "lib": ["dom", "es6"],
+    "allowJs": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": false,
+    "strict": false,
+    "forceConsistentCasingInFileNames": false,
+    "moduleResolution": "node",
+    "resolveJsonModule": false,
+    "isolatedModules": false,
+    "noEmit": false
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "*/.spec.ts", "./dist"]
+}
