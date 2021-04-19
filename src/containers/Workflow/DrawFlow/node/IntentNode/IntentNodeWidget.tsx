@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { PortWidget } from '@projectstorm/react-diagrams-core';
 import { Action, InputType } from '@projectstorm/react-canvas-core';
 import {
@@ -38,6 +39,7 @@ export interface IntentNodeWidgetState {
 
 const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const { node, engine } = props;
+  const { workflowId } = useParams();
   const classes = useStyle();
   const [isHover, setIsHover] = useState(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
@@ -85,8 +87,8 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
             console.log('remove');
-            const data = await apis.workFlow.removeNode(
-              '60772243b8287d30f84e3f6a',
+            const data = await apis.workflow.removeNode(
+              workflowId,
               (model as BaseNodeModel).id,
             );
             if (data.status) {

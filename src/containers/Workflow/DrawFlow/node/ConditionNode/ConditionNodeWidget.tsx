@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { PortWidget } from '@projectstorm/react-diagrams-core';
 import {
   Action,
@@ -63,6 +64,7 @@ const conditionsDefault: Conditions = {
 
 const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const { engine, node } = props;
+  const { workflowId } = useParams();
   const classes = useStyle();
   const [conditon, setContion] = useState<Condition>();
   const [subConditions, setSubConditions] = useState<Conditions[]>([]);
@@ -168,8 +170,8 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
         _.forEach(selectedEntities, async (model: any) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
-            const data = await apis.workFlow.removeNode(
-              '60772243b8287d30f84e3f6a',
+            const data = await apis.workflow.removeNode(
+              workflowId,
               (model as BaseNodeModel).id,
             );
             if (data.status) {

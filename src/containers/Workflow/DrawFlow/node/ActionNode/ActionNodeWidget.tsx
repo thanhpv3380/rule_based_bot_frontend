@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams';
 import { Box, TextField, Paper, Typography, Grid } from '@material-ui/core';
 import {
@@ -26,6 +27,7 @@ export interface ActionNodeWidgetProps {
 
 const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   const { node, engine } = props;
+  const { workflowId } = useParams();
   const classes = useStyles();
   const [isHover, setIsHover] = useState(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
@@ -71,8 +73,8 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
         _.forEach(selectedEntities, async (model) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
-            const data = await apis.workFlow.removeNode(
-              '60772243b8287d30f84e3f6a',
+            const data = await apis.workflow.removeNode(
+              workflowId,
               (model as BaseNodeModel).id,
             );
             if (data.status) {

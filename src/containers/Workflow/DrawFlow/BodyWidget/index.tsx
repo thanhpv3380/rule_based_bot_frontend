@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useParams } from 'react-router-dom';
 import { CanvasWidget } from '@projectstorm/react-canvas-core';
 import { Application } from '../Application';
 import DemoCanvasWidget from './DemoCanvasWidget/index';
@@ -25,6 +25,7 @@ export interface BodyWidgetProps {
 const BodyWidget = (props: BodyWidgetProps) => {
   const classes = useStyles();
   const forceUpdate: () => void = React.useState()[1].bind(null, {});
+  const { workflowId } = useParams();
 
   const addNode = async (node: BaseNodeModel) => {
     node.setPosition(550, 300);
@@ -35,10 +36,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
         y: 300,
       },
     };
-    const data = await apis.workFlow.addNode(
-      '60772243b8287d30f84e3f6a',
-      newNode,
-    );
+    const data = await apis.workflow.addNode(workflowId, newNode);
     if (data.status) {
       node.id = data.result.node.id;
       props.app.getDiagramEngine().getModel().addNode(node);
@@ -120,11 +118,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
           };
       }
     });
-    const data = await apis.workFlow.updateFlowDraw(
-      '60772243b8287d30f84e3f6a',
-      newNodes,
-    );
-    console.log(newNodes, 'result');
+    const data = await apis.workflow.updateFlowDraw(workflowId, newNodes);
   };
 
   return (

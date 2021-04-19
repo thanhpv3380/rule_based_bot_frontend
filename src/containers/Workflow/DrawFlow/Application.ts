@@ -27,30 +27,6 @@ export class Application {
         this.diagramEngine.getNodeFactories().registerFactory(new MenuNodeFactory());
         this.diagramEngine.getLinkFactories().registerFactory(new AdvancedLinkFactory());
 
-        // const nodeStart = new StartNodeModel();
-        // nodeStart.setPosition(550, 100);
-
-        // const node1 = new ConditionNodeModel();
-        // node1.setPosition(50, 50);
-
-        // const node2 = new IntentNodeModel();
-        // node2.setPosition(400, 200);
-
-        // const node3 = new ActionNodeModel();
-
-        // node3.setPosition(1000, 300);
-
-        // const link1 = new AdvancedLinkModel();
-        // link1.setSourcePort(node1.getPort("out"));
-        // link1.setTargetPort(node2.getPort("in"));
-
-        // const link2 = new AdvancedLinkModel();
-        // link2.setTargetPort(node1.getPort("out"));
-        // link2.setSourcePort(node3.getPort("in"));
-        // console.log(node3);
-
-        // this.activeModel.addAll(nodeStart, node1, node2, node3, link1, link2);
-
         this.diagramEngine.getActionEventBus().registerAction(new CustomDeleteItemsAction());
         this.diagramEngine.getStateMachine().pushState(new DefaultState());
     }

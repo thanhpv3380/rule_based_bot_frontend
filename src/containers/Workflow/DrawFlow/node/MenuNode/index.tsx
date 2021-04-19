@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { MenuNodeWidget } from './MenuNodeWidget';
+import MenuNodeWidget from './MenuNodeWidget';
 import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
 import { DiagramEngine } from '@projectstorm/react-diagrams-core';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';

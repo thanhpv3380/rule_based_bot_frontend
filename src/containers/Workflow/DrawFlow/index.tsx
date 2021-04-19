@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useParams } from 'react-router-dom';
 import BodyWidget from './BodyWidget/index';
 import { Application } from './Application';
 import apis from '../../../apis';
@@ -34,7 +34,10 @@ export interface Node {
 }
 
 const DrawFlow = () => {
-  const [applicaion, setApplication] = React.useState<Application>(
+  const { workflowId } = useParams();
+  console.log(workflowId, 'workflow');
+
+  const [application, setApplication] = React.useState<Application>(
     new Application(),
   );
   const drawNodes = (nodes: Node[], map: Map<string, NodeModel>) => {
@@ -46,7 +49,7 @@ const DrawFlow = () => {
           nodeDraw = new StartNodeModel({ id: node.id });
 
           nodeDraw.setPosition(node.position.x, node.position.y);
-          applicaion.getActiveDiagram().addNode(nodeDraw);
+          application.getActiveDiagram().addNode(nodeDraw);
           map.set(node.id, nodeDraw);
           break;
         case 'INTENT':
@@ -57,7 +60,7 @@ const DrawFlow = () => {
           nodeDraw.setPosition(node.position.x, node.position.y);
 
           nodeDraw.setPosition(node.position.x, node.position.y);
-          applicaion.getActiveDiagram().addNode(nodeDraw);
+          application.getActiveDiagram().addNode(nodeDraw);
           map.set(node.id, nodeDraw);
           break;
         case 'ACTION': {
@@ -66,7 +69,7 @@ const DrawFlow = () => {
             itemId: (node.action && node.action.id) || null,
           });
           nodeDraw.setPosition(node.position.x, node.position.y);
-          applicaion.getActiveDiagram().addNode(nodeDraw);
+          application.getActiveDiagram().addNode(nodeDraw);
           map.set(node.id, nodeDraw);
           break;
         }
@@ -90,7 +93,7 @@ const DrawFlow = () => {
         intentId: sourceNodeId,
       });
       nodeDraw.setPosition(el.position.x, el.position.y);
-      applicaion.getActiveDiagram().addNode(nodeDraw);
+      application.getActiveDiagram().addNode(nodeDraw);
       map.set(el.id, nodeDraw);
     });
   };
@@ -104,7 +107,7 @@ const DrawFlow = () => {
           const link = new AdvancedLinkModel();
           link.setSourcePort(parentNode.getPort('out') as AdvancedPortModel);
           link.setTargetPort(nodeDraw.getPort('in') as AdvancedPortModel);
-          applicaion.getActiveDiagram().addLink(link);
+          application.getActiveDiagram().addLink(link);
         });
       }
     });
@@ -113,12 +116,12 @@ const DrawFlow = () => {
     const map: Map<string, NodeModel> = new Map();
     await drawNodes(nodes, map);
     await drawLinks(nodes, map);
-    applicaion.getDiagramEngine().repaintCanvas();
+    application.getDiagramEngine().repaintCanvas();
   };
   const fetchWorkFlow = async () => {
-    const data = await apis.workFlow.getWorkFlowById(
-      '60772243b8287d30f84e3f6a',
-    );
+    console.log(workflowId, 'fetch');
+
+    const data = await apis.workflow.getWorkFlowById(workflowId);
     if (data.status) {
       const { nodes } = data.result.workflow;
       drawFlow(nodes as Node[]);
@@ -127,8 +130,8 @@ const DrawFlow = () => {
 
   React.useEffect(() => {
     fetchWorkFlow();
-  }, [applicaion]);
-  return <BodyWidget app={applicaion} />;
+  }, [application]);
+  return <BodyWidget app={application} />;
 };
 
 export default DrawFlow;
