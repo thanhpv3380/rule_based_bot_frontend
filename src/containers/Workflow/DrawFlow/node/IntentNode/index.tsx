@@ -1,16 +1,30 @@
 import * as React from 'react';
-import { IntentNodeModel } from './IntentNodeModel';
 import IntentNodeWidget from './IntentNodeWidget';
 import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
-import { DiagramEngine } from '@projectstorm/react-diagrams-core';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
+import { BaseModelOptions } from '@projectstorm/react-canvas-core';
+import { BaseNodeModel } from '../BaseNodeModel';
 
+export interface IntentNodeModelOptions extends BaseModelOptions {
+  color?: string;
+  id?: string;
+  itemId?: string;
+}
+
+export class IntentNodeModel extends BaseNodeModel {
+  constructor(options: IntentNodeModelOptions = {}) {
+    super({
+      ...options,
+      type: 'INTENT',
+    });
+  }
+}
 export class IntentNodeFactory extends AbstractReactFactory<
   IntentNodeModel,
   AdvancedDiagramEngine
 > {
   constructor() {
-    super('ts-custom-node');
+    super('INTENT');
   }
 
   generateModel(initialConfig) {

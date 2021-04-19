@@ -17,7 +17,7 @@ export class CustomDeleteItemsAction extends Action {
     };
     super({
       type: InputType.KEY_DOWN,
-      fire: (event: ActionEvent<React.KeyboardEvent>) => {
+      fire: (event: ActionEvent<any>) => {
         // console.log(event.event.keyCode);
         // console.log(
         //   options.keyCodes.indexOf(event.event.keyCode),
@@ -25,7 +25,7 @@ export class CustomDeleteItemsAction extends Action {
         // );
 
         if (options.keyCodes.indexOf(event.event.keyCode) >= 0) {
-          console.log('dosomething');
+          console.log('disable');
           // this.engine.repaintCanvas();
         }
       },

@@ -4,7 +4,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
-import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import TranningPhrases from '../components/tranningPhrases';
 import Parameters from '../components/parameter';
@@ -13,17 +12,15 @@ import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
 
-function IntentDetail(props) {
+function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   const classes = useStyles();
-  const { intentId } = useParams();
-  const { groupItems, handleUpdate } = props;
   const { enqueueSnackbar } = useSnackbar();
   const [intent, setIntent] = useState({});
-  // const [groupSelect, setGroupSelect] = useState();
   const [patterns, setPatterns] = useState();
   const [actions, setActions] = useState([]);
+  const [currentIntentId, setCurrentIntentId] = useState();
 
-  const fetchIntent = async () => {
+  const fetchIntent = async (intentId) => {
     const data = await apis.intent.getIntent(intentId);
     if (data.status) {
       setIntent({ ...data.result, parameters: data.result.parameters || [] });
@@ -33,17 +30,26 @@ function IntentDetail(props) {
 
   const fetchActions = async () => {
     const data = await apis.action.getActions();
-
     if (data.status) {
       setActions(data.result.actions);
     }
   };
 
   useEffect(() => {
-    fetchIntent();
-    fetchActions();
-  }, [intentId]);
+    if (flowIntentId) {
+      setCurrentIntentId(flowIntentId);
+      fetchIntent(flowIntentId);
+    } else {
+      const listUrl = window.location.href.split('/');
+      const itemId = listUrl[listUrl.length - 1];
+      setCurrentIntentId(itemId);
+      fetchIntent(itemId);
+    }
+  }, [window.location.href]);
 
+  useEffect(() => {
+    fetchActions();
+  }, []);
   // function component itemInfoHeader
   const handleSave = async () => {
     const parameters =
@@ -72,7 +78,7 @@ function IntentDetail(props) {
       mappingAction: intent.mappingAction && intent.mappingAction.id,
     };
     console.log(newIntent);
-    const data = await apis.intent.updateIntent(intentId, newIntent);
+    const data = await apis.intent.updateIntent(currentIntentId, newIntent);
     if (data.status) {
       const { result } = data;
       enqueueSnackbar('Update intent success', {
@@ -104,7 +110,7 @@ function IntentDetail(props) {
 
   // Component TranningPhrases
   const handleKeyDown = async (value) => {
-    const data = await apis.intent.addUsersay(intentId, value);
+    const data = await apis.intent.addUsersay(currentIntentId, value);
     if (data.status) {
       const newPatterns = [...patterns];
       newPatterns.push(value);
@@ -113,7 +119,7 @@ function IntentDetail(props) {
   };
 
   const handleDeleteUsersay = async (usersay) => {
-    const data = await apis.intent.removeUsersay(intentId, usersay);
+    const data = await apis.intent.removeUsersay(currentIntentId, usersay);
     if (data.status) {
       const newIntent = { ...intent };
       const newPatterns = newIntent.patterns.filter((el) => el !== usersay);

@@ -21,6 +21,7 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
   const { enqueueSnackbar } = useSnackbar();
   const botId = useSelector((state) => state.bot.bot);
   const [openModal, setOpenModal] = useState(false);
+  const [isFetchData, setIsFetchData] = useState(false);
   const [workflowData, setWorkflowData] = useState({
     name: '',
     groupWorkflow: '',
@@ -31,6 +32,7 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
     const data = await apis.workflow.getWorkflow(id);
     if (data && data.status) {
       setWorkflowData(data.result.workflow);
+      setIsFetchData(true);
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
@@ -103,34 +105,39 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
         handleSave={handleSave}
         handleChange={handleChangeInfoHeader}
       />
-      <div className={classes.content}>
-        <Box display="flex">
-          <Box mr={2}>
-            <Button
-              variant="outlined"
-              color="primary"
-              size="large"
-              onClick={handleOpenParametersModal}
-            >
-              Parameters
-            </Button>
-          </Box>
-          <Box>
-            <Button
-              variant="outlined"
-              color="primary"
-              size="large"
-              onClick={handleOpenDrawFlow}
-            >
-              Workflow
-            </Button>
-          </Box>
-        </Box>
 
-        <ParametersModal
-          open={openModal}
-          handleCloseModal={handleCloseParametersModal}
-        />
+      <div className={classes.content}>
+        {isFetchData && (
+          <>
+            <Box display="flex">
+              <Box mr={2}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  onClick={handleOpenParametersModal}
+                >
+                  Parameters
+                </Button>
+              </Box>
+              <Box>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  onClick={handleOpenDrawFlow}
+                >
+                  Workflow
+                </Button>
+              </Box>
+            </Box>
+
+            <ParametersModal
+              open={openModal}
+              handleCloseModal={handleCloseParametersModal}
+            />
+          </>
+        )}
       </div>
     </>
   );

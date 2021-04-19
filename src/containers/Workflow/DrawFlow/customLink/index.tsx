@@ -122,7 +122,7 @@ export class AdvancedLinkFactory extends DefaultLinkFactory {
     return new AdvancedLinkModel();
   }
 
-  generateReactWidget(event): JSX.Element {
+  generateReactWidget(event: any): JSX.Element {
     return (
       <AdvancedLinkWidget link={event.model} diagramEngine={this.engine} />
     );

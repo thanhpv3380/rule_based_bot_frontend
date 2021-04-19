@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
-import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
-import {
-  CanvasWidget,
-  Action,
-  ActionEvent,
-  InputType,
-} from '@projectstorm/react-canvas-core';
 import { Modal, Paper, Grid } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import useStyles from './index.style';
 import DetailAction from '../../../../../Action/DetailAction';
 import apis from '../../../../../../apis';
@@ -17,13 +9,13 @@ import textDefault from '../../../../../../constants/textDefault';
 
 interface ActionNodeDetailProps {
   open: boolean;
-  setOpen: Function;
+  handleCloseEdit: Function;
 }
 
 const ActionNodeDetail = (props: ActionNodeDetailProps) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { open, setOpen } = props;
+  const { open, handleCloseEdit } = props;
   const [groupAndItems, setGroupAndItems] = useState([]);
 
   const fetchGroupAndItems = async () => {
@@ -50,9 +42,7 @@ const ActionNodeDetail = (props: ActionNodeDetailProps) => {
     <Modal
       open={open}
       className={classes.modal}
-      onClose={() => {
-        setOpen(false);
-      }}
+      onClose={() => handleCloseEdit()}
     >
       <Paper className={classes.root}>
         <Grid className={classes.content}>
