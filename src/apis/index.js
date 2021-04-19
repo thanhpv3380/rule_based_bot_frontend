@@ -9,8 +9,14 @@ import * as groupEntity from './groupEntity';
 import * as dictionary from './dictionary';
 import * as upload from './upload';
 import * as chatbot from './chatbot';
+<<<<<<< HEAD
 import * as workFlow from './workFlow';
 import * as condition from './condition';
+=======
+import * as workflow from './workflow';
+import * as groupWorkflow from './groupWorkflow';
+import * as slot from './slot';
+>>>>>>> task/flow
 
 export default {
   auth,
@@ -24,6 +30,12 @@ export default {
   dictionary,
   upload,
   chatbot,
+<<<<<<< HEAD
   workFlow,
   condition,
+=======
+  groupWorkflow,
+  workflow,
+  slot,
+>>>>>>> task/flow
 };

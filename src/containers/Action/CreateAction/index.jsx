@@ -25,11 +25,27 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const [parameters, setParameters] = useState([]);
   const [actionData, setActionData] = useState({
     name: '',
     groupAction: '',
   });
   const [actions, setActions] = useState([]);
+
+  const fetchSlots = async () => {
+    const data = await apis.slot.getSlots();
+    if (data && data.status) {
+      setParameters(data.result.slots);
+    } else {
+      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+        variant: 'success',
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchSlots();
+  }, []);
 
   useEffect(() => {
     setActionData({
@@ -149,6 +165,8 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
           url: '',
           headers: [],
           body: [],
+          response: null,
+          parameters: [],
         },
       },
     ]);
@@ -298,6 +316,49 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     setActions(newActions);
   };
 
+  const handleAddParameterItem = (actionId, data) => {
+    const { slot, name, value } = data;
+    if (!slot || !value) {
+      enqueueSnackbar('Value of properties of JSON API cannot be empty', {
+        variant: 'warning',
+      });
+      return false;
+    }
+    const newActions = [...actions];
+    const tempParameters = newActions[actionId].api.parameters;
+    const parameterIdExist = tempParameters.find((el) => el.slot === slot);
+    if (parameterIdExist) {
+      enqueueSnackbar('Slot already setted', {
+        variant: 'warning',
+      });
+      return false;
+    }
+    newActions[actionId].api = {
+      ...newActions[actionId].api,
+      parameters: [
+        ...newActions[actionId].api.parameters,
+        { slot, name, value },
+      ],
+    };
+    setActions(newActions);
+    return true;
+  };
+
+  const handleDeleteParameterItem = (actionId, pos) => {
+    const newActions = [...actions];
+    newActions[actionId].api = {
+      ...newActions[actionId].api,
+      parameters: [
+        ...newActions[actionId].api.parameters.slice(0, pos),
+        ...newActions[actionId].api.parameters.slice(
+          pos + 1,
+          newActions[actionId].api.parameters.length,
+        ),
+      ],
+    };
+    setActions(newActions);
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     const data = await apis.action.createAction({
@@ -374,6 +435,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
         <ActionJsonApi
           actionId={id}
           item={action}
+          parameters={parameters}
           handleDeleteJsonApi={handleDeleteItem}
           handleChange={handleChangeJsonApiInfoItem}
           handleAddHeaderItem={handleAddHeaderApiItem}
@@ -382,6 +444,8 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
           handleAddBodyItem={handleAddBodyApiItem}
           handleChangeBodyItem={handleChangeBodyApiItem}
           handleDeleteBodyItem={handleDeleteBodyApiItem}
+          handleAddParameterItem={handleAddParameterItem}
+          handleDeleteParameterItem={handleDeleteParameterItem}
         />
       );
     }
