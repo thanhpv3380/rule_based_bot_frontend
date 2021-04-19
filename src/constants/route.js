@@ -19,4 +19,10 @@ export default {
     CREATE_ENTITY: '/bot/:id/entities/create',
     DETAIL_ENTITY: '/bot/:id/entities/detail/:entityId',
   },
+  WORKFLOW_BOT: {
+    WORKFLOW: '/bot/:id/workflows',
+    CREATE_WORKFLOW: '/bot/:id/workflows/create',
+    DETAIL_WORKFLOW: '/bot/:id/workflows/detail/:workflowId',
+    DRAW_FLOW: '/bot/:id/draw-workflows/:workflowId',
+  },
 };

@@ -7,6 +7,8 @@ export default {
     VIDEO: 'video',
     NAME_OF_OPTION: 'Name of option',
     VALUE: 'Value',
+    NAME_OF_SLOT: 'Name of Slot',
+    VALUE_OF_PROPERTIES: 'Value of Properties',
   },
   SEARCH: 'Search',
   SEARCH_TRAINING_PHRASES: 'Search training phrases',
@@ -28,4 +30,8 @@ export default {
   ENTER_VALUE: 'Enter value',
   ENTER_SYNONYMS: 'Enter Synonyms',
   ENTER_TO_INPUT_OTHER_ENTITY: 'Enter @ to input other entity',
+  TITLE: 'Title',
+  NAME_OF_SLOT: 'Name of Slot',
+  VALUE: 'Value',
+  DATA_TYPE: 'Data Type',
 };

@@ -7,4 +7,5 @@ export default {
   CATEGORY: 'OPTION',
   API: 'API',
   LOOP: 'LOOP',
+  JSON_API: 'JSON_API',
 };

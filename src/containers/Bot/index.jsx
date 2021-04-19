@@ -35,7 +35,7 @@ const Bot = () => {
 
   const fetchBots = async (query) => {
     const data = await apis.bot.getBots(query);
-    if (data.status) {
+    if (data && data.status) {
       setBots(data.result.bots);
       setPagination({
         ...pagination,

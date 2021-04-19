@@ -6,6 +6,8 @@ import Dictionary from '../pages/Dictionary';
 import Action from '../pages/Action';
 import Intent from '../pages/Intent';
 import Entity from '../pages/Entity';
+import Workflow from '../pages/Workflow';
+import DrawFlow from '../pages/DrawFlow';
 
 export default [
   {
@@ -15,6 +17,7 @@ export default [
     restricted: true,
     isPrivate: false,
     isLayout: false,
+    isHeader: false,
   },
   {
     path: routes.DASHBOARD,
@@ -23,6 +26,7 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: false,
+    isHeader: true,
   },
   {
     path: routes.DASHBOARD_BOT,
@@ -31,6 +35,7 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: true,
+    isHeader: true,
   },
   {
     path: routes.DICTIONARY_BOT,
@@ -39,6 +44,7 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: true,
+    isHeader: true,
   },
   {
     path: routes.ACTION_BOT.ACTION,
@@ -47,6 +53,7 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: true,
+    isHeader: true,
   },
   {
     path: routes.INTENT_BOT.INTENT,
@@ -55,6 +62,7 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: true,
+    isHeader: true,
   },
   {
     path: routes.ENTITY_BOT.ENTITY,
@@ -63,5 +71,24 @@ export default [
     restricted: false,
     isPrivate: true,
     isLayout: true,
+    isHeader: true,
+  },
+  {
+    path: routes.WORKFLOW_BOT.WORKFLOW,
+    component: Workflow,
+    exact: false,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+    isHeader: true,
+  },
+  {
+    path: routes.WORKFLOW_BOT.DRAW_FLOW,
+    component: DrawFlow,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: false,
+    isHeader: false,
   },
 ];
