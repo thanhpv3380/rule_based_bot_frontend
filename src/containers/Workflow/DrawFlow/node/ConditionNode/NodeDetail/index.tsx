@@ -1,26 +1,20 @@
-import * as React from "react";
-import { useState } from "react";
-import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams-core";
+import * as React from 'react';
+import { useState } from 'react';
+import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
 import {
   CanvasWidget,
   Action,
   ActionEvent,
   InputType,
-} from "@projectstorm/react-canvas-core";
+} from '@projectstorm/react-canvas-core';
 import {
   Button,
   Box,
-  TextField,
-  Paper,
-  ListItem,
-  ListItemText,
-  IconButton,
   Table,
   TableBody,
   TableCell,
   TableRow,
   TableContainer,
-  Drawer,
   InputBase,
   Select,
   MenuItem,
@@ -28,8 +22,9 @@ import {
   Typography,
   Grid,
   Modal,
-} from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+  TextField,
+} from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   MoreVert as MoreVertIcon,
   Edit as Editcon,
@@ -39,127 +34,58 @@ import {
   Close as CloseIcon,
   DeleteOutlineOutlined as DeleteOutlineOutlinedIcon,
   Add as AddIcon,
-} from "@material-ui/icons";
-import { makeStyles } from "@material-ui/styles";
+} from '@material-ui/icons';
+import useStyle from './index.style';
+import { Conditions, Condition, Parameter } from '../Condition.types';
 
-const useStyle = makeStyles({
-  root: {
-    backgroundColor: "#eaeaea",
-    height: "50%",
-    width: "40%",
-    borderRadius: 10,
-    overflow: "auto",
-  },
-  modal: {
-    "& :focus": {
-      outline: "none",
-    },
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  gridHeaderTiltle: {
-    margin: "10px 0px 30px 40px",
-  },
-  gridHeaderIcon: {
-    margin: "10px 10px 30px 0px",
-  },
-  table: {
-    "& .MuiTableCell-root": {
-      borderLeft: "1px solid rgba(224, 224, 224, 1)",
-    },
-  },
-  body: {
-    margin: "0px 40px",
-  },
-  tableRow: {
-    position: "relative",
-  },
-  menu: {
-    top: 40,
-    left: 3,
-  },
-  paddingMenu: {
-    paddingTop: 2,
-    paddingBottom: 2,
-  },
-  tableCellInput: {
-    width: 100,
-    backgroundColor: "#ffff",
-    borderBottom: "10px solid #eaeaea",
-  },
-  tableCellSelect: {
-    cursor: "pointer",
-    backgroundColor: "#ffff",
-    borderBottom: "10px solid #eaeaea",
-  },
-  tableCellIcon: {
-    cursor: "pointer",
-    borderBottom: "none",
-  },
-  iconDeleteButton: {
-    border: "1px solid",
-    borderRadius: 5,
-  },
-  tableRowButton: {
-    backgroundColor: "#ffff",
-  },
-});
-
-interface Condition {
-  openMenuConnectCondition: any;
-  openMenuOperator: any;
-}
-
-const menuOperator: string[] = ["=", "!=", ">", "<", "start with"];
-const menuConnectCondition: string[] = ["and", "or"];
-
-const rows: Condition[] = [
-  {
-    openMenuConnectCondition: null,
-    openMenuOperator: null,
-  },
-  {
-    openMenuConnectCondition: null,
-    openMenuOperator: null,
-  },
-];
+const menuOperator: string[] = ['=', '!=', '>', '<', 'start with'];
+const menuConnectCondition: string[] = ['and', 'or'];
 
 interface ConditionNodeDetail {
   open: boolean;
-  conditions: Condition[];
+  parameters: Parameter[];
+  subConditions: Conditions[];
+  condition: Condition;
   handleOpenMenuOperator: Function;
   handleCloseMenuOperator: Function;
   handleCloseMenuConnectCondition: Function;
   handleOpenMenuConnectCondition: Function;
-  setOpen: Function;
+  handleCloseEdit: Function;
+  handleAddCondition: Function;
+  handleDeleteCondition: Function;
+  handleChangeCondition: Function;
 }
 
 const ConditionNodeDetail = (props: ConditionNodeDetail) => {
   const classes = useStyle();
   const {
     open,
-    conditions,
+    parameters,
+    subConditions,
+    condition,
     handleOpenMenuOperator,
     handleCloseMenuOperator,
     handleCloseMenuConnectCondition,
     handleOpenMenuConnectCondition,
-    setOpen,
+    handleCloseEdit,
+    handleAddCondition,
+    handleDeleteCondition,
+    handleChangeCondition,
   } = props;
 
-  const handleMouseEnterItem = (e) => {
-    e.target.style.backgroundColor = "#208ef0";
+  React.useEffect(() => {}, [subConditions, parameters]);
+  const handleMouseEnterItem = (e: any) => {
+    e.target.style.backgroundColor = '#208ef0';
   };
-  const handleMouseLeaveItem = (e) => {
-    e.target.style.backgroundColor = "#ffff";
+  const handleMouseLeaveItem = (e: any) => {
+    e.target.style.backgroundColor = '#ffff';
   };
+
   return (
     <Modal
       className={classes.modal}
       open={open}
-      onClose={() => {
-        setOpen(false);
-      }}
+      onClose={() => handleCloseEdit()}
     >
       <Box className={classes.root}>
         <Grid container justify="space-between">
@@ -167,18 +93,14 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
             <Typography variant="h6">Condition</Typography>
           </Grid>
           <Grid item className={classes.gridHeaderIcon}>
-            <CloseIcon
-              onClick={() => {
-                setOpen(false);
-              }}
-            />
+            <CloseIcon onClick={() => handleCloseEdit()} />
           </Grid>
         </Grid>
         <Box className={classes.body}>
           <TableContainer>
             <Table size="small" className={classes.table}>
               <TableBody>
-                {conditions.map((condition, index) => (
+                {subConditions.map((el, pos) => (
                   <TableRow className={classes.tableRow}>
                     <TableCell
                       component="th"
@@ -187,87 +109,109 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                     >
                       <Autocomplete
                         size="small"
-                        options={[]}
-                        getOptionSelected={(option, value) =>
-                          option.id === value.id
+                        fullWidth
+                        options={parameters}
+                        value={
+                          (parameters &&
+                            parameters.find(
+                              (item) => item.parameterName === el.parameter,
+                            )) ||
+                          null
                         }
-                        getOptionLabel={(option) => option.name}
+                        // getOptionSelected={(option, value) =>
+                        //   option.parameterName === value.parameterName
+                        // }
+                        onChange={(e, value) =>
+                          handleChangeCondition(e, pos, value)
+                        }
+                        getOptionLabel={(option) => option.parameterName}
                         renderInput={(params) => (
-                          <InputBase {...params} placeholder="Tên tham số" />
+                          <InputBase
+                            ref={params.InputProps.ref}
+                            inputProps={params.inputProps}
+                          />
                         )}
                       />
                     </TableCell>
                     <TableCell
                       align="left"
                       className={classes.tableCellSelect}
-                      onClick={(e) => handleOpenMenuOperator(e, index)}
+                      onClick={(e) => handleOpenMenuOperator(e, pos)}
                     >
-                      {">"}
-                      <Menu
+                      <Select
+                        fullWidth
                         elevation={0}
-                        className={classes.menu}
-                        anchorEl={condition.openMenuOperator}
-                        open={Boolean(condition.openMenuOperator)}
-                        onClose={(e) => handleCloseMenuOperator(e, index)}
+                        value={el.operator}
+                        input={<InputBase />}
+                        IconComponent={() => <div />}
+                        name="subOperator"
+                        onChange={(e) => handleChangeCondition(e, pos)}
                       >
                         {menuOperator.map((el) => (
                           <MenuItem
                             onMouseEnter={handleMouseEnterItem}
                             onMouseLeave={handleMouseLeaveItem}
-                            onClick={(e) => handleCloseMenuOperator(e, index)}
+                            // onClick={(e) => handleCloseMenuOperator(e, pos)}
                             value={el}
                           >
                             {el}
                           </MenuItem>
                         ))}
-                      </Menu>
+                      </Select>
                     </TableCell>
                     <TableCell align="left" className={classes.tableCellInput}>
-                      <InputBase placeholder="Giá trị" />
+                      <InputBase
+                        placeholder="Giá trị"
+                        name="value"
+                        value={el.value}
+                        onChange={(e) => handleChangeCondition(e, pos)}
+                      />
                     </TableCell>
                     <TableCell
                       align="left"
                       className={classes.tableCellSelect}
-                      onClick={(e) => handleOpenMenuConnectCondition(e, index)}
+                      onClick={(e) => handleOpenMenuConnectCondition(e, pos)}
                     >
-                      {"and"}
-                      <Menu
-                        elevation={0}
-                        className={classes.menu}
-                        keepMounted
-                        anchorEl={condition.openMenuConnectCondition}
-                        open={Boolean(condition.openMenuConnectCondition)}
-                        onClose={(e) => {
-                          handleCloseMenuConnectCondition(e, index);
-                        }}
-                        MenuListProps={{
-                          classes: { padding: classes.paddingMenu },
-                        }}
+                      <Select
+                        // className={classes.menu}
+                        value={condition ? condition.operator : 'and'}
+                        input={<InputBase />}
+                        IconComponent={() => <div />}
+                        onChange={(e) => handleChangeCondition(e)}
+                        name="operator"
+                        // MenuListProps={{
+                        //   classes: { padding: classes.paddingMenu },
+                        // }}
                       >
                         {menuConnectCondition.map((el) => (
                           <MenuItem
                             onMouseEnter={handleMouseEnterItem}
                             onMouseLeave={handleMouseLeaveItem}
                             onClick={(e) =>
-                              handleCloseMenuConnectCondition(e, index)
+                              handleCloseMenuConnectCondition(e, pos)
                             }
                             value={el}
                           >
                             {el}
                           </MenuItem>
                         ))}
-                      </Menu>
+                      </Select>
                     </TableCell>
                     <TableCell align="center" className={classes.tableCellIcon}>
                       <DeleteOutlineOutlinedIcon
                         className={classes.iconDeleteButton}
+                        onClick={() => handleDeleteCondition(pos)}
                       />
                     </TableCell>
                   </TableRow>
                 ))}
 
                 <TableRow>
-                  <Button variant="outlined" className={classes.tableRowButton}>
+                  <Button
+                    variant="outlined"
+                    className={classes.tableRowButton}
+                    onClick={() => handleAddCondition()}
+                  >
                     <AddIcon />
                   </Button>
                 </TableRow>

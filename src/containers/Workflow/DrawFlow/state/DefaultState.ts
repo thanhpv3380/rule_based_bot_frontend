@@ -7,30 +7,31 @@ import {
 	ActionEvent,
 	DragCanvasState
 } from '@projectstorm/react-canvas-core';
-import { PortModel, DiagramEngine, DragDiagramItemsState } from '@projectstorm/react-diagrams-core';
 import { CreateLinkState } from './CreateLinkState';
-import { MenuNodeModel } from '../node/MenuNode/MenuNodeModel';
+import { MenuNodeModel } from '../node';
 import { AdvancedDiagramEngine } from "../AdvancedDiagramEngine";
 import { AdvancedPortModel } from '../customLink';
+import { AdvancedDragDiagramItemsState } from './AdvancedDragDiagramItemsState';
 
 export class DefaultState extends State<AdvancedDiagramEngine> {
 	dragCanvas: DragCanvasState;
 	createLink: CreateLinkState;
-	dragItems: DragDiagramItemsState;
+	dragItems: AdvancedDragDiagramItemsState;
 
 	constructor() {
 		super({ name: 'starting-state' });
 		this.childStates = [new SelectingState()];
 		this.dragCanvas = new DragCanvasState();
 		this.createLink = new CreateLinkState();
-		this.dragItems = new DragDiagramItemsState();
+		this.dragItems = new AdvancedDragDiagramItemsState();
 
 		// determine what was clicked on
 		this.registerAction(
 			new Action({
 				type: InputType.MOUSE_DOWN,
-				fire: (event: ActionEvent<MouseEvent>) => {
+				fire: (event: ActionEvent<any>) => {
 					const element = this.engine.getActionEventBus().getModelForEvent(event);
+					console.log(element);
 
 					// click on canvas
 					if (!element) {
@@ -43,7 +44,6 @@ export class DefaultState extends State<AdvancedDiagramEngine> {
 						console.log("2");
 						this.handleDeleteSelectNode();
 						this.transitionWithEvent(this.createLink, event);
-
 					}
 					// click on item
 					else {
@@ -61,11 +61,12 @@ export class DefaultState extends State<AdvancedDiagramEngine> {
 		this.registerAction(
 			new Action({
 				type: InputType.MOUSE_UP,
-				fire: (event: ActionEvent<MouseEvent>) => {
+				fire: (event: ActionEvent<any>) => {
+					console.log(event, "up");
+
 					const model = this.engine.getMouseElement(event.event);
 					console.log("up");
 					if (!(model instanceof AdvancedPortModel)) return;
-
 				}
 			}
 			))

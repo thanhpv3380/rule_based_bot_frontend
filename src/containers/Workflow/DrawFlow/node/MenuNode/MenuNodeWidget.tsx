@@ -12,12 +12,12 @@ import {
   Close as CloseIcon,
   DeviceHubSharp as DeviceHubSharpIcon,
 } from '@material-ui/icons';
-import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
-import { MenuNodeModel } from './MenuNodeModel';
-import { ActionNodeModel } from '../ActionNode/ActionNodeModel';
-import { IntentNodeModel } from '../IntentNode/IntentNodeModel';
-import { ConditionNodeModel } from '../ConditionNode/ConditionNodeModel';
+import { PortWidget } from '@projectstorm/react-diagrams-core';
+import { ActionNodeModel } from '../';
+import { IntentNodeModel, ConditionNodeModel, MenuNodeModel } from '../index';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
+import { BaseNodeModel } from '../BaseNodeModel';
+import apis from '../../../../../apis';
 export interface MenuNodeWidgetProps {
   node: MenuNodeModel;
   engine: AdvancedDiagramEngine;
@@ -54,7 +54,7 @@ export class MenuNodeWidget extends React.Component<
     this.state = {};
   }
 
-  handleClick = (id) => {
+  handleClick = async (id) => {
     const listNode = this.props.engine
       .getModel()
       .getActiveNodeLayer()
@@ -79,9 +79,7 @@ export class MenuNodeWidget extends React.Component<
 
       node.setPosition(positionX, positionY);
 
-      // add node to model
-      const model = this.props.engine.getModel();
-      model.addNode(node);
+      console.log(node, 'node');
 
       // get port in of new node
       const element_select_port = node.getPort('in');
@@ -97,6 +95,37 @@ export class MenuNodeWidget extends React.Component<
         element_select_port.reportPosition();
       }
 
+      // call api add node
+      const parent = [(link.getSourcePort().getParent() as BaseNodeModel).id];
+
+      node.setPosition(positionX, positionY);
+      const newNode = {
+        type: node.getType(),
+        position: {
+          x: positionX,
+          y: positionY,
+        },
+        parent,
+      };
+
+      const data = await apis.workFlow.addNode(
+        '60772243b8287d30f84e3f6a',
+        newNode,
+      );
+      if (data.status) {
+        node.id = data.result.node.id;
+        if (node instanceof ConditionNodeModel) {
+          node.intentId = (link
+            .getSourcePort()
+            .getParent() as BaseNodeModel).id;
+          node.itemId = data.result.node.condition;
+        }
+      }
+
+      // add node to model
+      const model = this.props.engine.getModel();
+      model.addNode(node);
+
       // remove last node
       lastNode.remove();
 
@@ -106,11 +135,17 @@ export class MenuNodeWidget extends React.Component<
   };
 
   render() {
+    console.log(this.props.node, 'node');
+    const { node } = this.props;
+    let menu = items;
+    if (!node.isIntent) {
+      menu = items.filter((el) => el.id !== 2);
+    }
     return (
       <List
         component="nav"
         aria-label="main mailbox folders"
-        style={{ backgroundColor: '#ffff', borderRadius: 10 }}
+        style={{ backgroundColor: '#ffff', borderRadius: 10, minWidth: 180 }}
       >
         <PortWidget
           engine={this.props.engine}
@@ -118,7 +153,7 @@ export class MenuNodeWidget extends React.Component<
         >
           <div className="circle-select-port" />
         </PortWidget>
-        {items.map((el) => (
+        {menu.map((el) => (
           <ListItem key={el.id} button onClick={() => this.handleClick(el.id)}>
             <ListItemIcon style={{ color: 'black' }}>{el.icon}</ListItemIcon>
             <ListItemText>

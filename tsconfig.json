@@ -1,25 +1,9 @@
 {
+  "extends": "./paths.json",
   "compilerOptions": {
-    "suppressExcessPropertyErrors": true,
-    "declaration": false,
-    "outDir": "dist/@types",
-    "strictNullChecks": false,
-    "sourceMap": true,
-    "skipLibCheck": true,
-    "jsx": "react",
-    "target": "es6",
-    "module": "commonjs",
-    "lib": [
-      "dom",
-      "es6"
-    ]
-  },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "*/.spec.ts",
-    "./dist"
-  ]
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  }
 }

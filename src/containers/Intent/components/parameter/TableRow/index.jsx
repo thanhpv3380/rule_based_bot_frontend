@@ -324,7 +324,10 @@ function TableRowCustom(props) {
 
       {parameter && parameter.isEdit ? (
         <TableCell align="left">
-          <DoneIcon onClick={handleClickAccept} />
+          <DoneIcon
+            className={classes.iconMargin}
+            onClick={handleClickAccept}
+          />
           <CloseIcon
             className={classes.iconTableCell}
             onClick={handleClickCloseEdit}
@@ -332,7 +335,10 @@ function TableRowCustom(props) {
         </TableCell>
       ) : (
         <TableCell align="left">
-          <DeleteIcon onClick={() => handleDelete(position)} />
+          <DeleteIcon
+            className={classes.iconMargin}
+            onClick={() => handleDelete(position)}
+          />
           <EditIcon
             className={classes.iconTableCell}
             onClick={handleOpenEdit}

@@ -1,16 +1,30 @@
 import * as React from 'react';
-import { MenuNodeModel } from './MenuNodeModel';
 import { MenuNodeWidget } from './MenuNodeWidget';
 import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
 import { DiagramEngine } from '@projectstorm/react-diagrams-core';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
-
+import { BaseModelOptions } from '@projectstorm/react-canvas-core';
+import { BaseNodeModel } from '../BaseNodeModel';
+export interface MenuNodeModelOptions extends BaseModelOptions {
+  color?: string;
+  isIntent?: boolean;
+}
+export class MenuNodeModel extends BaseNodeModel {
+  isIntent?: boolean;
+  constructor(options: MenuNodeModelOptions = {}) {
+    super({
+      ...options,
+      type: 'MENU',
+    });
+    this.isIntent = options.isIntent;
+  }
+}
 export class MenuNodeFactory extends AbstractReactFactory<
   MenuNodeModel,
   AdvancedDiagramEngine
 > {
   constructor() {
-    super('menu-node');
+    super('MENU');
   }
 
   generateModel(initialConfig) {
