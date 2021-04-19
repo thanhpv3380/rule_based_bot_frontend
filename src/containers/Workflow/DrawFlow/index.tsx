@@ -9,10 +9,8 @@ import {
   ActionNodeModel,
   ConditionNodeModel,
 } from './node';
-import { getCookie, setCookie } from '../../../utils/cookie';
 import { AdvancedLinkModel, AdvancedPortModel } from './customLink';
 import { NodeModel } from '@projectstorm/react-diagrams-core';
-import { DefaultNodeModel } from '@projectstorm/react-diagrams-defaults';
 export interface Node {
   id: string;
   action: {
@@ -123,7 +121,6 @@ const DrawFlow = () => {
     );
     if (data.status) {
       const { nodes } = data.result.workflow;
-      // console.log(data);
       drawFlow(nodes as Node[]);
     }
   };

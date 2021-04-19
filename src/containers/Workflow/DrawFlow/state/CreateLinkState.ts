@@ -27,23 +27,10 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 					const {
 						event: { clientX, clientY }
 					} = actionEvent;
-<<<<<<< HEAD
 					const ox = this.engine.getModel().getOffsetX();
 					const oy = this.engine.getModel().getOffsetY();
 
 					console.log(element, "element");
-=======
-
-					const ox = this.engine.getModel().getOffsetX();
-					const oy = this.engine.getModel().getOffsetY();
-
-					console.log('offset', ox, oy);
-					console.log('toa do client up', clientX, clientY);
-					console.log('toa do offset up', ox, oy);
-					const listPost = element && element['ports'];
-					const portCurrentPort = (listPost && listPost['in']) || null;
-
->>>>>>> task/flow
 					if (element instanceof AdvancedPortModel && !this.sourcePort) {
 						this.sourcePort = element;
 						console.log(element, "source port");
