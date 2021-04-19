@@ -8,11 +8,20 @@
     "skipLibCheck": true,
     "jsx": "react",
     "target": "es6",
-    "module": "commonjs",
+    "module": "esnext",
     "lib": [
       "dom",
       "es6"
-    ]
+    ],
+    "allowJs": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": false,
+    "strict": false,
+    "forceConsistentCasingInFileNames": false,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
   },
   "include": [
     "src"

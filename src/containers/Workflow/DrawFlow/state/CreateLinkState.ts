@@ -32,19 +32,19 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 					const ox = this.engine.getModel().getOffsetX();
 					const oy = this.engine.getModel().getOffsetY();
 
-					console.log('offset', ox, oy);
-					console.log('toa do client up', clientX, clientY);
-					console.log('toa do offset up', ox, oy);
+
 					const listPost = element && element['ports'];
 					const portCurrentPort = (listPost && listPost['in']) || null;
 
 					if (element instanceof AdvancedPortModel && !this.sourcePort) {
 						this.sourcePort = element;
-
+						console.log('offset', ox, oy);
+						console.log('toa do client up', clientX, clientY);
+						console.log('toa do offset up', ox, oy);
 						const link = this.sourcePort.createLinkModel();
 						link.setSourcePort(this.sourcePort);
 						link.getFirstPoint().setPosition(clientX - ox, clientY - oy);
-						//link.getLastPoint().setPosition(clientX - ox + 20, clientY - oy + 20);
+						link.getLastPoint().setPosition(clientX - ox + 20, clientY - oy + 20);
 
 						this.link = this.engine.getModel().addLink(link);
 					} else if (portCurrentPort && portCurrentPort instanceof AdvancedPortModel && this.sourcePort && portCurrentPort !== this.sourcePort) {
@@ -87,7 +87,6 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 					const oy = this.engine.getModel().getOffsetY();
 					console.log('toa do client', event.clientX, event.clientY);
 					console.log('toa do offset', ox, oy);
-					//console.log("move", event.clientX, event.clientY);
 					this.link.getLastPoint().setPosition(event.clientX - ox, event.clientY - oy);
 					this.engine.repaintCanvas();
 				}
