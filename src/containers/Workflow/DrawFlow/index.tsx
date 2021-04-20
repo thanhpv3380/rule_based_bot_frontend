@@ -122,14 +122,14 @@ const DrawFlow = () => {
     console.log(workflowId, 'fetch');
 
     const data = await apis.workflow.getWorkFlowById(workflowId);
-    if (data.status) {
+    if (data && data.status) {
       const { nodes } = data.result.workflow;
       drawFlow(nodes as Node[]);
     }
   };
 
   React.useEffect(() => {
-    fetchWorkFlow();
+    //fetchWorkFlow();
   }, [application]);
   return <BodyWidget app={application} />;
 };

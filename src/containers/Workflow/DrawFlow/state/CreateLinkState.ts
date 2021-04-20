@@ -33,14 +33,9 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 					const zoomLevel = this.engine.getModel().getZoomLevel() / 100;
 					const posX = (clientX - ox) / zoomLevel;
 					const posY = (clientY - oy) / zoomLevel;
-					console.log('zoom', zoomLevel);
-					console.log("offset up ", ox, oy);
-					console.log("client up ", clientX, clientY);
-					console.log(element, "element");
+
 					if (element instanceof AdvancedPortModel && !this.sourcePort) {
 						this.sourcePort = element;
-						console.log(element, "source port");
-						console.log(this.sourcePort.getParent() instanceof IntentNodeModel, "instanceof");
 						const link = this.sourcePort.createLinkModel();
 						link.setSourcePort(this.sourcePort);
 
@@ -49,24 +44,49 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 
 						this.link = this.engine.getModel().addLink(link);
 					} else if (element instanceof BaseNodeModel) {
-						const listPort = element.getPorts();
-						const portCurrentPort = (listPort && listPort['in']) || null;
-						if (portCurrentPort && portCurrentPort instanceof AdvancedPortModel && this.sourcePort && portCurrentPort !== this.sourcePort) {
+						const listPortCurrentNode = element.getPorts();
+
+						const portInCurrentNode = (listPortCurrentNode && listPortCurrentNode['in']) || null;
+						const portOutCurrentNode = (listPortCurrentNode && listPortCurrentNode['out']) || null;
+
+						if (portInCurrentNode && portInCurrentNode instanceof AdvancedPortModel && this.sourcePort && portInCurrentNode !== this.sourcePort) {
 							const sourceNode = this.link.getSourcePort().getParent();
-							if (this.sourcePort.canLinkToPort(portCurrentPort)) {
-								if (element instanceof ConditionNodeModel) {
-									console.log(element.itemId, "itemID");
-									if (sourceNode instanceof IntentNodeModel) {
-										element.intentId = sourceNode.itemId;
-									} else {
-										//Todo alert thôgn báo action không thể nối với condition
-										return;
-									}
+							if (this.sourcePort.canLinkToPort(portInCurrentNode)) {
+								//console.log("check", element, sourceNode.getID());
+
+								const listPortSourceNode = sourceNode.getPorts();
+								const portInSourceNode = (listPortSourceNode && listPortSourceNode['in']) || null;
+								const portOutSourceNode = (listPortSourceNode && listPortSourceNode['out']) || null;
+
+								const listLinkCurrentNode = [...Object.keys(portInCurrentNode.getLinks()), ...Object.keys(portOutCurrentNode.getLinks())];
+								const listLinkSourceNode = [...Object.keys(portInSourceNode.getLinks()), ...Object.keys(portOutSourceNode.getLinks())];
+
+								console.log("check", listLinkCurrentNode, listLinkSourceNode)
+								const mutualNodeId = this.checkMutualNodeId(listLinkCurrentNode, listLinkSourceNode);
+								if (!mutualNodeId) {
+									// when click in Condition Node
+									// if (element instanceof ConditionNodeModel) {
+									// 	console.log(element.itemId, "itemID");
+									// 	if (sourceNode instanceof IntentNodeModel) {
+									// 		element.intentId = sourceNode.itemId;
+									// 	} else {
+									// 		//Todo alert thôgn báo action không thể nối với condition
+									// 		return;
+									// 	}
+									// }
+
+									// connect to port of current node
+									this.link.setTargetPort(portInCurrentNode);
+									portInCurrentNode.reportPosition();
+									this.clearState();
+									this.eject();
+								} else {
+									alert("node is connected")
 								}
-								this.link.setTargetPort(portCurrentPort);
-								portCurrentPort.reportPosition();
-								this.clearState();
-								this.eject();
+
+
+
+
 							}
 						}
 					}
@@ -123,6 +143,11 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 				}
 			})
 		);
+	}
+
+	checkMutualNodeId(itemsA: Array<String>, itemsB: Array<String>) {
+		const mutualNodeId = itemsA.find(el => itemsB.indexOf(el) >= 0);
+		return mutualNodeId;
 	}
 
 	clearState() {
