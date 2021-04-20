@@ -37,9 +37,8 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
 
   const fetchActions = async () => {
     const data: DataResponse = await apis.action.getActions();
-    if (data.status) {
+    if (data && data.status) {
       setActions(data.result.actions);
-      console.log(node.itemId);
       setAction(data.result.actions.find((el) => el.id === node.itemId));
     }
   };
@@ -76,6 +75,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
             const data = await apis.workflow.removeNode(
               workflowId,
               (model as BaseNodeModel).id,
+              'ACTION',
             );
             if (data.status) {
               model.remove();

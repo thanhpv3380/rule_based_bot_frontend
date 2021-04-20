@@ -110,7 +110,7 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                       <Autocomplete
                         size="small"
                         fullWidth
-                        options={parameters}
+                        options={parameters || []}
                         value={
                           (parameters &&
                             parameters.find(

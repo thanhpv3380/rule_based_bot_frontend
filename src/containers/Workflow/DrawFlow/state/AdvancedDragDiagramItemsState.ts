@@ -45,11 +45,6 @@ export class AdvancedDragDiagramItemsState extends MoveItemsState<AdvancedDiagra
                         item: item
                     };
                 }
-                if (item instanceof ConditionNodeModel) {
-                    //console.log(item.intentId, "intentId");
-                }
-                // console.log(item["itemId"], "itemId");
-                //console.log(item["id"], "id");
 
                 const pos = this.initialPositions[item.getID()].point;
 

@@ -85,7 +85,7 @@ const DrawFlow = () => {
         const sourceNode: IntentNodeModel = map.get(
           el.parent[0],
         ) as IntentNodeModel;
-        sourceNodeId = sourceNode.itemId;
+        sourceNodeId = sourceNode && sourceNode.itemId;
       }
       const nodeDraw = new ConditionNodeModel({
         id: el.id,
@@ -112,8 +112,16 @@ const DrawFlow = () => {
       }
     });
   };
-  const drawFlow = async (nodes: Node[]) => {
+  const drawFlow = async (
+    nodes: Node[],
+    ox: number,
+    oy: number,
+    zoom: number,
+  ) => {
     const map: Map<string, NodeModel> = new Map();
+    application.getActiveDiagram().setOffsetX(ox);
+    application.getActiveDiagram().setOffsetY(oy);
+    application.getActiveDiagram().setZoomLevel(zoom);
     await drawNodes(nodes, map);
     await drawLinks(nodes, map);
     application.getDiagramEngine().repaintCanvas();
@@ -123,8 +131,8 @@ const DrawFlow = () => {
 
     const data = await apis.workflow.getWorkFlowById(workflowId);
     if (data && data.status) {
-      const { nodes } = data.result.workflow;
-      drawFlow(nodes as Node[]);
+      const { nodes, offsetX, offsetY, zoom } = data.result.workflow;
+      drawFlow(nodes as Node[], offsetX, offsetY, zoom);
     }
   };
 
