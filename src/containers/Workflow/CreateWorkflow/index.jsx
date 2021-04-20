@@ -5,7 +5,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
-import { Button } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import useStyles from './index.style';
 import apis from '../../../apis';
@@ -51,7 +50,7 @@ const CreateWorkFlow = ({ groupItems, groupId, handleCreate }) => {
     if (e.target.name === 'groupId') {
       setWorkflowData({
         ...workflowData,
-        groupAction: e.target.value,
+        groupWorkflow: e.target.value,
       });
     }
     if (e.target.name === 'name') {
@@ -75,7 +74,7 @@ const CreateWorkFlow = ({ groupItems, groupId, handleCreate }) => {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.CREATE_FAILED, {
+      enqueueSnackbar(data.message || textDefault.CREATE_FAILED, {
         variant: 'error',
       });
     }

@@ -22,6 +22,7 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
   const botId = useSelector((state) => state.bot.bot);
   const [openModal, setOpenModal] = useState(false);
   const [isFetchData, setIsFetchData] = useState(false);
+  const [oldGroupId, setOldGroupId] = useState();
   const [workflowData, setWorkflowData] = useState({
     name: '',
     groupWorkflow: '',
@@ -29,9 +30,15 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
   const [currentWorkflowId, setCurrentWorkflowId] = useState();
 
   const fetchWorkflow = async (id) => {
-    const data = await apis.workflow.getWorkflow(id);
+    const data = await apis.workflow.getWorkflowById(id);
     if (data && data.status) {
-      setWorkflowData(data.result.workflow);
+      const { workflow } = data.result;
+      setWorkflowData(workflow);
+      setOldGroupId(
+        typeof workflow.groupWorkflow === 'object'
+          ? workflow.groupWorkflow.id
+          : workflow.groupWorkflow,
+      );
       setIsFetchData(true);
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
@@ -51,7 +58,7 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
     if (e.target.name === 'groupId') {
       setWorkflowData({
         ...workflowData,
-        groupAction: e.target.value,
+        groupWorkflow: e.target.value,
       });
     }
     if (e.target.name === 'name') {
@@ -64,19 +71,20 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const data = await apis.action.updateAction(currentWorkflowId, {
+    const data = await apis.workflow.updateWorkflow(currentWorkflowId, {
       name: workflowData.name,
       nodes: [],
       groupWorkflow: workflowData.groupWorkflow,
     });
-    if (data.status) {
-      handleUpdate(data.result.workflow, workflowData.groupWorkflow);
+    if (data && data.status) {
+      handleUpdate(data.result.workflow, oldGroupId);
+      setOldGroupId(data.result.workflow.groupWorkflow);
       setWorkflowData(data.result.workflow);
       enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.UPDATE_FAILED, {
+      enqueueSnackbar((data && data.message) || textDefault.UPDATE_FAILED, {
         variant: 'error',
       });
     }

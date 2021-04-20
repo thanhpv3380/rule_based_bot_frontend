@@ -42,32 +42,6 @@ export async function deleteWorkflow(id) {
   return response;
 }
 
-export async function getWorkflowById(id) {
-  const response = await api({
-    method: 'GET',
-    url: `/workflows/${id}`,
-  });
-  return response;
-}
-
-export async function updateNodesInWorkflow(id, nodes) {
-  const response = await api({
-    method: 'PUT',
-    url: `/workflows/${id}`,
-    data: nodes,
-  });
-  return response;
-}
-
-export async function updateFlowDraw(id, nodes) {
-  const response = await api({
-    method: 'PUT',
-    url: `/workflows/flowDraw/${id}`,
-    data: { nodes },
-  });
-  return response;
-}
-
 export async function addNode(id, node) {
   const response = await api({
     method: 'PUT',
@@ -77,11 +51,11 @@ export async function addNode(id, node) {
   return response;
 }
 
-export async function removeNode(id, nodeId) {
+export async function removeNode(id, nodeId, type) {
   const response = await api({
     method: 'PUT',
     url: `/workflows/removeNode/${id}`,
-    data: { nodeId },
+    data: { nodeId, type },
   });
   return response;
 }

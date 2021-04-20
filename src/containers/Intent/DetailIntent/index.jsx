@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import TranningPhrases from '../components/tranningPhrases';
+import TrainingPhrases from '../components/trainingPhrases';
 import Parameters from '../components/parameter';
 import ActionMapping from '../components/actionMapping';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
@@ -18,6 +18,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   const [intent, setIntent] = useState({});
   const [patterns, setPatterns] = useState();
   const [actions, setActions] = useState([]);
+  const [oldGroupId, setOldGroupId] = useState();
   const [currentIntentId, setCurrentIntentId] = useState();
 
   const fetchIntent = async (intentId) => {
@@ -25,6 +26,11 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
     if (data.status) {
       setIntent({ ...data.result, parameters: data.result.parameters || [] });
       setPatterns(data.result.patterns);
+      setOldGroupId(
+        typeof data.result.groupIntent === 'object'
+          ? data.result.groupIntent.id
+          : data.result.groupIntent,
+      );
     }
   };
 
@@ -77,14 +83,14 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       groupIntent: intent.groupIntent,
       mappingAction: intent.mappingAction && intent.mappingAction.id,
     };
-    console.log(newIntent);
     const data = await apis.intent.updateIntent(currentIntentId, newIntent);
     if (data.status) {
       const { result } = data;
       enqueueSnackbar('Update intent success', {
         variant: 'success',
       });
-      handleUpdate(result, intent.groupIntent);
+      handleUpdate(result, oldGroupId);
+      setOldGroupId(result.intent.intent);
     } else {
       const { code } = data;
       enqueueSnackbar(`Cannot fetch data  ${code}`, {
@@ -108,7 +114,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
     }
   };
 
-  // Component TranningPhrases
+  // Component TrainingPhrases
   const handleKeyDown = async (value) => {
     const data = await apis.intent.addUsersay(currentIntentId, value);
     if (data.status) {
@@ -292,7 +298,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
         handleChange={handleChangeInfoHeader}
       />
       <CardContent className={classes.cardContent}>
-        <TranningPhrases
+        <TrainingPhrases
           intent={intent}
           patterns={patterns}
           handleKeyDown={handleKeyDown}

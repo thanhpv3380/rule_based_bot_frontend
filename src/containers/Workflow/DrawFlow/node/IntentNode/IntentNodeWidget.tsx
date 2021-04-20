@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import {
   MoreVert as MoreVertIcon,
-  Edit as Editcon,
+  Edit as EditIcon,
   DeleteOutline as DeleteOutlineIcon,
   FileCopy as FileCopyIcon,
   RecordVoiceOver as RecordVoiceOverIcon,
@@ -135,7 +135,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
     >
       {isHover ? (
         <Box className={classes.iconMenu}>
-          <Editcon
+          <EditIcon
             fontSize="small"
             className={classes.iconMenuItem}
             onClick={handleOpenEdit}
