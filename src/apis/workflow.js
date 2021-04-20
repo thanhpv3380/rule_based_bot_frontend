@@ -17,11 +17,11 @@ export async function updateWorkFlow(id, nodes) {
   return response;
 }
 
-export async function updateFlowDraw(id, nodes) {
+export async function updateFlowDraw(id, { offsetX, offsetY, nodes, zoom }) {
   const response = await api({
     method: 'PUT',
     url: `/workFlows/flowDraw/${id}`,
-    data: { nodes },
+    data: { offsetX, offsetY, nodes, zoom },
   });
   return response;
 }

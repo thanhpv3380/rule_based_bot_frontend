@@ -84,8 +84,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const fetchIntent = async (intentId: string) => {
     const data: DataIntentResponse = await apis.intent.getIntent(intentId);
     if (data.status) {
-      console.log(data.result.parameters, 'parameter');
-
       setParameters(data.result.parameters);
     }
   };
@@ -114,7 +112,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     setOpenEdit(false);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
-    //todo call api save condition
     if (subConditions) {
       console.log(subConditions, 'subCondition', conditon);
       const newCondition = {
@@ -305,7 +302,11 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                         <TableCell className={classes.tableCell} align="left">
                           {el.operator}
                         </TableCell>
-                        <TableCell className={classes.tableCell} align="left">
+                        <TableCell
+                          className={classes.tableCell}
+                          style={{ minWidth: 80 }}
+                          align="left"
+                        >
                           {el.value}
                         </TableCell>
                         <TableCell className={classes.tableCell} align="left">

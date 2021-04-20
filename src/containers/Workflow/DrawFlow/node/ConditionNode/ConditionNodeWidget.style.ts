@@ -19,7 +19,7 @@ const useStyle = makeStyles({
         },
     },
     tableContainer: {
-        width: 280,
+        minWidth: 280,
         borderLeft: 'none',
         borderRadius: 10,
         paddingBottom: 2,

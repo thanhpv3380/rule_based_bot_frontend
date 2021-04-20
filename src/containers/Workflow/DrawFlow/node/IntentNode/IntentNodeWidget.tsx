@@ -43,7 +43,9 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const classes = useStyle();
   const [isHover, setIsHover] = useState(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [actionMouseWheel, setActionMouseWheel] = useState<Action>();
+  const [actionMouseWheel, setActionMouseWheel] = useState<Action>(
+    engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
+  );
   const [intent, setIntent] = useState<IntentsResponse>();
   const [intents, setIntents] = useState<IntentsResponse[]>();
 
@@ -63,12 +65,8 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
-    const action: Action = engine
-      .getActionEventBus()
-      .getActionsForType(InputType.MOUSE_WHEEL)[0];
-    engine.getActionEventBus().deregisterAction(action);
+    engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
-    setActionMouseWheel(action);
   };
 
   const handleCloseEdit = () => {
@@ -117,11 +115,22 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
     engine.repaintCanvas();
   };
 
+  const handleFocus = () => {
+    engine.getActionEventBus().deregisterAction(actionMouseWheel);
+    engine.repaintCanvas();
+  };
+
+  const handleMouseLeave = () => {
+    setIsHover(false);
+    engine.getActionEventBus().registerAction(actionMouseWheel);
+    engine.repaintCanvas();
+  };
+
   return (
     <Box
       className={classes.container}
       onMouseOver={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
+      onMouseLeave={() => handleMouseLeave()}
     >
       {isHover ? (
         <Box className={classes.iconMenu}>
@@ -163,6 +172,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
             node.itemId = (value && value.id) || null;
             setIntent(value);
           }}
+          onFocus={handleFocus}
           getOptionSelected={(option, value) => option.id === value.id}
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import { CanvasWidget } from '@projectstorm/react-canvas-core';
 import { Application } from '../Application';
 import DemoCanvasWidget from './DemoCanvasWidget/index';
@@ -26,6 +27,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
   const classes = useStyles();
   const forceUpdate: () => void = React.useState()[1].bind(null, {});
   const { workflowId } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
 
   const addNode = async (node: BaseNodeModel) => {
     node.setPosition(550, 300);
@@ -65,19 +67,21 @@ const BodyWidget = (props: BodyWidgetProps) => {
       .getModel()
       .getNodes() as BaseNodeModel[];
     const newNodes = nodes.map((el: BaseNodeModel) => {
-      const links = el.getPort('in').getLinks();
-      let parent = [];
-      for (var object in links) {
-        parent.push(
-          (links[object].getSourcePort().getParent() as BaseNodeModel).id,
-        );
-      }
+      const linkTargets = el.getPort('in').getLinks();
+      let parent = Object.keys(linkTargets).map((el) =>
+        (linkTargets[el].getSourcePort().getParent() as BaseNodeModel).getID(),
+      );
+      const linkSources = el.getPort('out').getLinks();
+      const children = Object.keys(linkSources).map((el) =>
+        (linkSources[el].getTargetPort().getParent() as BaseNodeModel).getID(),
+      );
+
       switch (el.getType()) {
         case 'START':
           return {
-            id: el.id,
+            id: el.getID(),
             type: el.getType(),
-            parent: parent,
+            children,
             position: {
               x: el.getPosition().x,
               y: el.getPosition().y,
@@ -88,7 +92,8 @@ const BodyWidget = (props: BodyWidgetProps) => {
             id: el.id,
             type: el.getType(),
             intent: el.itemId,
-            parent: parent,
+            parent,
+            children,
             position: {
               x: el.getPosition().x,
               y: el.getPosition().y,
@@ -99,7 +104,8 @@ const BodyWidget = (props: BodyWidgetProps) => {
             id: el.id,
             type: el.getType(),
             action: el.itemId,
-            parent: parent,
+            parent,
+            children,
             position: {
               x: el.getPosition().x,
               y: el.getPosition().y,
@@ -110,7 +116,8 @@ const BodyWidget = (props: BodyWidgetProps) => {
             id: el.id,
             type: el.getType(),
             condition: el.itemId,
-            parent: parent,
+            parent,
+            children,
             position: {
               x: el.getPosition().x,
               y: el.getPosition().y,
@@ -118,7 +125,25 @@ const BodyWidget = (props: BodyWidgetProps) => {
           };
       }
     });
-    const data = await apis.workflow.updateFlowDraw(workflowId, newNodes);
+    console.log(newNodes, 'newsNodes');
+    console.log(props.app.getActiveDiagram());
+
+    const newWorkflow = {
+      nodes: newNodes,
+      offsetX: props.app.getActiveDiagram().getOffsetX(),
+      offsetY: props.app.getActiveDiagram().getOffsetY(),
+      zoom: props.app.getActiveDiagram().getZoomLevel(),
+    };
+    const data = await apis.workflow.updateFlowDraw(workflowId, newWorkflow);
+    if (data.status) {
+      enqueueSnackbar('update workflow susscess', {
+        variant: 'success',
+      });
+    } else {
+      enqueueSnackbar('update workflow failed', {
+        variant: 'error',
+      });
+    }
   };
 
   return (
