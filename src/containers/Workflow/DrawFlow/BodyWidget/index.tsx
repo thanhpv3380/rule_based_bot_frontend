@@ -134,9 +134,9 @@ const BodyWidget = (props: BodyWidgetProps) => {
       offsetY: props.app.getActiveDiagram().getOffsetY(),
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
-    const data = await apis.workflow.updateFlowDraw(workflowId, newWorkflow);
+    const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
     if (data.status) {
-      enqueueSnackbar('update workflow susscess', {
+      enqueueSnackbar('update workflow success', {
         variant: 'success',
       });
     } else {

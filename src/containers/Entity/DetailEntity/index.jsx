@@ -26,6 +26,7 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [entityId, setEntityId] = useState();
+  const [oldGroupId, setOldGroupId] = useState();
   const [entityData, setEntityData] = useState({
     type: 1,
     name: '',
@@ -38,8 +39,13 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
   const fetchEntity = async (id) => {
     const data = await apis.entity.getEntity(id);
     if (data && data.status) {
-      console.log(data.result.entity);
-      setEntityData(data.result.entity);
+      const { entity } = data.result;
+      setEntityData(entity);
+      setOldGroupId(
+        typeof entity.groupEntity === 'object'
+          ? entity.groupEntity.id
+          : entity.groupEntity,
+      );
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
@@ -87,7 +93,8 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
       groupEntity: entityData.groupEntity,
     });
     if (data && data.status) {
-      handleUpdate(data.result.entity);
+      handleUpdate(data.result.entity, oldGroupId);
+      setOldGroupId(data.result.entity.groupEntity);
       enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
         variant: 'success',
       });

@@ -129,7 +129,7 @@ const DrawFlow = () => {
   const fetchWorkFlow = async () => {
     console.log(workflowId, 'fetch');
 
-    const data = await apis.workflow.getWorkFlowById(workflowId);
+    const data = await apis.workflow.getWorkflowById(workflowId);
     if (data.status) {
       const { nodes, offsetX, offsetY, zoom } = data.result.workflow;
       drawFlow(nodes as Node[], offsetX, offsetY, zoom);

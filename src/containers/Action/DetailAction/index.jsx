@@ -25,6 +25,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
   const classes = useStyles();
   const [currentActionId, setCurrentActionId] = useState();
   const [parameters, setParameters] = useState([]);
+  const [oldGroupId, setOldGroupId] = useState();
   const [actionData, setActionData] = useState({});
   const [actions, setActions] = useState([]);
 
@@ -46,8 +47,14 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
   const fetchAction = async (id) => {
     const data = await apis.action.getAction(id);
     if (data && data.status) {
-      setActionData(data.result.action);
-      setActions(data.result.action.actions);
+      const { action } = data.result;
+      setActionData(action);
+      setActions(action.actions);
+      setOldGroupId(
+        typeof action.groupAction === 'object'
+          ? action.groupAction.id
+          : action.groupAction,
+      );
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
@@ -359,9 +366,10 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
       groupAction: actionData.groupAction,
     });
     if (data.status) {
-      handleUpdate(data.result.action, actionData.groupAction);
+      handleUpdate(data.result.action, oldGroupId);
       setActionData(data.result.action);
       setActions(data.result.action.actions);
+      setOldGroupId(data.result.action.groupAction);
       enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
         variant: 'success',
       });

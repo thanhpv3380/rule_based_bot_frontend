@@ -75,6 +75,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
             const data = await apis.workflow.removeNode(
               workflowId,
               (model as BaseNodeModel).id,
+              'ACTION',
             );
             if (data.status) {
               model.remove();

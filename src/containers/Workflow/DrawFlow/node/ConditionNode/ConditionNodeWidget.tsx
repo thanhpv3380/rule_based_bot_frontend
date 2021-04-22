@@ -66,7 +66,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const { engine, node } = props;
   const { workflowId } = useParams();
   const classes = useStyle();
-  const [conditon, setContion] = useState<Condition>();
+  const [condition, setCondition] = useState<Condition>();
   const [subConditions, setSubConditions] = useState<Conditions[]>([]);
   const [isHover, setIsHover] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
@@ -77,7 +77,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const fetchCondition = async (id: string) => {
     const data = await apis.condition.getConditionById(id);
     if (data.status) {
-      setContion(data.result);
+      setCondition(data.result);
       setSubConditions(data.result.conditions);
     }
   };
@@ -113,7 +113,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
     if (subConditions) {
-      console.log(subConditions, 'subCondition', conditon);
+      console.log(subConditions, 'subCondition', condition);
       const newCondition = {
         conditions: subConditions.map((el) => {
           return {
@@ -123,7 +123,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
             operator: el.operator,
           };
         }),
-        operator: conditon.operator,
+        operator: condition.operator,
       };
       console.log(node.itemId, newCondition);
 
@@ -170,6 +170,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
             const data = await apis.workflow.removeNode(
               workflowId,
               (model as BaseNodeModel).id,
+              'CONDITION',
             );
             if (data.status) {
               await model.remove();
@@ -183,7 +184,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   };
 
   const handleDuplicateNode = () => {
-    console.log('duplidacate');
+    console.log('duplicate');
     const selectedEntities = engine
       .getModel()
       .getSelectedEntities()[0] as ConditionNodeModel;
@@ -201,14 +202,14 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     const newConditions = [...subConditions];
     newConditions.push(conditionsDefault);
     setSubConditions(newConditions);
-    if (!conditon) {
+    if (!condition) {
       const newCondition: Condition = {
         operator: 'and',
         conditions: [],
         createBy: { id: '', name: 'null' },
         bot: { id: '', name: '' },
       };
-      setContion(newCondition);
+      setCondition(newCondition);
     }
   };
 
@@ -227,9 +228,9 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       newSubConditions[pos].operator = value;
       setSubConditions(newSubConditions);
     } else if (name === 'operator') {
-      var newCondition = { ...conditon };
+      var newCondition = { ...condition };
       newCondition.operator = value;
-      setContion(newCondition);
+      setCondition(newCondition);
     } else if (name === 'value') {
       var newSubConditions: Conditions[] = [...subConditions];
       newSubConditions[pos].value = value;
@@ -310,7 +311,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                           {el.value}
                         </TableCell>
                         <TableCell className={classes.tableCell} align="left">
-                          {conditon ? conditon.operator : 'and'}
+                          {condition ? condition.operator : 'and'}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -342,7 +343,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
         open={openEdit}
         parameters={parameters}
         subConditions={subConditions}
-        condition={conditon}
+        condition={condition}
         handleOpenMenuOperator={handleOpenMenuOperator}
         handleCloseMenuOperator={handleCloseMenuOperator}
         handleCloseMenuConnectCondition={handleCloseMenuConnectCondition}
