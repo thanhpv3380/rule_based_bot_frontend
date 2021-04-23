@@ -11,6 +11,8 @@ import {
 } from './node';
 import { AdvancedLinkModel, AdvancedPortModel } from './customLink';
 import { NodeModel } from '@projectstorm/react-diagrams-core';
+import { NodeConnect } from './node/Node.types';
+
 export interface Node {
   id: string;
   action: {
@@ -25,12 +27,15 @@ export interface Node {
     id: string;
     name: string;
   };
-  parent: string[];
+  parent: NodeConnect[];
+  children: NodeConnect[];
   position: {
     x: number;
     y: number;
   };
   type: 'START' | 'INTENT' | 'CONDITION' | 'ACTION';
+  workflow: string;
+  bot: string;
 }
 
 const DrawFlow = () => {
@@ -80,19 +85,14 @@ const DrawFlow = () => {
     });
 
     listNodeCondition.map((el) => {
-      let sourceNodeId: string;
-      if (el.parent) {
-        const sourceNode: IntentNodeModel = map.get(
-          el.parent[0],
-        ) as IntentNodeModel;
-        sourceNodeId = sourceNode && sourceNode.itemId;
-      }
+      const intents = el.parent.filter((ele) => ele.type === 'INTENT');
+
       const nodeDraw = new ConditionNodeModel({
         id: el.id,
         itemId: (el.condition && el.condition.id) || null,
-        intentId: sourceNodeId,
+        intents,
       });
-      nodeDraw.setPosition(el.position.x, el.position.y);
+      nodeDraw.setPosition(el.position.x || 0, el.position.y || 0);
       application.getActiveDiagram().addNode(nodeDraw);
       map.set(el.id, nodeDraw);
     });
@@ -127,8 +127,6 @@ const DrawFlow = () => {
     application.getDiagramEngine().repaintCanvas();
   };
   const fetchWorkFlow = async () => {
-    console.log(workflowId, 'fetch');
-
     const data = await apis.workflow.getWorkflowById(workflowId);
     if (data.status) {
       const { nodes, offsetX, offsetY, zoom } = data.result.workflow;

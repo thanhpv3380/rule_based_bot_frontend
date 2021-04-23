@@ -91,7 +91,13 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
       }
 
       // call api add node
-      const parent = [(link.getSourcePort().getParent() as BaseNodeModel).id];
+      const nodeConnect: any = link.getSourcePort().getParent();
+      const parent = [
+        {
+          node: nodeConnect.id,
+          type: nodeConnect.getType(),
+        },
+      ];
 
       node.setPosition(positionX, positionY);
 
@@ -111,7 +117,12 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
         if (node instanceof ConditionNodeModel) {
           const sourceNode = link.getSourcePort().getParent();
           if (sourceNode instanceof IntentNodeModel) {
-            node.intentId = sourceNode.id;
+            node.intents = [
+              {
+                node: sourceNode.id,
+                type: 'INTENT',
+              },
+            ];
           }
           node.itemId = data.result.node.condition;
         }

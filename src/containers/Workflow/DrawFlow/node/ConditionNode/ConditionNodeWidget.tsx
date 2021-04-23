@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { useSnackbar } from 'notistack';
 import { useParams } from 'react-router-dom';
 import { PortWidget } from '@projectstorm/react-diagrams-core';
 import {
@@ -43,6 +44,7 @@ import {
 } from './Condition.types';
 import { BaseNodeModel } from '../BaseNodeModel';
 import apis from '../../../../../apis';
+import { NodeConnect } from '../Node.types';
 
 export interface ConditionNodeWidgetProps {
   node: ConditionNodeModel;
@@ -66,6 +68,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const { engine, node } = props;
   const { workflowId } = useParams();
   const classes = useStyle();
+  const { enqueueSnackbar } = useSnackbar();
   const [condition, setCondition] = useState<Condition>();
   const [subConditions, setSubConditions] = useState<Conditions[]>([]);
   const [isHover, setIsHover] = useState<boolean>(false);
@@ -81,16 +84,18 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       setSubConditions(data.result.conditions);
     }
   };
-  const fetchIntent = async (intentId: string) => {
-    const data: DataIntentResponse = await apis.intent.getIntent(intentId);
-    if (data.status) {
+  const fetchIntent = async (intents: NodeConnect[]) => {
+    const data: DataIntentResponse = await apis.intent.getParametersIntent(
+      intents,
+    );
+    if (data && data.status) {
       setParameters(data.result.parameters);
     }
   };
 
   useEffect(() => {
-    if (node.intentId) {
-      fetchIntent(node.intentId);
+    if (node.intents.length > 0) {
+      fetchIntent(node.intents);
     }
     if (node.itemId) {
       fetchCondition(node.itemId);
@@ -98,10 +103,8 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   }, []);
 
   useEffect(() => {
-    if (node.intentId) {
-      fetchIntent(node.intentId);
-    }
-  }, [node.intentId]);
+    fetchIntent(node.intents);
+  }, [node.intents.length]);
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
@@ -118,12 +121,10 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
     if (subConditions) {
-      console.log(subConditions, 'subCondition', condition);
       const newCondition = {
         conditions: subConditions.map((el) => {
           return {
             parameter: el.parameter,
-            intent: node.intentId,
             value: el.value,
             operator: el.operator,
           };
@@ -176,9 +177,13 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
               workflowId,
               (model as BaseNodeModel).id,
             );
-            if (data.status) {
+            if (data && data.status) {
               await model.remove();
               engine.repaintCanvas();
+            } else {
+              enqueueSnackbar((data && data.message) || 'Delete node failed', {
+                variant: 'error',
+              });
             }
           }
         });

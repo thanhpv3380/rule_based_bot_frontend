@@ -36,3 +36,4 @@ export interface DataIntentResponse {
     status: number,
     result?: IntentResponse
 }
+

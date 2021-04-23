@@ -45,7 +45,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
       props.app.getDiagramEngine().getModel().addNode(node);
       forceUpdate();
     } else {
-      enqueueSnackbar(data.message || 'Create node failed', {
+      enqueueSnackbar((data && data.message) || 'Create node failed', {
         variant: 'error',
       });
     }
