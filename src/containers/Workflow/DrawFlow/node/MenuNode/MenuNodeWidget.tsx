@@ -76,8 +76,6 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
 
       node.setPosition(positionX, positionY);
 
-      console.log(node, 'node');
-
       // get port in of new node
       const element_select_port = node.getPort('in');
 
@@ -96,6 +94,7 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
       const parent = [(link.getSourcePort().getParent() as BaseNodeModel).id];
 
       node.setPosition(positionX, positionY);
+
       const newNode = {
         type: node.getType(),
         position: {
@@ -103,15 +102,17 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
           y: positionY,
         },
         parent,
+        workflow: workflowId,
       };
 
-      const data = await apis.workflow.addNode(workflowId, newNode);
-      if (data.status) {
+      const data = await apis.node.createNode({ ...newNode });
+      if (data && data.status) {
         node.id = data.result.node.id;
         if (node instanceof ConditionNodeModel) {
-          node.intentId = (link
-            .getSourcePort()
-            .getParent() as BaseNodeModel).id;
+          const sourceNode = link.getSourcePort().getParent();
+          if (sourceNode instanceof IntentNodeModel) {
+            node.intentId = sourceNode.id;
+          }
           node.itemId = data.result.node.condition;
         }
       }

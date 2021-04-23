@@ -72,10 +72,9 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
         _.forEach(selectedEntities, async (model) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
-            const data = await apis.workflow.removeNode(
+            const data = await apis.node.deleteNode(
               workflowId,
               (model as BaseNodeModel).id,
-              'ACTION',
             );
             if (data.status) {
               model.remove();

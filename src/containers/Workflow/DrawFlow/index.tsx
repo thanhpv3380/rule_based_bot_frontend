@@ -102,8 +102,8 @@ const DrawFlow = () => {
     nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel = map.get(node.id);
       if (node.parent) {
-        node.parent.map((nodeId: string) => {
-          const parentNode = map.get(nodeId);
+        node.parent.map((el: any) => {
+          const parentNode = map.get(el.node);
           const link = new AdvancedLinkModel();
           link.setSourcePort(parentNode.getPort('out') as AdvancedPortModel);
           link.setTargetPort(nodeDraw.getPort('in') as AdvancedPortModel);
@@ -119,9 +119,9 @@ const DrawFlow = () => {
     zoom: number,
   ) => {
     const map: Map<string, NodeModel> = new Map();
-    application.getActiveDiagram().setOffsetX(ox);
-    application.getActiveDiagram().setOffsetY(oy);
-    application.getActiveDiagram().setZoomLevel(zoom);
+    application.getActiveDiagram().setOffsetX(ox || 0);
+    application.getActiveDiagram().setOffsetY(oy || 0);
+    application.getActiveDiagram().setZoomLevel(zoom || 100);
     await drawNodes(nodes, map);
     await drawLinks(nodes, map);
     application.getDiagramEngine().repaintCanvas();

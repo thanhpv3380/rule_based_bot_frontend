@@ -85,10 +85,9 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
             console.log('remove');
-            const data = await apis.workflow.removeNode(
+            const data = await apis.node.deleteNode(
               workflowId,
               (model as BaseNodeModel).id,
-              'INTENT',
             );
             if (data.status) {
               model.remove();

@@ -89,13 +89,18 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   };
 
   useEffect(() => {
-    if (node.itemId) {
-      fetchCondition(node.itemId);
-    }
     if (node.intentId) {
       fetchIntent(node.intentId);
     }
-    console.log('reset');
+    if (node.itemId) {
+      fetchCondition(node.itemId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (node.intentId) {
+      fetchIntent(node.intentId);
+    }
   }, [node.intentId]);
 
   const handleOpenEdit = () => {
@@ -167,10 +172,9 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
         _.forEach(selectedEntities, async (model: any) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
-            const data = await apis.workflow.removeNode(
+            const data = await apis.node.deleteNode(
               workflowId,
               (model as BaseNodeModel).id,
-              'CONDITION',
             );
             if (data.status) {
               await model.remove();
