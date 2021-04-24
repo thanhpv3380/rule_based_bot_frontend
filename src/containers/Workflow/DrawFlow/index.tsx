@@ -86,7 +86,7 @@ const DrawFlow = () => {
 
     listNodeCondition.map((el) => {
       const intents = el.parent.filter((ele) => ele.type === 'INTENT');
-
+      console.log(intents);
       const nodeDraw = new ConditionNodeModel({
         id: el.id,
         itemId: (el.condition && el.condition.id) || null,

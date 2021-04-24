@@ -72,14 +72,22 @@ const BodyWidget = (props: BodyWidgetProps) => {
       .getNodes() as BaseNodeModel[];
     const newNodes = nodes.map((el: BaseNodeModel) => {
       const linkTargets = el.getPort('in').getLinks();
-      let parent = Object.keys(linkTargets).map((el) =>
-        (linkTargets[el].getSourcePort().getParent() as BaseNodeModel).getID(),
-      );
+      let parent = Object.keys(linkTargets).map((el) => {
+        const nodeEle: any = linkTargets[el].getSourcePort().getParent();
+        return {
+          node: nodeEle.id,
+          type: nodeEle.getType(),
+        };
+      });
       const linkSources = el.getPort('out').getLinks();
-      const children = Object.keys(linkSources).map((el) =>
-        (linkSources[el].getTargetPort().getParent() as BaseNodeModel).getID(),
-      );
-
+      const children = Object.keys(linkSources).map((el) => {
+        const nodeEle: any = linkSources[el].getTargetPort().getParent();
+        return {
+          node: nodeEle.id,
+          type: nodeEle.getType(),
+        };
+      });
+      console.log('test save', parent, children);
       switch (el.getType()) {
         case 'START':
           return {
@@ -129,8 +137,6 @@ const BodyWidget = (props: BodyWidgetProps) => {
           };
       }
     });
-    console.log(newNodes, 'newsNodes');
-    console.log(props.app.getActiveDiagram());
 
     const newWorkflow = {
       nodes: newNodes,

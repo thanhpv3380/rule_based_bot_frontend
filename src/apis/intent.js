@@ -77,12 +77,3 @@ export async function removeParameter(id, parameter) {
   });
   return response;
 }
-
-export async function getParametersIntent(intents) {
-  const response = await api({
-    method: 'POST',
-    url: `/intents/getParameters`,
-    data: { intents },
-  });
-  return response;
-}

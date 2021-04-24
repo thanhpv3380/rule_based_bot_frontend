@@ -79,22 +79,21 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   const fetchCondition = async (id: string) => {
     const data = await apis.condition.getConditionById(id);
-    if (data.status) {
+    if (data && data.status) {
       setCondition(data.result);
       setSubConditions(data.result.conditions);
     }
   };
   const fetchIntent = async (intents: NodeConnect[]) => {
-    const data: DataIntentResponse = await apis.intent.getParametersIntent(
-      intents,
-    );
+    console.log('fsdfsd', intents);
+    const data: DataIntentResponse = await apis.node.getParameters(intents);
     if (data && data.status) {
       setParameters(data.result.parameters);
     }
   };
 
   useEffect(() => {
-    if (node.intents.length > 0) {
+    if (node && node.intents && node.intents.length > 0) {
       fetchIntent(node.intents);
     }
     if (node.itemId) {
@@ -104,7 +103,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   useEffect(() => {
     fetchIntent(node.intents);
-  }, [node.intents.length]);
+  }, [node && node.intents && node.intents.length]);
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
