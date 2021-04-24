@@ -27,6 +27,11 @@ export class Application {
         this.diagramEngine.getNodeFactories().registerFactory(new MenuNodeFactory());
         this.diagramEngine.getLinkFactories().registerFactory(new AdvancedLinkFactory());
 
+        // const node = new StartNodeModel();
+        // node.setPosition(50, 50);
+        // node.id = "607ea6c1eb5a0c450cf140c5";
+
+        // this.activeModel.addNode(node);
         this.diagramEngine.getActionEventBus().registerAction(new CustomDeleteItemsAction());
         this.diagramEngine.getStateMachine().pushState(new DefaultState());
     }

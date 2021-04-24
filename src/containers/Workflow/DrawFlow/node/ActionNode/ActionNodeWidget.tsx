@@ -143,7 +143,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
         <Autocomplete
           className={classes.autoComplete}
           size="small"
-          options={actions}
+          options={actions || []}
           value={action || null}
           onChange={(e: React.ChangeEvent<{}>, value: any, reason: string) => {
             node.itemId = (value && value.id) || null;

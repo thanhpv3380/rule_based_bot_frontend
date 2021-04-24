@@ -68,13 +68,25 @@ const BodyWidget = (props: BodyWidgetProps) => {
       .getNodes() as BaseNodeModel[];
     const newNodes = nodes.map((el: BaseNodeModel) => {
       const linkTargets = el.getPort('in').getLinks();
-      let parent = Object.keys(linkTargets).map((el) =>
-        (linkTargets[el].getSourcePort().getParent() as BaseNodeModel).getID(),
-      );
+      let parent = Object.keys(linkTargets).map((el) => {
+        const node = linkTargets[el]
+          .getSourcePort()
+          .getParent() as BaseNodeModel;
+        return {
+          node: node.id,
+          type: node.getType(),
+        };
+      });
       const linkSources = el.getPort('out').getLinks();
-      const children = Object.keys(linkSources).map((el) =>
-        (linkSources[el].getTargetPort().getParent() as BaseNodeModel).getID(),
-      );
+      const children = Object.keys(linkSources).map((el) => {
+        const node = linkSources[el]
+          .getTargetPort()
+          .getParent() as BaseNodeModel;
+        return {
+          node: node.id,
+          type: node.getType(),
+        };
+      });
 
       switch (el.getType()) {
         case 'START':
@@ -135,15 +147,15 @@ const BodyWidget = (props: BodyWidgetProps) => {
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
     const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
-    if (data.status) {
-      enqueueSnackbar('update workflow success', {
-        variant: 'success',
-      });
-    } else {
-      enqueueSnackbar('update workflow failed', {
-        variant: 'error',
-      });
-    }
+    // if (data.status) {
+    //   enqueueSnackbar('update workflow success', {
+    //     variant: 'success',
+    //   });
+    // } else {
+    //   enqueueSnackbar('update workflow failed', {
+    //     variant: 'error',
+    //   });
+    // }
   };
 
   return (

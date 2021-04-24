@@ -4,7 +4,7 @@ import { Card, Divider, CardContent } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 // import { useSelector } from 'react-redux';
-import TranningPhrases from '../components/tranningPhrases';
+import TranningPhrases from '../components/trainingPhrases';
 import Parameters from '../components/parameter';
 import ActionMapping from '../components/actionMapping';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';

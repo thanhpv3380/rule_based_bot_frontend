@@ -40,9 +40,9 @@ const DrawFlow = () => {
   const [application, setApplication] = React.useState<Application>(
     new Application(),
   );
-  const drawNodes = (nodes: Node[], map: Map<string, NodeModel>) => {
+  const drawNodes = async (nodes: Node[], map: Map<string, NodeModel>) => {
     const listNodeCondition: Node[] = [];
-    nodes.map(async (node: Node) => {
+    await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel;
       switch (node.type) {
         case 'START':
@@ -79,7 +79,7 @@ const DrawFlow = () => {
       }
     });
 
-    listNodeCondition.map((el) => {
+    await listNodeCondition.map((el) => {
       let sourceNodeId: string;
       if (el.parent) {
         const sourceNode: IntentNodeModel = map.get(
@@ -98,12 +98,15 @@ const DrawFlow = () => {
     });
   };
 
-  const drawLinks = (nodes: Node[], map: Map<string, NodeModel>) => {
-    nodes.map(async (node: Node) => {
+  const drawLinks = async (nodes: Node[], map: Map<string, NodeModel>) => {
+    await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel = map.get(node.id);
       if (node.parent) {
-        node.parent.map((nodeId: string) => {
-          const parentNode = map.get(nodeId);
+        node.parent.map((el: any) => {
+          const parentNode = map.get(el.node);
+          // console.log(el);
+
+          // console.log(map, 'node', parentNode);
           const link = new AdvancedLinkModel();
           link.setSourcePort(parentNode.getPort('out') as AdvancedPortModel);
           link.setTargetPort(nodeDraw.getPort('in') as AdvancedPortModel);
