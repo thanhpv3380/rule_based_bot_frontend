@@ -23,6 +23,7 @@ import {
   Grid,
   Modal,
   TextField,
+  Popper,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
@@ -124,6 +125,7 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                         onChange={(e, value) =>
                           handleChangeCondition(e, pos, value)
                         }
+                        className={classes.autocomplete}
                         getOptionLabel={(option) => option.parameterName}
                         renderInput={(params) => (
                           <InputBase

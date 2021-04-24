@@ -41,7 +41,7 @@ const useStyle = makeStyles({
         paddingBottom: 2,
     },
     tableCellInput: {
-        width: 100,
+        width: 300,
         backgroundColor: '#ffff',
         borderBottom: '10px solid #eaeaea',
     },
@@ -61,6 +61,9 @@ const useStyle = makeStyles({
     tableRowButton: {
         backgroundColor: '#ffff',
     },
+    autocomplete: {
+        minWidth: 200
+    }
 });
 
 export default useStyle;

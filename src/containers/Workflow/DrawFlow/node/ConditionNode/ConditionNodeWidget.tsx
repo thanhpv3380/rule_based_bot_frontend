@@ -84,41 +84,48 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       setSubConditions(data.result.conditions);
     }
   };
-  const fetchIntent = async (intents: NodeConnect[]) => {
-    console.log('fsdfsd', intents);
-    const data: DataIntentResponse = await apis.node.getParameters(intents);
+  const fetchParameters = async (intents: NodeConnect[]) => {
+    const data: DataIntentResponse = await apis.intent.getParametersByList(
+      intents,
+    );
     if (data && data.status) {
       setParameters(data.result.parameters);
+    } else {
+      enqueueSnackbar((data && data.message) || 'fetch data failed', {
+        variant: 'error',
+      });
     }
   };
 
   useEffect(() => {
-    if (node && node.intents && node.intents.length > 0) {
-      fetchIntent(node.intents);
-    }
     if (node.itemId) {
       fetchCondition(node.itemId);
     }
   }, []);
 
-  useEffect(() => {
-    fetchIntent(node.intents);
-  }, [node && node.intents && node.intents.length]);
-
-  const handleOpenEdit = () => {
+  const handleOpenEdit = async () => {
+    const links = node.getPort('in').getLinks();
+    let intents = [];
+    Object.keys(links).forEach((el: string) => {
+      const nodeEle: any = links[el].getSourcePort().getParent();
+      if (nodeEle.getType() === 'INTENT') {
+        intents.push(nodeEle.itemId);
+      }
+    });
+    await fetchParameters(intents);
     setOpenEdit(true);
-    const action: Action = engine
-      .getActionEventBus()
-      .getActionsForType(InputType.MOUSE_WHEEL)[0];
-    engine.getActionEventBus().deregisterAction(action);
-    engine.repaintCanvas();
-    setActionMouseWheel(action);
+    // const action: Action = engine
+    //   .getActionEventBus()
+    //   .getActionsForType(InputType.MOUSE_WHEEL)[0];
+    // engine.getActionEventBus().deregisterAction(action);
+    // engine.repaintCanvas();
+    // setActionMouseWheel(action);
   };
 
   const handleCloseEdit = async () => {
     setOpenEdit(false);
-    engine.getActionEventBus().registerAction(actionMouseWheel);
-    engine.repaintCanvas();
+    // engine.getActionEventBus().registerAction(actionMouseWheel);
+    // engine.repaintCanvas();
     if (subConditions) {
       const newCondition = {
         conditions: subConditions.map((el) => {

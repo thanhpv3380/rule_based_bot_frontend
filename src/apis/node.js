@@ -33,12 +33,3 @@ export async function deleteNode(workflowId, nodeId) {
   });
   return response;
 }
-
-export async function getParameters(nodes) {
-  const response = await api({
-    method: 'POST',
-    url: `/nodes/getParameters`,
-    data: { nodes },
-  });
-  return response;
-}

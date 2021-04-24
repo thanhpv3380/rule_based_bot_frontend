@@ -29,11 +29,13 @@ export interface Parameter {
 export interface IntentResponse {
     id: string,
     name: string,
-    parameters: Parameter[]
+    parameters: Parameter[],
+
 }
 
 export interface DataIntentResponse {
     status: number,
-    result?: IntentResponse
+    result?: IntentResponse,
+    message: string,
 }
 
