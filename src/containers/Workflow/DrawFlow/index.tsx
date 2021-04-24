@@ -45,9 +45,9 @@ const DrawFlow = () => {
   const [application, setApplication] = React.useState<Application>(
     new Application(),
   );
-  const drawNodes = (nodes: Node[], map: Map<string, NodeModel>) => {
+  const drawNodes = async (nodes: Node[], map: Map<string, NodeModel>) => {
     const listNodeCondition: Node[] = [];
-    nodes.map(async (node: Node) => {
+    await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel;
       switch (node.type) {
         case 'START':
@@ -86,7 +86,6 @@ const DrawFlow = () => {
 
     listNodeCondition.map((el) => {
       const intents = el.parent.filter((ele) => ele.type === 'INTENT');
-      console.log(intents);
       const nodeDraw = new ConditionNodeModel({
         id: el.id,
         itemId: (el.condition && el.condition.id) || null,
@@ -98,8 +97,8 @@ const DrawFlow = () => {
     });
   };
 
-  const drawLinks = (nodes: Node[], map: Map<string, NodeModel>) => {
-    nodes.map(async (node: Node) => {
+  const drawLinks = async (nodes: Node[], map: Map<string, NodeModel>) => {
+    await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel = map.get(node.id);
       if (node.parent) {
         node.parent.map((el: any) => {

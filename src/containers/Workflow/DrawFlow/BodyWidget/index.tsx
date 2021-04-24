@@ -87,7 +87,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
           type: nodeEle.getType(),
         };
       });
-      console.log('test save', parent, children);
+
       switch (el.getType()) {
         case 'START':
           return {
@@ -145,6 +145,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
     const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
+
     if (data && data.status) {
       enqueueSnackbar('Update workflow success', {
         variant: 'success',
