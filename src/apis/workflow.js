@@ -41,21 +41,3 @@ export async function deleteWorkflow(id) {
   });
   return response;
 }
-
-export async function addNode(id, node) {
-  const response = await api({
-    method: 'PUT',
-    url: `/workflows/addNode/${id}`,
-    data: { node },
-  });
-  return response;
-}
-
-export async function removeNode(id, nodeId, type) {
-  const response = await api({
-    method: 'PUT',
-    url: `/workflows/removeNode/${id}`,
-    data: { nodeId, type },
-  });
-  return response;
-}

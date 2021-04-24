@@ -37,14 +37,17 @@ const BodyWidget = (props: BodyWidgetProps) => {
         x: 550,
         y: 300,
       },
+      workflow: workflowId,
     };
-    const data = await apis.workflow.addNode(workflowId, newNode);
-    if (data.status) {
+    const data = await apis.node.createNode({ ...newNode });
+    if (data && data.status) {
       node.id = data.result.node.id;
       props.app.getDiagramEngine().getModel().addNode(node);
       forceUpdate();
     } else {
-      //Todo alert failed
+      enqueueSnackbar((data && data.message) || 'Create node failed', {
+        variant: 'error',
+      });
     }
   };
 
@@ -61,6 +64,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
     var node: ActionNodeModel = new ActionNodeModel();
     addNode(node);
   };
+
   const handleSave = async () => {
     const nodes = props.app
       .getDiagramEngine()
@@ -147,6 +151,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
     const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
+<<<<<<< HEAD
     // if (data.status) {
     //   enqueueSnackbar('update workflow success', {
     //     variant: 'success',
@@ -156,6 +161,17 @@ const BodyWidget = (props: BodyWidgetProps) => {
     //     variant: 'error',
     //   });
     // }
+=======
+    if (data && data.status) {
+      enqueueSnackbar('Update workflow success', {
+        variant: 'success',
+      });
+    } else {
+      enqueueSnackbar('Update workflow failed', {
+        variant: 'error',
+      });
+    }
+>>>>>>> 770775cd7d21d705d39570331a00b275798bcf66
   };
 
   return (

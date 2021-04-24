@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams';
 import { Box, TextField, Paper, Typography, Grid } from '@material-ui/core';
 import {
@@ -29,6 +30,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   const { node, engine } = props;
   const { workflowId } = useParams();
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [isHover, setIsHover] = useState(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [actionMouseWheel, setActionMouseWheel] = useState<Action>();
@@ -72,14 +74,17 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
         _.forEach(selectedEntities, async (model) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
-            const data = await apis.workflow.removeNode(
+            const data = await apis.node.deleteNode(
               workflowId,
               (model as BaseNodeModel).id,
-              'ACTION',
             );
-            if (data.status) {
+            if (data && data.status) {
               model.remove();
               engine.repaintCanvas();
+            } else {
+              enqueueSnackbar((data && data.message) || 'Delete node failed', {
+                variant: 'error',
+              });
             }
           }
         });
