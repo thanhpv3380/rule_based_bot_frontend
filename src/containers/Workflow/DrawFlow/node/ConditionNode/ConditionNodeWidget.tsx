@@ -56,7 +56,7 @@ export interface ConditionNodeWidgetState {
   open: boolean;
 }
 
-const conditionsDefault: Conditions = {
+const conditionsDefault = {
   parameter: '',
   operator: '=',
   value: '',
@@ -84,18 +84,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       setSubConditions(data.result.conditions);
     }
   };
-  const fetchParameters = async (intents: NodeConnect[]) => {
-    const data: DataIntentResponse = await apis.intent.getParametersByList(
-      intents,
-    );
-    if (data && data.status) {
-      setParameters(data.result.parameters);
-    } else {
-      enqueueSnackbar((data && data.message) || 'fetch data failed', {
-        variant: 'error',
-      });
-    }
-  };
 
   useEffect(() => {
     if (node.itemId) {
@@ -104,15 +92,27 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   }, []);
 
   const handleOpenEdit = async () => {
-    const links = node.getPort('in').getLinks();
-    let intents = [];
-    Object.keys(links).forEach((el: string) => {
-      const nodeEle: any = links[el].getSourcePort().getParent();
-      if (nodeEle.getType() === 'INTENT') {
-        intents.push(nodeEle.itemId);
-      }
-    });
-    await fetchParameters(intents);
+    let tempParameters = [];
+    let listNode = [];
+    const getIntentParent = (tempNode) => {
+      const links = tempNode.getPort('in').getLinks();
+      Object.keys(links).forEach((el: string) => {
+        const nodeEle: any = links[el].getSourcePort().getParent();
+
+        if (listNode.indexOf(nodeEle.id) <= 0) {
+          listNode.push(nodeEle.id);
+          if (nodeEle.getType() === 'INTENT') {
+            if (nodeEle.itemId) {
+              tempParameters.push(...nodeEle.nodeInfo.parameters);
+            }
+          }
+          getIntentParent(nodeEle);
+        }
+      });
+    };
+    getIntentParent(node);
+
+    setParameters(tempParameters);
     setOpenEdit(true);
     // const action: Action = engine
     //   .getActionEventBus()
@@ -215,7 +215,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   const handleAddCondition = () => {
     const newConditions = [...subConditions];
-    newConditions.push(conditionsDefault);
+    newConditions.push({ ...conditionsDefault });
     setSubConditions(newConditions);
     if (!condition) {
       const newCondition: Condition = {
@@ -234,28 +234,25 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     setSubConditions(newConditions);
   };
 
-  const handleChangeCondition = (e: any, pos: number, parameter: any) => {
-    const { name, value } = e.target;
+  const handleChangeCondition = (name: string, value: any, pos: number) => {
     console.log(subConditions, 'old', name, value, pos);
 
     if (name === 'subOperator') {
-      var newSubConditions: Conditions[] = [...subConditions];
-      newSubConditions[pos].operator = value;
+      const newSubConditions: Conditions[] = [...subConditions];
+      newSubConditions[pos].operator = value.toString();
       setSubConditions(newSubConditions);
     } else if (name === 'operator') {
-      var newCondition = { ...condition };
-      newCondition.operator = value;
+      const newCondition = { ...condition };
+      newCondition.operator = value.toString();
       setCondition(newCondition);
     } else if (name === 'value') {
-      var newSubConditions: Conditions[] = [...subConditions];
+      // console.log(value.toString());
+      const newSubConditions: Conditions[] = [...subConditions];
       newSubConditions[pos].value = value;
       setSubConditions(newSubConditions);
-    } else {
-      console.log(pos, 'pos');
-
-      var newSubConditions: Conditions[] = [...subConditions];
-      newSubConditions[pos].parameter = parameter.parameterName;
-      console.log(newSubConditions[pos], newSubConditions);
+    } else if (name === 'parameter') {
+      const newSubConditions: Conditions[] = [...subConditions];
+      newSubConditions[pos].parameter = value && value.parameterName;
 
       setSubConditions(newSubConditions);
     }
@@ -263,7 +260,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   return (
     <Box
-      // style={{ width: 280, borderRadius: 10 }}
       onMouseOver={() => {
         setIsHover(true);
       }}
@@ -294,7 +290,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       )}
 
       <Paper elevation={5} className={classes.root}>
-        {/*  */}
         <Box display="flex" alignItems="center" flexDirection="column">
           <PortWidget engine={props.engine} port={props.node.getPort('in')} />
           <Grid container justify="center" className={classes.header}>

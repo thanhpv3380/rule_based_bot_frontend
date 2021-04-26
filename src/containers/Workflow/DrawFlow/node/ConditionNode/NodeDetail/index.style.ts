@@ -62,7 +62,7 @@ const useStyle = makeStyles({
         backgroundColor: '#ffff',
     },
     autocomplete: {
-        minWidth: 200
+        //minWidth: 200
     }
 });
 

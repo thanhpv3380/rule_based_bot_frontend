@@ -61,6 +61,7 @@ const DrawFlow = () => {
           nodeDraw = new IntentNodeModel({
             id: node.id,
             itemId: (node.intent && node.intent.id) || null,
+            nodeInfo: node.intent || null,
           });
           nodeDraw.setPosition(node.position.x, node.position.y);
 
@@ -72,6 +73,7 @@ const DrawFlow = () => {
           nodeDraw = new ActionNodeModel({
             id: node.id,
             itemId: (node.action && node.action.id) || null,
+            nodeInfo: node.action || null,
           });
           nodeDraw.setPosition(node.position.x, node.position.y);
           application.getActiveDiagram().addNode(nodeDraw);
@@ -90,6 +92,7 @@ const DrawFlow = () => {
         id: el.id,
         itemId: (el.condition && el.condition.id) || null,
         intents,
+        nodeInfo: el.condition || null,
       });
       nodeDraw.setPosition(el.position.x || 0, el.position.y || 0);
       application.getActiveDiagram().addNode(nodeDraw);
@@ -104,9 +107,11 @@ const DrawFlow = () => {
         node.parent.map((el: any) => {
           const parentNode = map.get(el.node);
           const link = new AdvancedLinkModel();
-          link.setSourcePort(parentNode.getPort('out') as AdvancedPortModel);
-          link.setTargetPort(nodeDraw.getPort('in') as AdvancedPortModel);
-          application.getActiveDiagram().addLink(link);
+          if (parentNode) {
+            link.setSourcePort(parentNode.getPort('out') as AdvancedPortModel);
+            link.setTargetPort(nodeDraw.getPort('in') as AdvancedPortModel);
+            application.getActiveDiagram().addLink(link);
+          }
         });
       }
     });

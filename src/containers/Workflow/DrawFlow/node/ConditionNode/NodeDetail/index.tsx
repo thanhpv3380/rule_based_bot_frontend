@@ -123,7 +123,7 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                         //   option.parameterName === value.parameterName
                         // }
                         onChange={(e, value) =>
-                          handleChangeCondition(e, pos, value)
+                          handleChangeCondition('parameter', value, pos)
                         }
                         className={classes.autocomplete}
                         getOptionLabel={(option) => option.parameterName}
@@ -147,16 +147,22 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                         input={<InputBase />}
                         IconComponent={() => <div />}
                         name="subOperator"
-                        onChange={(e) => handleChangeCondition(e, pos)}
+                        onChange={(e) =>
+                          handleChangeCondition(
+                            'subOperator',
+                            e.target.value,
+                            pos,
+                          )
+                        }
                       >
-                        {menuOperator.map((el) => (
+                        {menuOperator.map((ele) => (
                           <MenuItem
                             onMouseEnter={handleMouseEnterItem}
                             onMouseLeave={handleMouseLeaveItem}
                             // onClick={(e) => handleCloseMenuOperator(e, pos)}
-                            value={el}
+                            value={ele}
                           >
-                            {el}
+                            {ele}
                           </MenuItem>
                         ))}
                       </Select>
@@ -166,7 +172,9 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                         placeholder="Giá trị"
                         name="value"
                         value={el.value}
-                        onChange={(e) => handleChangeCondition(e, pos)}
+                        onChange={(e) =>
+                          handleChangeCondition('value', e.target.value, pos)
+                        }
                       />
                     </TableCell>
                     <TableCell
@@ -179,22 +187,24 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                         value={condition ? condition.operator : 'and'}
                         input={<InputBase />}
                         IconComponent={() => <div />}
-                        onChange={(e) => handleChangeCondition(e)}
+                        onChange={(e) =>
+                          handleChangeCondition('operator', e.target.value)
+                        }
                         name="operator"
                         // MenuListProps={{
                         //   classes: { padding: classes.paddingMenu },
                         // }}
                       >
-                        {menuConnectCondition.map((el) => (
+                        {menuConnectCondition.map((ele) => (
                           <MenuItem
                             onMouseEnter={handleMouseEnterItem}
                             onMouseLeave={handleMouseLeaveItem}
                             onClick={(e) =>
                               handleCloseMenuConnectCondition(e, pos)
                             }
-                            value={el}
+                            value={ele}
                           >
-                            {el}
+                            {ele}
                           </MenuItem>
                         ))}
                       </Select>
@@ -212,7 +222,10 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                   <Button
                     variant="outlined"
                     className={classes.tableRowButton}
-                    onClick={() => handleAddCondition()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleAddCondition();
+                    }}
                   >
                     <AddIcon />
                   </Button>

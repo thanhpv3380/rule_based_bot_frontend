@@ -9,6 +9,7 @@ export interface ActionNodeModelOptions extends BaseModelOptions {
   color?: string;
   id?: string;
   itemId?: string;
+  nodeInfo?: any;
 }
 export class ActionNodeModel extends BaseNodeModel {
   constructor(options: ActionNodeModelOptions = {}) {
