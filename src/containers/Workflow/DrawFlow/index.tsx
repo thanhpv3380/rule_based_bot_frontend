@@ -84,20 +84,9 @@ const DrawFlow = () => {
       }
     });
 
-<<<<<<< HEAD
-    await listNodeCondition.map((el) => {
-      let sourceNodeId: string;
-      if (el.parent) {
-        const sourceNode: IntentNodeModel = map.get(
-          el.parent[0],
-        ) as IntentNodeModel;
-        sourceNodeId = sourceNode && sourceNode.itemId;
-      }
-=======
     listNodeCondition.map((el) => {
       const intents = el.parent.filter((ele) => ele.type === 'INTENT');
 
->>>>>>> 770775cd7d21d705d39570331a00b275798bcf66
       const nodeDraw = new ConditionNodeModel({
         id: el.id,
         itemId: (el.condition && el.condition.id) || null,
@@ -115,12 +104,6 @@ const DrawFlow = () => {
       if (node.parent) {
         node.parent.map((el: any) => {
           const parentNode = map.get(el.node);
-<<<<<<< HEAD
-          // console.log(el);
-
-          // console.log(map, 'node', parentNode);
-=======
->>>>>>> 770775cd7d21d705d39570331a00b275798bcf66
           const link = new AdvancedLinkModel();
           link.setSourcePort(parentNode.getPort('out') as AdvancedPortModel);
           link.setTargetPort(nodeDraw.getPort('in') as AdvancedPortModel);

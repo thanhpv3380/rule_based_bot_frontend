@@ -1,9 +1,9 @@
 import * as React from 'react';
 import ActionNodeWidget from './ActionNodeWidget';
 import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
-import { DiagramEngine } from '@projectstorm/react-diagrams-core';
 import { BaseModelOptions } from '@projectstorm/react-canvas-core';
 import { BaseNodeModel } from '../BaseNodeModel';
+import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 
 export interface ActionNodeModelOptions extends BaseModelOptions {
   color?: string;
@@ -20,7 +20,7 @@ export class ActionNodeModel extends BaseNodeModel {
 }
 export class ActionNodeFactory extends AbstractReactFactory<
   ActionNodeModel,
-  DiagramEngine
+  AdvancedDiagramEngine
 > {
   constructor() {
     super('ACTION');
@@ -33,7 +33,7 @@ export class ActionNodeFactory extends AbstractReactFactory<
   generateReactWidget(event: any): JSX.Element {
     return (
       <ActionNodeWidget
-        engine={this.engine as DiagramEngine}
+        engine={this.engine as AdvancedDiagramEngine}
         node={event.model}
       />
     );

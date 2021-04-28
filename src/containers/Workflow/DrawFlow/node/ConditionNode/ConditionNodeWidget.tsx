@@ -73,7 +73,9 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const [subConditions, setSubConditions] = useState<Conditions[]>([]);
   const [isHover, setIsHover] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [actionMouseWheel, setActionMouseWheel] = useState<Action>();
+  const [actionMouseWheel] = useState<Action>(
+    engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
+  );
   const [intent, setIntent] = useState<IntentResponse>();
   const [parameters, setParameters] = useState<Parameter[]>();
 
@@ -94,7 +96,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   };
 
   useEffect(() => {
-    if (node.intents.length > 0) {
+    if (node.intents && node.intents.length > 0) {
       fetchIntent(node.intents);
     }
     if (node.itemId) {
@@ -104,20 +106,17 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   useEffect(() => {
     fetchIntent(node.intents);
-  }, [node.intents.length]);
+  }, [node.intents && node.intents.length]);
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
-    const action: Action = engine
-      .getActionEventBus()
-      .getActionsForType(InputType.MOUSE_WHEEL)[0];
-    engine.getActionEventBus().deregisterAction(action);
+    engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
-    setActionMouseWheel(action);
   };
 
   const handleCloseEdit = async () => {
     setOpenEdit(false);
+    setIsHover(false);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
     if (subConditions) {
@@ -133,10 +132,10 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       };
       console.log(node.itemId, newCondition);
 
-      const data = await apis.condition.updateCondition(
-        node.itemId,
-        newCondition,
-      );
+      // const data = await apis.condition.updateCondition(
+      //   node.itemId,
+      //   newCondition,
+      // );
     }
   };
 

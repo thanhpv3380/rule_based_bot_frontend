@@ -25,12 +25,16 @@ export interface BodyWidgetProps {
 
 const BodyWidget = (props: BodyWidgetProps) => {
   const classes = useStyles();
+  const { app } = props;
   const forceUpdate: () => void = React.useState()[1].bind(null, {});
   const { workflowId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
   const addNode = async (node: BaseNodeModel) => {
-    node.setPosition(550, 300);
+    node.setPosition(
+      550 - app.getActiveDiagram().getOffsetX(),
+      300 - app.getActiveDiagram().getOffsetY(),
+    );
     const newNode = {
       type: node.getType(),
       position: {
@@ -151,17 +155,6 @@ const BodyWidget = (props: BodyWidgetProps) => {
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
     const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
-<<<<<<< HEAD
-    // if (data.status) {
-    //   enqueueSnackbar('update workflow success', {
-    //     variant: 'success',
-    //   });
-    // } else {
-    //   enqueueSnackbar('update workflow failed', {
-    //     variant: 'error',
-    //   });
-    // }
-=======
     if (data && data.status) {
       enqueueSnackbar('Update workflow success', {
         variant: 'success',
@@ -171,7 +164,6 @@ const BodyWidget = (props: BodyWidgetProps) => {
         variant: 'error',
       });
     }
->>>>>>> 770775cd7d21d705d39570331a00b275798bcf66
   };
 
   return (

@@ -61,6 +61,9 @@ const useStyle = makeStyles({
     tableRowButton: {
         backgroundColor: '#ffff',
     },
+    paper: {
+        width: "450px"
+    }
 });
 
 export default useStyle;

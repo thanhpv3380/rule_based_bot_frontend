@@ -20,7 +20,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import textDefault from '../../../../constants/textDefault';
 import useStyles from './index.style';
 
-function TranningPhrases(props) {
+function Patterns(props) {
   const classes = useStyles();
   const {
     // userExpression,
@@ -114,4 +114,4 @@ function TranningPhrases(props) {
   );
 }
 
-export default TranningPhrases;
+export default Patterns;

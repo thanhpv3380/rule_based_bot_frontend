@@ -20,10 +20,11 @@ import { Action, InputType } from '@projectstorm/react-canvas-core';
 import { DataResponse, ActionsResponse } from './ActionNodeWidget.type';
 import apis from '../.././../../../apis';
 import { BaseNodeModel } from '../BaseNodeModel';
+import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 
 export interface ActionNodeWidgetProps {
   node: ActionNodeModel;
-  engine: DiagramEngine;
+  engine: AdvancedDiagramEngine;
 }
 
 const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
@@ -33,7 +34,9 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [isHover, setIsHover] = useState(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [actionMouseWheel, setActionMouseWheel] = useState<Action>();
+  const [actionMouseWheel] = useState<Action>(
+    engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
+  );
   const [action, setAction] = useState<ActionsResponse>();
   const [actions, setActions] = useState<ActionsResponse[]>();
 
@@ -47,20 +50,17 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
 
   useEffect(() => {
     fetchActions();
-  }, []);
+  }, [action]);
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
-    const action: Action = engine
-      .getActionEventBus()
-      .getActionsForType(InputType.MOUSE_WHEEL)[0];
-    engine.getActionEventBus().deregisterAction(action);
+    engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
-    setActionMouseWheel(action);
   };
 
   const handleCloseEdit = () => {
     setOpenEdit(false);
+    setIsHover(false);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
   };
@@ -105,6 +105,16 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
     );
     engine.getModel().addNode(newNode);
     // engine.getModel().addNode(newNode);
+    engine.repaintCanvas();
+  };
+
+  const handleOpenAutocomplete = () => {
+    engine.getActionEventBus().deregisterAction(actionMouseWheel);
+    engine.repaintCanvas();
+  };
+
+  const handleCloseAutocomplete = () => {
+    engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
   };
 
@@ -154,6 +164,8 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
             node.itemId = (value && value.id) || null;
             setAction(value);
           }}
+          onOpen={handleOpenAutocomplete}
+          onClose={handleCloseAutocomplete}
           getOptionSelected={(option, value) => option.id === value.id}
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (

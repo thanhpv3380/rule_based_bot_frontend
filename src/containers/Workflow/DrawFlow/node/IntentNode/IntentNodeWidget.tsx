@@ -3,7 +3,12 @@ import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useParams } from 'react-router-dom';
 import { PortWidget } from '@projectstorm/react-diagrams-core';
-import { Action, InputType } from '@projectstorm/react-canvas-core';
+import {
+  Action,
+  DragCanvasState,
+  InputType,
+  StateMachine,
+} from '@projectstorm/react-canvas-core';
 import {
   Box,
   TextField,
@@ -45,7 +50,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [isHover, setIsHover] = useState(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [actionMouseWheel, setActionMouseWheel] = useState<Action>(
+  const [actionMouseWheel] = useState<Action>(
     engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
   );
   const [intent, setIntent] = useState<IntentsResponse>();
@@ -67,12 +72,16 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
+
+    // engine.getActionEventBus().deregisterAction(actionMove);
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
   };
 
   const handleCloseEdit = () => {
     setOpenEdit(false);
+    setIsHover(false);
+    // engine.getActionEventBus().registerAction(actionMove);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
   };
@@ -121,13 +130,12 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
     engine.repaintCanvas();
   };
 
-  const handleFocus = () => {
+  const handleOpenAutocomplete = () => {
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
   };
 
-  const handleMouseLeave = () => {
-    setIsHover(false);
+  const handleCloseAutocomplete = () => {
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
   };
@@ -136,7 +144,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
     <Box
       className={classes.container}
       onMouseOver={() => setIsHover(true)}
-      onMouseLeave={() => handleMouseLeave()}
+      onMouseLeave={() => setIsHover(false)}
     >
       {isHover ? (
         <Box className={classes.iconMenu}>
@@ -178,7 +186,8 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
             node.itemId = (value && value.id) || null;
             setIntent(value);
           }}
-          onFocus={handleFocus}
+          onOpen={handleOpenAutocomplete}
+          onClose={handleCloseAutocomplete}
           getOptionSelected={(option, value) => option.id === value.id}
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (
