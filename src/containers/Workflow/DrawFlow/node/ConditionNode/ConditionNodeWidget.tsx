@@ -56,7 +56,7 @@ export interface ConditionNodeWidgetState {
   open: boolean;
 }
 
-const conditionsDefault: Conditions = {
+const conditionsDefault = {
   parameter: '',
   operator: '=',
   value: '',
@@ -81,44 +81,76 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   const fetchCondition = async (id: string) => {
     const data = await apis.condition.getConditionById(id);
-    if (data.status) {
+    if (data && data.status) {
       setCondition(data.result);
       setSubConditions(data.result.conditions);
     }
   };
-  const fetchIntent = async (intents: NodeConnect[]) => {
-    const data: DataIntentResponse = await apis.intent.getParametersIntent(
-      intents,
-    );
-    if (data && data.status) {
-      setParameters(data.result.parameters);
-    }
-  };
 
   useEffect(() => {
+<<<<<<< HEAD
     if (node.intents && node.intents.length > 0) {
       fetchIntent(node.intents);
     }
+=======
+>>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
     if (node.itemId) {
       fetchCondition(node.itemId);
     }
   }, []);
 
+<<<<<<< HEAD
   useEffect(() => {
     fetchIntent(node.intents);
   }, [node.intents && node.intents.length]);
+=======
+  const handleOpenEdit = async () => {
+    let tempParameters = [];
+    let listNode = [];
+    const getIntentParent = (tempNode) => {
+      const links = tempNode.getPort('in').getLinks();
+      Object.keys(links).forEach((el: string) => {
+        const nodeEle: any = links[el].getSourcePort().getParent();
+>>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
 
-  const handleOpenEdit = () => {
+        if (listNode.indexOf(nodeEle.id) <= 0) {
+          listNode.push(nodeEle.id);
+          if (nodeEle.getType() === 'INTENT') {
+            if (nodeEle.itemId) {
+              tempParameters.push(...nodeEle.nodeInfo.parameters);
+            }
+          }
+          getIntentParent(nodeEle);
+        }
+      });
+    };
+    getIntentParent(node);
+
+    setParameters(tempParameters);
     setOpenEdit(true);
+<<<<<<< HEAD
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
+=======
+    // const action: Action = engine
+    //   .getActionEventBus()
+    //   .getActionsForType(InputType.MOUSE_WHEEL)[0];
+    // engine.getActionEventBus().deregisterAction(action);
+    // engine.repaintCanvas();
+    // setActionMouseWheel(action);
+>>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
   };
 
   const handleCloseEdit = async () => {
     setOpenEdit(false);
+<<<<<<< HEAD
     setIsHover(false);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
+=======
+    // engine.getActionEventBus().registerAction(actionMouseWheel);
+    // engine.repaintCanvas();
+>>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
     if (subConditions) {
       const newCondition = {
         conditions: subConditions.map((el) => {
@@ -208,7 +240,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   const handleAddCondition = () => {
     const newConditions = [...subConditions];
-    newConditions.push(conditionsDefault);
+    newConditions.push({ ...conditionsDefault });
     setSubConditions(newConditions);
     if (!condition) {
       const newCondition: Condition = {
@@ -227,28 +259,25 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     setSubConditions(newConditions);
   };
 
-  const handleChangeCondition = (e: any, pos: number, parameter: any) => {
-    const { name, value } = e.target;
+  const handleChangeCondition = (name: string, value: any, pos: number) => {
     console.log(subConditions, 'old', name, value, pos);
 
     if (name === 'subOperator') {
-      var newSubConditions: Conditions[] = [...subConditions];
-      newSubConditions[pos].operator = value;
+      const newSubConditions: Conditions[] = [...subConditions];
+      newSubConditions[pos].operator = value.toString();
       setSubConditions(newSubConditions);
     } else if (name === 'operator') {
-      var newCondition = { ...condition };
-      newCondition.operator = value;
+      const newCondition = { ...condition };
+      newCondition.operator = value.toString();
       setCondition(newCondition);
     } else if (name === 'value') {
-      var newSubConditions: Conditions[] = [...subConditions];
+      // console.log(value.toString());
+      const newSubConditions: Conditions[] = [...subConditions];
       newSubConditions[pos].value = value;
       setSubConditions(newSubConditions);
-    } else {
-      console.log(pos, 'pos');
-
-      var newSubConditions: Conditions[] = [...subConditions];
-      newSubConditions[pos].parameter = parameter.parameterName;
-      console.log(newSubConditions[pos], newSubConditions);
+    } else if (name === 'parameter') {
+      const newSubConditions: Conditions[] = [...subConditions];
+      newSubConditions[pos].parameter = value && value.parameterName;
 
       setSubConditions(newSubConditions);
     }
@@ -256,7 +285,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   return (
     <Box
-      // style={{ width: 280, borderRadius: 10 }}
       onMouseOver={() => {
         setIsHover(true);
       }}
@@ -287,7 +315,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       )}
 
       <Paper elevation={5} className={classes.root}>
-        {/*  */}
         <Box display="flex" alignItems="center" flexDirection="column">
           <PortWidget engine={props.engine} port={props.node.getPort('in')} />
           <Grid container justify="center" className={classes.header}>

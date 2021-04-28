@@ -77,22 +77,18 @@ const BodyWidget = (props: BodyWidgetProps) => {
     const newNodes = nodes.map((el: BaseNodeModel) => {
       const linkTargets = el.getPort('in').getLinks();
       let parent = Object.keys(linkTargets).map((el) => {
-        const node = linkTargets[el]
-          .getSourcePort()
-          .getParent() as BaseNodeModel;
+        const nodeEle: any = linkTargets[el].getSourcePort().getParent();
         return {
-          node: node.id,
-          type: node.getType(),
+          node: nodeEle.id,
+          type: nodeEle.getType(),
         };
       });
       const linkSources = el.getPort('out').getLinks();
       const children = Object.keys(linkSources).map((el) => {
-        const node = linkSources[el]
-          .getTargetPort()
-          .getParent() as BaseNodeModel;
+        const nodeEle: any = linkSources[el].getTargetPort().getParent();
         return {
-          node: node.id,
-          type: node.getType(),
+          node: nodeEle.id,
+          type: nodeEle.getType(),
         };
       });
 
@@ -145,8 +141,6 @@ const BodyWidget = (props: BodyWidgetProps) => {
           };
       }
     });
-    console.log(newNodes, 'newsNodes');
-    console.log(props.app.getActiveDiagram());
 
     const newWorkflow = {
       nodes: newNodes,
@@ -155,6 +149,10 @@ const BodyWidget = (props: BodyWidgetProps) => {
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
     const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
     if (data && data.status) {
       enqueueSnackbar('Update workflow success', {
         variant: 'success',

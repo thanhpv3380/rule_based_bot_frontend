@@ -16,6 +16,7 @@ export interface ConditionNodeModelOptions extends BaseModelOptions {
   id?: string;
   itemId?: string;
   intents?: NodeConnect[];
+  nodeInfo?: any;
 }
 export class ConditionNodeModel extends BaseNodeModel {
   intents?: NodeConnect[];

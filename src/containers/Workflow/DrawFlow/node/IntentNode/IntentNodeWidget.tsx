@@ -58,7 +58,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
 
   const fetchIntents = async () => {
     const data: DataResponse = await apis.intent.getIntents();
-    if (data.status) {
+    if (data && data.status) {
       setIntents(data.result);
       if (node.itemId) {
         setIntent(data.result.find((el) => el.id === node.itemId));
