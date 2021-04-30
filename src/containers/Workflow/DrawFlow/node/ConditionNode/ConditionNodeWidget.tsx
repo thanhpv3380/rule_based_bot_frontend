@@ -87,23 +87,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     }
   };
 
-  useEffect(() => {
-<<<<<<< HEAD
-    if (node.intents && node.intents.length > 0) {
-      fetchIntent(node.intents);
-    }
-=======
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
-    if (node.itemId) {
-      fetchCondition(node.itemId);
-    }
-  }, []);
-
-<<<<<<< HEAD
-  useEffect(() => {
-    fetchIntent(node.intents);
-  }, [node.intents && node.intents.length]);
-=======
   const handleOpenEdit = async () => {
     let tempParameters = [];
     let listNode = [];
@@ -111,7 +94,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       const links = tempNode.getPort('in').getLinks();
       Object.keys(links).forEach((el: string) => {
         const nodeEle: any = links[el].getSourcePort().getParent();
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
 
         if (listNode.indexOf(nodeEle.id) <= 0) {
           listNode.push(nodeEle.id);
@@ -125,32 +107,22 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       });
     };
     getIntentParent(node);
-
     setParameters(tempParameters);
     setOpenEdit(true);
-<<<<<<< HEAD
-    engine.getActionEventBus().deregisterAction(actionMouseWheel);
-    engine.repaintCanvas();
-=======
+
     // const action: Action = engine
     //   .getActionEventBus()
     //   .getActionsForType(InputType.MOUSE_WHEEL)[0];
     // engine.getActionEventBus().deregisterAction(action);
     // engine.repaintCanvas();
     // setActionMouseWheel(action);
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
   };
 
   const handleCloseEdit = async () => {
     setOpenEdit(false);
-<<<<<<< HEAD
     setIsHover(false);
-    engine.getActionEventBus().registerAction(actionMouseWheel);
-    engine.repaintCanvas();
-=======
     // engine.getActionEventBus().registerAction(actionMouseWheel);
     // engine.repaintCanvas();
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
     if (subConditions) {
       const newCondition = {
         conditions: subConditions.map((el) => {

@@ -149,10 +149,6 @@ const BodyWidget = (props: BodyWidgetProps) => {
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
     const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
-<<<<<<< HEAD
-=======
-
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
     if (data && data.status) {
       enqueueSnackbar('Update workflow success', {
         variant: 'success',

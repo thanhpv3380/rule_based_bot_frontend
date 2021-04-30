@@ -81,7 +81,6 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
   const handleMouseLeaveItem = (e: any) => {
     e.target.style.backgroundColor = '#ffff';
   };
-  console.log(parameters, 'parameter');
 
   return (
     <Modal
@@ -121,7 +120,7 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                           null
                         }
                         classes={{
-                          paper: classes.paper
+                          paper: classes.paper,
                         }}
                         // getOptionSelected={(option, value) =>
                         //   option.parameterName === value.parameterName

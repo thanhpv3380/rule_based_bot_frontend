@@ -11,48 +11,8 @@ import { AdvancedLinkModel, AdvancedPortModel } from '../customLink';
 import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
 import { BaseNodeModel } from '../node/BaseNodeModel';
 import { ActionNodeModel, ConditionNodeModel, IntentNodeModel } from '../node';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-} from '@material-ui/core';
+import { NodeModel } from '@projectstorm/react-diagrams-core';
 
-const Modal = () => {
-  return (
-    <Dialog
-      open={true}
-      // onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {"Use Google's location service?"}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Let Google help apps determine location. This means sending anonymous
-          location data to Google, even when no apps are running.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button //onClick={handleClose}
-          color="primary"
-        >
-          Disagree
-        </Button>
-        <Button //onClick={handleClose}
-          color="primary"
-          autoFocus
-        >
-          Agree
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
 /**
  * This state is controlling the creation of a link.
  */
@@ -63,6 +23,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
   constructor() {
     super({ name: 'create-new-link' });
     this.enqueueSnackbar = useSnackbar().enqueueSnackbar;
+    const context = this;
     this.registerAction(
       new Action({
         type: InputType.MOUSE_UP,
@@ -74,9 +35,10 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
           const {
             event: { clientX, clientY },
           } = actionEvent;
+
+          // get position and zoom level
           const ox = this.engine.getModel().getOffsetX();
           const oy = this.engine.getModel().getOffsetY();
-
           const zoomLevel = this.engine.getModel().getZoomLevel() / 100;
           const posX = (clientX - ox) / zoomLevel;
           const posY = (clientY - oy) / zoomLevel;
@@ -91,12 +53,17 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 
             this.link = this.engine.getModel().addLink(link);
           } else if (element instanceof BaseNodeModel) {
+            // get links in target node
             const listPortCurrentNode = element.getPorts();
-
             const portInCurrentNode =
               (listPortCurrentNode && listPortCurrentNode['in']) || null;
             const portOutCurrentNode =
               (listPortCurrentNode && listPortCurrentNode['out']) || null;
+
+            const listLinkCurrentNode = [
+              ...Object.keys(portInCurrentNode.getLinks()),
+              ...Object.keys(portOutCurrentNode.getLinks()),
+            ];
 
             if (
               portInCurrentNode &&
@@ -106,116 +73,39 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
             ) {
               const sourceNode = this.link.getSourcePort().getParent();
               if (this.sourcePort.canLinkToPort(portInCurrentNode)) {
-                //console.log("check", element, sourceNode.getID());
-
+                // get links in source node
                 const listPortSourceNode = sourceNode.getPorts();
                 const portInSourceNode =
                   (listPortSourceNode && listPortSourceNode['in']) || null;
                 const portOutSourceNode =
                   (listPortSourceNode && listPortSourceNode['out']) || null;
 
-                const listLinkCurrentNode = [
-                  ...Object.keys(portInCurrentNode.getLinks()),
-                  ...Object.keys(portOutCurrentNode.getLinks()),
-                ];
                 const listLinkSourceNode = [
                   ...Object.keys(portInSourceNode.getLinks()),
                   ...Object.keys(portOutSourceNode.getLinks()),
                 ];
 
-                // check connect node
+                // check allow connect
+                const isConnect = this.checkAllowConnect(
+                  sourceNode,
+                  element,
+                  portOutSourceNode.getLinks(),
+                );
+                if (!isConnect) return;
 
-                console.log('check', listLinkCurrentNode, listLinkSourceNode);
+                // check 2 node is connected
                 const mutualNodeId = this.checkMutualNodeId(
                   listLinkCurrentNode,
                   listLinkSourceNode,
                 );
+
                 if (!mutualNodeId) {
-                  const listKeysLink = Object.keys(
-                    portOutSourceNode.getLinks(),
-                  );
-                  const links = portOutSourceNode.getLinks();
-
-                  const targetPortOfSourceNode = listKeysLink
-                    .map((el) =>
-                      portOutSourceNode.getLinks()[el].getTargetPort(),
-                    )
-                    .find((el) => el !== null);
-                  const childOfSourceNode =
-                    (targetPortOfSourceNode &&
-                      targetPortOfSourceNode.getParent()) ||
-                    null;
-                  console.log(childOfSourceNode, 'link');
-                  if (childOfSourceNode instanceof ActionNodeModel) {
-                    const confirm = window.confirm(
-                      'Output is Action only one connect, are you want remove ',
-                    );
-                    if (confirm) {
-                      console.log(listKeysLink.length);
-                      listKeysLink.forEach((el) => {
-                        let link = portOutSourceNode.getLinks()[el];
-                        if (link.getTargetPort() !== undefined) {
-                          link.remove();
-                        }
-                      });
-                    } else {
-                      this.link.remove();
-                      this.clearState();
-                      this.eject();
-                      this.engine.repaintCanvas();
-                      return;
-                    }
-                  } else if (childOfSourceNode instanceof IntentNodeModel) {
-                    if (!(element instanceof IntentNodeModel)) {
-                      const confirm = window.confirm(
-                        'Are you sure you want to delete?',
-                      );
-                      if (confirm) {
-                        console.log(listKeysLink.length);
-                        listKeysLink.forEach((el) => {
-                          let link = portOutSourceNode.getLinks()[el];
-                          if (link.getTargetPort() !== undefined) {
-                            link.remove();
-                          }
-                        });
-                      } else {
-                        this.link.remove();
-                        this.clearState();
-                        this.eject();
-                        this.engine.repaintCanvas();
-                        return;
-                      }
-                    }
-                  } else if (childOfSourceNode instanceof ConditionNodeModel) {
-                    if (!(element instanceof ConditionNodeModel)) {
-                      const confirm = window.confirm(
-                        'Are you sure you want to delete?',
-                      );
-                      if (confirm) {
-                        console.log(listKeysLink.length);
-                        listKeysLink.forEach((el) => {
-                          let link = portOutSourceNode.getLinks()[el];
-                          if (link.getTargetPort() !== undefined) {
-                            link.remove();
-                          }
-                        });
-                      } else {
-                        this.link.remove();
-                        this.clearState();
-                        this.eject();
-                        this.engine.repaintCanvas();
-                        return;
-                      }
-                    }
-                  }
-
-                  // connect to port of current node
                   this.link.setTargetPort(portInCurrentNode);
                   portInCurrentNode.reportPosition();
                   this.clearState();
                   this.eject();
                 } else {
-                  this.enqueueSnackbar('node is connected', {
+                  this.enqueueSnackbar('Node is connected', {
                     variant: 'error',
                   });
                 }
@@ -291,5 +181,158 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
   clearState() {
     this.link = undefined;
     this.sourcePort = undefined;
+  }
+
+  checkAllowConnect(nodeSource: any, nodeTarget: any, listLinkSourceNode: any) {
+    console.log(listLinkSourceNode);
+    // check 2 intent connect
+    if (
+      nodeSource instanceof IntentNodeModel &&
+      nodeTarget instanceof IntentNodeModel
+    ) {
+      this.enqueueSnackbar("2 Intent can't connect", {
+        variant: 'error',
+      });
+      return false;
+    }
+
+    // check condition connect intent
+    if (
+      nodeSource instanceof ConditionNodeModel &&
+      nodeTarget instanceof IntentNodeModel
+    ) {
+      this.enqueueSnackbar("Condition can't connect to Intent", {
+        variant: 'error',
+      });
+      return false;
+    }
+
+    const nodesConnSource = {};
+    listLinkSourceNode.forEach((el) => {
+      const node = el.getTargetPort().getParent();
+      if (node) {
+        if (node instanceof IntentNodeModel) {
+          nodesConnSource['IntentNodeModel'] =
+            nodesConnSource['IntentNodeModel'] + 1 || 1;
+        } else if (node instanceof ActionNodeModel) {
+          nodesConnSource['ActionNodeModel'] =
+            nodesConnSource['ActionNodeModel'] + 1 || 1;
+        } else if (node instanceof ConditionNodeModel) {
+          nodesConnSource['ConditionNodeModel'] =
+            nodesConnSource['ConditionNodeModel'] + 1 || 1;
+        }
+      }
+    });
+
+    if (nodeSource instanceof IntentNodeModel) {
+      if (nodeTarget instanceof ActionNodeModel) {
+        if (nodesConnSource['ConditionNodeModel'] > 0) {
+          this.enqueueSnackbar('Intent has connected to Condition', {
+            variant: 'error',
+          });
+          return false;
+        }
+        if (nodesConnSource['ActionNodeModel'] > 0) {
+          this.enqueueSnackbar("Intent can't connect to many Action", {
+            variant: 'error',
+          });
+          return false;
+        }
+        return true;
+      }
+      if (nodeTarget instanceof ConditionNodeModel) {
+        if (nodesConnSource['ActionNodeModel'] > 0) {
+          this.enqueueSnackbar('Intent has connected to Action', {
+            variant: 'error',
+          });
+          return false;
+        }
+        return true;
+      }
+      return true;
+    }
+    if (nodeSource instanceof ActionNodeModel) {
+      if (nodeTarget instanceof ActionNodeModel) {
+        if (nodesConnSource['ConditionNodeModel'] > 0) {
+          this.enqueueSnackbar('Action has connected to Condition', {
+            variant: 'error',
+          });
+          return false;
+        }
+        if (nodesConnSource['IntentNodeModel'] > 0) {
+          this.enqueueSnackbar('Action has connected to Intent', {
+            variant: 'error',
+          });
+          return false;
+        }
+        if (nodesConnSource['ActionNodeModel'] > 0) {
+          this.enqueueSnackbar("Action can't connect to many Action", {
+            variant: 'error',
+          });
+          return false;
+        }
+        return true;
+      }
+      if (nodeTarget instanceof ConditionNodeModel) {
+        if (nodesConnSource['ActionNodeModel'] > 0) {
+          this.enqueueSnackbar('Action has connected to Action', {
+            variant: 'error',
+          });
+          return false;
+        }
+        if (nodesConnSource['IntentNodeModel'] > 0) {
+          this.enqueueSnackbar('Action has connected to Intent', {
+            variant: 'error',
+          });
+          return false;
+        }
+        return true;
+      }
+      if (nodeTarget instanceof IntentNodeModel) {
+        if (nodesConnSource['ActionNodeModel'] > 0) {
+          this.enqueueSnackbar('Action has connected to Action', {
+            variant: 'error',
+          });
+          return false;
+        }
+        if (nodesConnSource['ConditionNodeModel'] > 0) {
+          this.enqueueSnackbar('Action has connected to Condition', {
+            variant: 'error',
+          });
+          return false;
+        }
+        return true;
+      }
+      return true;
+    }
+
+    if (nodeSource instanceof ConditionNodeModel) {
+      if (nodeTarget instanceof ActionNodeModel) {
+        if (nodesConnSource['ConditionNodeModel'] > 0) {
+          this.enqueueSnackbar('Condition has connected to Condition', {
+            variant: 'error',
+          });
+          return false;
+        }
+        if (nodesConnSource['ActionNodeModel'] > 0) {
+          this.enqueueSnackbar("Condition can't connect to many Action", {
+            variant: 'error',
+          });
+          return false;
+        }
+        return true;
+      }
+      if (nodeTarget instanceof ConditionNodeModel) {
+        if (nodesConnSource['ActionNodeModel'] > 0) {
+          this.enqueueSnackbar('Intent has connected to Action', {
+            variant: 'error',
+          });
+          return false;
+        }
+        return true;
+      }
+      return true;
+    }
+    return true;
   }
 }
