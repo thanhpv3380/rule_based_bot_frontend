@@ -91,24 +91,25 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
                   element,
                   portOutSourceNode.getLinks(),
                 );
-                if (!isConnect) return;
+                if (!isConnect) {
+                  this.showNotification();
+                  return;
+                }
 
                 // check 2 node is connected
                 const mutualNodeId = this.checkMutualNodeId(
                   listLinkCurrentNode,
                   listLinkSourceNode,
                 );
-
-                if (!mutualNodeId) {
-                  this.link.setTargetPort(portInCurrentNode);
-                  portInCurrentNode.reportPosition();
-                  this.clearState();
-                  this.eject();
-                } else {
-                  this.enqueueSnackbar('Node is connected', {
-                    variant: 'error',
-                  });
+                if (mutualNodeId) {
+                  this.showNotification();
+                  return;
                 }
+
+                this.link.setTargetPort(portInCurrentNode);
+                portInCurrentNode.reportPosition();
+                this.clearState();
+                this.eject();
               }
             }
           } else if (
@@ -183,33 +184,40 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
     this.sourcePort = undefined;
   }
 
+  showNotification() {
+    this.enqueueSnackbar('Node is connected', {
+      variant: 'error',
+    });
+  }
+
+  checkHasNodeConnected(
+    nodeName: string,
+    listCountNode: any,
+    typeConnect: Number,
+  ) {
+    if (typeConnect === 0) return false;
+    const listNode = [
+      'IntentNodeModel',
+      'ActionNodeModel',
+      'ConditionNodeModel',
+    ];
+    const status = listNode.find(
+      (el) =>
+        ((typeConnect === 2 && el !== nodeName) || typeConnect === 1) &&
+        listCountNode[el] > 0,
+    );
+    if (status) return false;
+    return true;
+  }
+
   checkAllowConnect(nodeSource: any, nodeTarget: any, listLinkSourceNode: any) {
-    console.log(listLinkSourceNode);
-    // check 2 intent connect
-    if (
-      nodeSource instanceof IntentNodeModel &&
-      nodeTarget instanceof IntentNodeModel
-    ) {
-      this.enqueueSnackbar("2 Intent can't connect", {
-        variant: 'error',
-      });
-      return false;
-    }
-
-    // check condition connect intent
-    if (
-      nodeSource instanceof ConditionNodeModel &&
-      nodeTarget instanceof IntentNodeModel
-    ) {
-      this.enqueueSnackbar("Condition can't connect to Intent", {
-        variant: 'error',
-      });
-      return false;
-    }
-
+    // count node has connected to Source Node
     const nodesConnSource = {};
-    listLinkSourceNode.forEach((el) => {
-      const node = el.getTargetPort().getParent();
+    console.log(listLinkSourceNode);
+    Object.keys(listLinkSourceNode).forEach((el: any) => {
+      console.log(listLinkSourceNode[el]);
+      const node = listLinkSourceNode[el]?.getTargetPort()?.getParent();
+
       if (node) {
         if (node instanceof IntentNodeModel) {
           nodesConnSource['IntentNodeModel'] =
@@ -224,115 +232,42 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
       }
     });
 
-    if (nodeSource instanceof IntentNodeModel) {
-      if (nodeTarget instanceof ActionNodeModel) {
-        if (nodesConnSource['ConditionNodeModel'] > 0) {
-          this.enqueueSnackbar('Intent has connected to Condition', {
-            variant: 'error',
-          });
-          return false;
-        }
-        if (nodesConnSource['ActionNodeModel'] > 0) {
-          this.enqueueSnackbar("Intent can't connect to many Action", {
-            variant: 'error',
-          });
-          return false;
-        }
-        return true;
-      }
-      if (nodeTarget instanceof ConditionNodeModel) {
-        if (nodesConnSource['ActionNodeModel'] > 0) {
-          this.enqueueSnackbar('Intent has connected to Action', {
-            variant: 'error',
-          });
-          return false;
-        }
-        return true;
-      }
-      return true;
-    }
-    if (nodeSource instanceof ActionNodeModel) {
-      if (nodeTarget instanceof ActionNodeModel) {
-        if (nodesConnSource['ConditionNodeModel'] > 0) {
-          this.enqueueSnackbar('Action has connected to Condition', {
-            variant: 'error',
-          });
-          return false;
-        }
-        if (nodesConnSource['IntentNodeModel'] > 0) {
-          this.enqueueSnackbar('Action has connected to Intent', {
-            variant: 'error',
-          });
-          return false;
-        }
-        if (nodesConnSource['ActionNodeModel'] > 0) {
-          this.enqueueSnackbar("Action can't connect to many Action", {
-            variant: 'error',
-          });
-          return false;
-        }
-        return true;
-      }
-      if (nodeTarget instanceof ConditionNodeModel) {
-        if (nodesConnSource['ActionNodeModel'] > 0) {
-          this.enqueueSnackbar('Action has connected to Action', {
-            variant: 'error',
-          });
-          return false;
-        }
-        if (nodesConnSource['IntentNodeModel'] > 0) {
-          this.enqueueSnackbar('Action has connected to Intent', {
-            variant: 'error',
-          });
-          return false;
-        }
-        return true;
-      }
-      if (nodeTarget instanceof IntentNodeModel) {
-        if (nodesConnSource['ActionNodeModel'] > 0) {
-          this.enqueueSnackbar('Action has connected to Action', {
-            variant: 'error',
-          });
-          return false;
-        }
-        if (nodesConnSource['ConditionNodeModel'] > 0) {
-          this.enqueueSnackbar('Action has connected to Condition', {
-            variant: 'error',
-          });
-          return false;
-        }
-        return true;
-      }
-      return true;
+    console.log(nodesConnSource);
+
+    // typeConnect: 0 - can't conn, 1 - conn (1,1), 2 - conn (1-n)
+    if (nodeTarget instanceof IntentNodeModel) {
+      let typeConnect = 2;
+      if (
+        nodeSource instanceof IntentNodeModel ||
+        nodeSource instanceof ConditionNodeModel
+      )
+        typeConnect = 0;
+      return this.checkHasNodeConnected(
+        'IntentNodeModel',
+        nodesConnSource,
+        typeConnect,
+      );
     }
 
-    if (nodeSource instanceof ConditionNodeModel) {
-      if (nodeTarget instanceof ActionNodeModel) {
-        if (nodesConnSource['ConditionNodeModel'] > 0) {
-          this.enqueueSnackbar('Condition has connected to Condition', {
-            variant: 'error',
-          });
-          return false;
-        }
-        if (nodesConnSource['ActionNodeModel'] > 0) {
-          this.enqueueSnackbar("Condition can't connect to many Action", {
-            variant: 'error',
-          });
-          return false;
-        }
-        return true;
-      }
-      if (nodeTarget instanceof ConditionNodeModel) {
-        if (nodesConnSource['ActionNodeModel'] > 0) {
-          this.enqueueSnackbar('Intent has connected to Action', {
-            variant: 'error',
-          });
-          return false;
-        }
-        return true;
-      }
-      return true;
+    if (nodeTarget instanceof ActionNodeModel) {
+      let typeConnect = 1;
+      console.log('action check');
+      return this.checkHasNodeConnected(
+        'ActionNodeModel',
+        nodesConnSource,
+        typeConnect,
+      );
     }
+
+    if (nodeTarget instanceof ConditionNodeModel) {
+      let typeConnect = 2;
+      return this.checkHasNodeConnected(
+        'ConditionNodeModel',
+        nodesConnSource,
+        typeConnect,
+      );
+    }
+
     return true;
   }
 }
