@@ -1,9 +1,13 @@
 import api from './authApi';
 
-export async function getIntents() {
+export async function getIntents({ fields, sort }) {
   const response = await api({
     method: 'GET',
     url: '/intents',
+    params: {
+      fields,
+      sort,
+    },
   });
   return response;
 }
