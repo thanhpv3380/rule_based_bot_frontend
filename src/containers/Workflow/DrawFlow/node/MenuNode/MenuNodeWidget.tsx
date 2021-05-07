@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import {
   List,
   ListItem,
@@ -23,6 +24,7 @@ import {
 } from '../';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 import apis from '../../../../../apis';
+import { checkAllowConnect } from '../../../../../utils/checkConnectNode';
 export interface MenuNodeWidgetProps {
   node: MenuNodeModel;
   engine: AdvancedDiagramEngine;
@@ -53,11 +55,13 @@ const items = [
 const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
   const { engine, node } = props;
   const { workflowId } = useParams();
-
+  const { enqueueSnackbar } = useSnackbar();
   const handleClick = async (id) => {
     const listNode = engine.getModel().getActiveNodeLayer().getModels();
     const keys = Object.keys(listNode);
     const lastNode = listNode[keys[keys.length - 1]];
+
+    // check allow connect
 
     if (lastNode instanceof MenuNodeModel) {
       // get position of last node
@@ -83,6 +87,26 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
       const links = lastNode.getPorts()['in']['links'];
       const listKeysLink = Object.keys(links);
       const link = links[listKeysLink[listKeysLink.length - 1]];
+
+      const portSourceNode = link.getSourcePort();
+      const sourceNode = portSourceNode && portSourceNode.getParent();
+
+      const listPortSourceNode = sourceNode.getPorts();
+      const portOutSourceNode =
+        (listPortSourceNode && listPortSourceNode['out']) || null;
+
+      // check allow connect
+      const isConnect = checkAllowConnect(
+        sourceNode,
+        node,
+        portOutSourceNode.getLinks(),
+      );
+      if (!isConnect) {
+        enqueueSnackbar('Node is connected', {
+          variant: 'error',
+        });
+        return;
+      }
 
       link.getLastPoint().setPosition(positionX, positionY);
       if (link.getSourcePort().canLinkToPort(element_select_port)) {

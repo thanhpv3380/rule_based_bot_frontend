@@ -12,6 +12,7 @@ import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
 import { BaseNodeModel } from '../node/BaseNodeModel';
 import { ActionNodeModel, ConditionNodeModel, IntentNodeModel } from '../node';
 import { NodeModel } from '@projectstorm/react-diagrams-core';
+import { checkAllowConnect } from '../../../../utils/checkConnectNode';
 
 /**
  * This state is controlling the creation of a link.
@@ -85,8 +86,15 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
                   ...Object.keys(portOutSourceNode.getLinks()),
                 ];
 
+                const listKeyLinkPortInCurrentNode = Object.keys(
+                  portInCurrentNode.getLinks(),
+                );
+                if (listKeyLinkPortInCurrentNode.length > 0) {
+                  this.showNotification();
+                  return;
+                }
                 // check allow connect
-                const isConnect = this.checkAllowConnect(
+                const isConnect = checkAllowConnect(
                   sourceNode,
                   element,
                   portOutSourceNode.getLinks(),
@@ -116,9 +124,8 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
             element instanceof AdvancedLinkModel &&
             element['points'][1] === this.link.getLastPoint()
           ) {
-            const sourceNode = this.link.getSourcePort().getParent();
             const node = new MenuNodeModel({
-              isIntent: sourceNode instanceof IntentNodeModel,
+              isIntent: true,
             });
             node.setPosition(posX, posY);
             const model = this.engine.getModel();
@@ -188,86 +195,5 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
     this.enqueueSnackbar('Node is connected', {
       variant: 'error',
     });
-  }
-
-  checkHasNodeConnected(
-    nodeName: string,
-    listCountNode: any,
-    typeConnect: Number,
-  ) {
-    if (typeConnect === 0) return false;
-    const listNode = [
-      'IntentNodeModel',
-      'ActionNodeModel',
-      'ConditionNodeModel',
-    ];
-    const status = listNode.find(
-      (el) =>
-        ((typeConnect === 2 && el !== nodeName) || typeConnect === 1) &&
-        listCountNode[el] > 0,
-    );
-    if (status) return false;
-    return true;
-  }
-
-  checkAllowConnect(nodeSource: any, nodeTarget: any, listLinkSourceNode: any) {
-    // count node has connected to Source Node
-    const nodesConnSource = {};
-    console.log(listLinkSourceNode);
-    Object.keys(listLinkSourceNode).forEach((el: any) => {
-      console.log(listLinkSourceNode[el]);
-      const node = listLinkSourceNode[el]?.getTargetPort()?.getParent();
-
-      if (node) {
-        if (node instanceof IntentNodeModel) {
-          nodesConnSource['IntentNodeModel'] =
-            nodesConnSource['IntentNodeModel'] + 1 || 1;
-        } else if (node instanceof ActionNodeModel) {
-          nodesConnSource['ActionNodeModel'] =
-            nodesConnSource['ActionNodeModel'] + 1 || 1;
-        } else if (node instanceof ConditionNodeModel) {
-          nodesConnSource['ConditionNodeModel'] =
-            nodesConnSource['ConditionNodeModel'] + 1 || 1;
-        }
-      }
-    });
-
-    console.log(nodesConnSource);
-
-    // typeConnect: 0 - can't conn, 1 - conn (1,1), 2 - conn (1-n)
-    if (nodeTarget instanceof IntentNodeModel) {
-      let typeConnect = 2;
-      if (
-        nodeSource instanceof IntentNodeModel ||
-        nodeSource instanceof ConditionNodeModel
-      )
-        typeConnect = 0;
-      return this.checkHasNodeConnected(
-        'IntentNodeModel',
-        nodesConnSource,
-        typeConnect,
-      );
-    }
-
-    if (nodeTarget instanceof ActionNodeModel) {
-      let typeConnect = 1;
-      console.log('action check');
-      return this.checkHasNodeConnected(
-        'ActionNodeModel',
-        nodesConnSource,
-        typeConnect,
-      );
-    }
-
-    if (nodeTarget instanceof ConditionNodeModel) {
-      let typeConnect = 2;
-      return this.checkHasNodeConnected(
-        'ConditionNodeModel',
-        nodesConnSource,
-        typeConnect,
-      );
-    }
-
-    return true;
   }
 }

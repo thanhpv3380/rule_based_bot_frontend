@@ -1,12 +1,12 @@
 import api from './authApi';
 
-export async function getActions({ fields, sort }) {
+export async function getActions(data) {
   const response = await api({
     method: 'GET',
     url: '/actions',
     params: {
-      fields,
-      sort,
+      fields: data && data.fields,
+      sort: data && data.sort,
     },
   });
   return response;

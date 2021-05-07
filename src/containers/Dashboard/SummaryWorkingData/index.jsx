@@ -7,7 +7,6 @@ import {
   Divider,
   Grid,
   Paper,
-  Tooltip,
 } from '@material-ui/core';
 import {
   KeyboardDatePicker,
@@ -135,6 +134,13 @@ const SummaryWorkingData = () => {
     highChartsRender();
   }, []);
 
+  const [selectedDate, setSelectedDate] = React.useState(
+    new Date('2014-08-18T21:11:54'),
+  );
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
   return (
     <>
       <Box className={classes.heading} mt={2} mb={2}>
@@ -156,36 +162,17 @@ const SummaryWorkingData = () => {
           ))}
 
           {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            margin="normal"
-            label="Date picker dialog"
-            format="MM/dd/yyyy"
-            value={dateSelected.startDate}
-            onChange={(date) => {
-              setDateSelected({
-                ...dateSelected,
-                startDate: date,
-              });
-            }}
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-          />
-          <KeyboardDatePicker
-            margin="normal"
-            label="Date picker dialog"
-            format="MM/dd/yyyy"
-            value={dateSelected.endDate}
-            onChange={(date) => {
-              setDateSelected({
-                ...dateSelected,
-                endDate: date,
-              });
-            }}
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-          />
+            <KeyboardDatePicker
+              margin="normal"
+              id="date-picker-dialog"
+              label="Date picker dialog"
+              format="MM/dd/yyyy"
+              value={selectedDate}
+              onChange={handleDateChange}
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+            />
           </MuiPickersUtilsProvider> */}
         </Box>
       </Box>
