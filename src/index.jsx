@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import Highcharts from 'highcharts';
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
 import { ConfirmProvider } from 'material-ui-confirm';
@@ -10,6 +11,8 @@ import Router from './router';
 import store from './redux/store';
 import theme from './theme';
 import './index.css';
+
+window.Highcharts = Highcharts;
 
 ReactDOM.render(
   <React.StrictMode>

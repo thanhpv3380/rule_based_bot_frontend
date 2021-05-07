@@ -78,3 +78,6 @@ body {
 .circle-port:hover {
   background: mediumpurple;
 }
+.highcharts-credits {
+  display: none;
+}

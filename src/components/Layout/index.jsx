@@ -30,7 +30,7 @@ const Layout = ({ children, isLayout }) => {
       icon: <Home />,
       subMenus: [
         {
-          route: `/bot/${botId}`,
+          route: `/bot/${botId}/dashboard`,
           icon: <Poll />,
           heading: 'Dashboard',
         },
