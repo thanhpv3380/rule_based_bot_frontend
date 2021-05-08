@@ -27,4 +27,10 @@ export default makeStyles(() => ({
     background: '#fff',
     boxShadow: '0 10px 6px -6px #777'
   },
+  siderBarIcon: {
+    width: '2em', height: '2em'
+  },
+  siderBarIconSave: {
+    color: '#7b7b7b',
+  }
 }));

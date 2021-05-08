@@ -29,7 +29,7 @@ import {
   DeviceHubSharp as DeviceHubSharpIcon,
   Add as AddIcon,
 } from '@material-ui/icons';
-
+import { ConditionIcon } from '../../icon';
 import { ConditionNodeModel } from './index';
 import * as _ from 'lodash';
 import ConditionNodeDetail from './NodeDetail';
@@ -57,8 +57,11 @@ export interface ConditionNodeWidgetState {
 }
 
 const conditionsDefault = {
-  parameter: '',
-  operator: '=',
+  parameter: {
+    name: '',
+    id: '',
+  },
+  operator: 'is',
   value: '',
   openMenuConnectCondition: null,
   openMenuOperator: null,
@@ -81,6 +84,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   const fetchCondition = async (id: string) => {
     const data = await apis.condition.getConditionById(id);
+
     if (data && data.status) {
       setCondition(data.result);
       setSubConditions(data.result.conditions);
@@ -88,22 +92,11 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-    if (node.intents && node.intents.length > 0) {
-      fetchIntent(node.intents);
-    }
-=======
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
     if (node.itemId) {
       fetchCondition(node.itemId);
     }
   }, []);
 
-<<<<<<< HEAD
-  useEffect(() => {
-    fetchIntent(node.intents);
-  }, [node.intents && node.intents.length]);
-=======
   const handleOpenEdit = async () => {
     let tempParameters = [];
     let listNode = [];
@@ -111,12 +104,12 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       const links = tempNode.getPort('in').getLinks();
       Object.keys(links).forEach((el: string) => {
         const nodeEle: any = links[el].getSourcePort().getParent();
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
 
         if (listNode.indexOf(nodeEle.id) <= 0) {
           listNode.push(nodeEle.id);
           if (nodeEle.getType() === 'INTENT') {
             if (nodeEle.itemId) {
+              console.log(nodeEle, 'ele');
               tempParameters.push(...nodeEle.nodeInfo.parameters);
             }
           }
@@ -126,31 +119,17 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     };
     getIntentParent(node);
 
-    setParameters(tempParameters);
+    setParameters(tempParameters || []);
     setOpenEdit(true);
-<<<<<<< HEAD
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
-=======
-    // const action: Action = engine
-    //   .getActionEventBus()
-    //   .getActionsForType(InputType.MOUSE_WHEEL)[0];
-    // engine.getActionEventBus().deregisterAction(action);
-    // engine.repaintCanvas();
-    // setActionMouseWheel(action);
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
   };
 
   const handleCloseEdit = async () => {
     setOpenEdit(false);
-<<<<<<< HEAD
     setIsHover(false);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
-=======
-    // engine.getActionEventBus().registerAction(actionMouseWheel);
-    // engine.repaintCanvas();
->>>>>>> 22917bcf47079c4448c6c9f8459b2d9ae28b854a
     if (subConditions) {
       const newCondition = {
         conditions: subConditions.map((el) => {
@@ -277,7 +256,10 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       setSubConditions(newSubConditions);
     } else if (name === 'parameter') {
       const newSubConditions: Conditions[] = [...subConditions];
-      newSubConditions[pos].parameter = value && value.parameterName;
+      newSubConditions[pos].parameter = value && {
+        id: value.id,
+        name: value.parameterName,
+      };
 
       setSubConditions(newSubConditions);
     }
@@ -318,22 +300,41 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
         <Box display="flex" alignItems="center" flexDirection="column">
           <PortWidget engine={props.engine} port={props.node.getPort('in')} />
           <Grid container justify="center" className={classes.header}>
-            <DeviceHubSharpIcon className={classes.headerIcon} />
+            {/* <DeviceHubSharpIcon className={classes.headerIcon} /> */}
+            <ConditionIcon
+              className={classes.headerIcon}
+              style={{ width: '2em', height: '2em' }}
+              backgroundColor="#e7fff6"
+            />
             <Typography variant="h6">Condition</Typography>
           </Grid>
-          <Box>
+          <Box className={classes.content}>
             <TableContainer
               component={Paper}
               elevation={0}
-              className={classes.tableContainer}
+              className={
+                subConditions.length !== 0
+                  ? classes.tableContainer
+                  : classes.noneTableCon
+              }
+              onClick={handleOpenEdit}
             >
               <Table>
                 <TableBody>
                   {subConditions &&
                     subConditions.map((el, index) => (
                       <TableRow>
+                        <TableCell className={classes.tableCell} align="left">
+                          if
+                        </TableCell>
                         <TableCell className={classes.tableCell}>
-                          {el.parameter}
+                          {el.parameter.name || (
+                            <Typography
+                              style={{ color: 'rgba(138, 138, 138, 0.87)' }}
+                            >
+                              parameter
+                            </Typography>
+                          )}
                         </TableCell>
                         <TableCell className={classes.tableCell} align="left">
                           {el.operator}
@@ -343,26 +344,50 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                           style={{ minWidth: 80 }}
                           align="left"
                         >
-                          {el.value}
+                          {el.value || (
+                            <Typography
+                              style={{ color: 'rgba(138, 138, 138, 0.87)' }}
+                            >
+                              empty
+                            </Typography>
+                          )}
                         </TableCell>
                         <TableCell className={classes.tableCell} align="left">
                           {condition ? condition.operator : 'and'}
                         </TableCell>
                       </TableRow>
                     ))}
-                  {!subConditions ||
-                    (subConditions.length === 0 && (
-                      <TableRow>
-                        <Button fullWidth onClick={handleOpenEdit}>
-                          <AddIcon />
-                          Thêm điều kiện
-                        </Button>
-                      </TableRow>
-                    ))}
+                  {/* {!subConditions ||
+                    (subConditions.length === 0 && ( */}
+                  {/* <TableRow container > */}
+
+                  {/* </TableRow> */}
+                  {/* ))} */}
                 </TableBody>
               </Table>
             </TableContainer>
-            <Grid container alignItems="center" justify="center">
+            <Grid
+              container
+              alignItems="center"
+              justify="center"
+              className={classes.btnAdCondition}
+            >
+              <Button
+                onClick={() => {
+                  handleOpenEdit();
+                  handleAddCondition();
+                }}
+              >
+                <AddIcon />
+                Add condition
+              </Button>
+            </Grid>
+            <Grid
+              container
+              alignItems="center"
+              justify="center"
+              // className={classes.btnAdCondition}
+            >
               <PortWidget
                 engine={props.engine}
                 port={props.node.getPort('out')}

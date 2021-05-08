@@ -168,7 +168,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
                   } else if (childOfSourceNode instanceof IntentNodeModel) {
                     if (!(element instanceof IntentNodeModel)) {
                       const confirm = window.confirm(
-                        'Are you sure you want to delete?',
+                        'Are you sure you want to delete ?',
                       );
                       if (confirm) {
                         console.log(listKeysLink.length);
