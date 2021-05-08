@@ -87,7 +87,6 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
   const handleMouseLeaveItem = (e: any) => {
     e.target.style.backgroundColor = '#ffff';
   };
-  console.log(parameters, 'parameter');
 
   return (
     <Modal

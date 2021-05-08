@@ -91,12 +91,15 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     }
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     if (node.itemId) {
       fetchCondition(node.itemId);
     }
   }, []);
 
+=======
+>>>>>>> 7467434830b0711b2f3f229899392d569cf2cc20
   const handleOpenEdit = async () => {
     let tempParameters = [];
     let listNode = [];
@@ -118,18 +121,35 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       });
     };
     getIntentParent(node);
+<<<<<<< HEAD
 
     setParameters(tempParameters || []);
     setOpenEdit(true);
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
+=======
+    setParameters(tempParameters);
+    setOpenEdit(true);
+
+    // const action: Action = engine
+    //   .getActionEventBus()
+    //   .getActionsForType(InputType.MOUSE_WHEEL)[0];
+    // engine.getActionEventBus().deregisterAction(action);
+    // engine.repaintCanvas();
+    // setActionMouseWheel(action);
+>>>>>>> 7467434830b0711b2f3f229899392d569cf2cc20
   };
 
   const handleCloseEdit = async () => {
     setOpenEdit(false);
     setIsHover(false);
+<<<<<<< HEAD
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
+=======
+    // engine.getActionEventBus().registerAction(actionMouseWheel);
+    // engine.repaintCanvas();
+>>>>>>> 7467434830b0711b2f3f229899392d569cf2cc20
     if (subConditions) {
       const newCondition = {
         conditions: subConditions.map((el) => {

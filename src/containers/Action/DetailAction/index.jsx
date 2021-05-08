@@ -13,6 +13,7 @@ import {
   ActionMedia,
   ActionCategory,
   ActionJsonApi,
+  ActionLoop,
 } from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
@@ -140,6 +141,22 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
       {
         typeAction: actionsConstant.CATEGORY,
         options: [],
+      },
+    ]);
+  };
+
+  const handleAddLoop = () => {
+    setActions([
+      ...actions,
+      {
+        typeAction: actionsConstant.LOOP,
+        loop: {
+          intents: [],
+          parameters: [],
+          actionAskAgain: null,
+          numberOfLoop: 1,
+          actionFail: null,
+        },
       },
     ]);
   };
@@ -358,14 +375,28 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
     setActions(newActions);
   };
 
+  const handleChangeLoopInfo = (id, name, value) => {
+    const newActions = [...actions];
+    newActions[id] = {
+      ...newActions[id],
+      loop: {
+        ...newActions[id].loop,
+        [name]: value,
+      },
+    };
+    setActions(newActions);
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
+
+    console.log(actions);
     const data = await apis.action.updateAction(currentActionId, {
       name: actionData.name,
       actions,
       groupAction: actionData.groupAction,
     });
-    if (data.status) {
+    if (data && data.status) {
       handleUpdate(data.result.action, oldGroupId);
       setActionData(data.result.action);
       setActions(data.result.action.actions);
@@ -451,6 +482,17 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
         />
       );
     }
+    if (action.typeAction === actionsConstant.LOOP) {
+      return (
+        <ActionLoop
+          actionId={id}
+          item={action.loop}
+          parameters={parameters}
+          handleDeleteLoop={handleDeleteItem}
+          handleChangeLoopInfo={handleChangeLoopInfo}
+        />
+      );
+    }
     return '';
   };
 
@@ -484,6 +526,11 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
       heading: 'JSON API',
       icon: '',
       event: handleAddJsonApi,
+    },
+    {
+      heading: 'Loop',
+      icon: '',
+      event: handleAddLoop,
     },
   ];
 

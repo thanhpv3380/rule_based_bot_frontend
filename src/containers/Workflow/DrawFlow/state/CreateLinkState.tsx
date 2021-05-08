@@ -11,48 +11,8 @@ import { AdvancedLinkModel, AdvancedPortModel } from '../customLink';
 import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
 import { BaseNodeModel } from '../node/BaseNodeModel';
 import { ActionNodeModel, ConditionNodeModel, IntentNodeModel } from '../node';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-} from '@material-ui/core';
+import { NodeModel } from '@projectstorm/react-diagrams-core';
 
-const Modal = () => {
-  return (
-    <Dialog
-      open={true}
-      // onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {"Use Google's location service?"}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Let Google help apps determine location. This means sending anonymous
-          location data to Google, even when no apps are running.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button //onClick={handleClose}
-          color="primary"
-        >
-          Disagree
-        </Button>
-        <Button //onClick={handleClose}
-          color="primary"
-          autoFocus
-        >
-          Agree
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
 /**
  * This state is controlling the creation of a link.
  */
@@ -63,6 +23,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
   constructor() {
     super({ name: 'create-new-link' });
     this.enqueueSnackbar = useSnackbar().enqueueSnackbar;
+    const context = this;
     this.registerAction(
       new Action({
         type: InputType.MOUSE_UP,
@@ -74,9 +35,10 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
           const {
             event: { clientX, clientY },
           } = actionEvent;
+
+          // get position and zoom level
           const ox = this.engine.getModel().getOffsetX();
           const oy = this.engine.getModel().getOffsetY();
-
           const zoomLevel = this.engine.getModel().getZoomLevel() / 100;
           const posX = (clientX - ox) / zoomLevel;
           const posY = (clientY - oy) / zoomLevel;
@@ -91,12 +53,17 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
 
             this.link = this.engine.getModel().addLink(link);
           } else if (element instanceof BaseNodeModel) {
+            // get links in target node
             const listPortCurrentNode = element.getPorts();
-
             const portInCurrentNode =
               (listPortCurrentNode && listPortCurrentNode['in']) || null;
             const portOutCurrentNode =
               (listPortCurrentNode && listPortCurrentNode['out']) || null;
+
+            const listLinkCurrentNode = [
+              ...Object.keys(portInCurrentNode.getLinks()),
+              ...Object.keys(portOutCurrentNode.getLinks()),
+            ];
 
             if (
               portInCurrentNode &&
@@ -106,30 +73,35 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
             ) {
               const sourceNode = this.link.getSourcePort().getParent();
               if (this.sourcePort.canLinkToPort(portInCurrentNode)) {
-                //console.log("check", element, sourceNode.getID());
-
+                // get links in source node
                 const listPortSourceNode = sourceNode.getPorts();
                 const portInSourceNode =
                   (listPortSourceNode && listPortSourceNode['in']) || null;
                 const portOutSourceNode =
                   (listPortSourceNode && listPortSourceNode['out']) || null;
 
-                const listLinkCurrentNode = [
-                  ...Object.keys(portInCurrentNode.getLinks()),
-                  ...Object.keys(portOutCurrentNode.getLinks()),
-                ];
                 const listLinkSourceNode = [
                   ...Object.keys(portInSourceNode.getLinks()),
                   ...Object.keys(portOutSourceNode.getLinks()),
                 ];
 
-                // check connect node
+                // check allow connect
+                const isConnect = this.checkAllowConnect(
+                  sourceNode,
+                  element,
+                  portOutSourceNode.getLinks(),
+                );
+                if (!isConnect) {
+                  this.showNotification();
+                  return;
+                }
 
-                console.log('check', listLinkCurrentNode, listLinkSourceNode);
+                // check 2 node is connected
                 const mutualNodeId = this.checkMutualNodeId(
                   listLinkCurrentNode,
                   listLinkSourceNode,
                 );
+<<<<<<< HEAD
                 if (!mutualNodeId) {
                   const listKeysLink = Object.keys(
                     portOutSourceNode.getLinks(),
@@ -218,7 +190,17 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
                   this.enqueueSnackbar('node is connected', {
                     variant: 'error',
                   });
+=======
+                if (mutualNodeId) {
+                  this.showNotification();
+                  return;
+>>>>>>> 7467434830b0711b2f3f229899392d569cf2cc20
                 }
+
+                this.link.setTargetPort(portInCurrentNode);
+                portInCurrentNode.reportPosition();
+                this.clearState();
+                this.eject();
               }
             }
           } else if (
@@ -291,5 +273,92 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
   clearState() {
     this.link = undefined;
     this.sourcePort = undefined;
+  }
+
+  showNotification() {
+    this.enqueueSnackbar('Node is connected', {
+      variant: 'error',
+    });
+  }
+
+  checkHasNodeConnected(
+    nodeName: string,
+    listCountNode: any,
+    typeConnect: Number,
+  ) {
+    if (typeConnect === 0) return false;
+    const listNode = [
+      'IntentNodeModel',
+      'ActionNodeModel',
+      'ConditionNodeModel',
+    ];
+    const status = listNode.find(
+      (el) =>
+        ((typeConnect === 2 && el !== nodeName) || typeConnect === 1) &&
+        listCountNode[el] > 0,
+    );
+    if (status) return false;
+    return true;
+  }
+
+  checkAllowConnect(nodeSource: any, nodeTarget: any, listLinkSourceNode: any) {
+    // count node has connected to Source Node
+    const nodesConnSource = {};
+    console.log(listLinkSourceNode);
+    Object.keys(listLinkSourceNode).forEach((el: any) => {
+      console.log(listLinkSourceNode[el]);
+      const node = listLinkSourceNode[el]?.getTargetPort()?.getParent();
+
+      if (node) {
+        if (node instanceof IntentNodeModel) {
+          nodesConnSource['IntentNodeModel'] =
+            nodesConnSource['IntentNodeModel'] + 1 || 1;
+        } else if (node instanceof ActionNodeModel) {
+          nodesConnSource['ActionNodeModel'] =
+            nodesConnSource['ActionNodeModel'] + 1 || 1;
+        } else if (node instanceof ConditionNodeModel) {
+          nodesConnSource['ConditionNodeModel'] =
+            nodesConnSource['ConditionNodeModel'] + 1 || 1;
+        }
+      }
+    });
+
+    console.log(nodesConnSource);
+
+    // typeConnect: 0 - can't conn, 1 - conn (1,1), 2 - conn (1-n)
+    if (nodeTarget instanceof IntentNodeModel) {
+      let typeConnect = 2;
+      if (
+        nodeSource instanceof IntentNodeModel ||
+        nodeSource instanceof ConditionNodeModel
+      )
+        typeConnect = 0;
+      return this.checkHasNodeConnected(
+        'IntentNodeModel',
+        nodesConnSource,
+        typeConnect,
+      );
+    }
+
+    if (nodeTarget instanceof ActionNodeModel) {
+      let typeConnect = 1;
+      console.log('action check');
+      return this.checkHasNodeConnected(
+        'ActionNodeModel',
+        nodesConnSource,
+        typeConnect,
+      );
+    }
+
+    if (nodeTarget instanceof ConditionNodeModel) {
+      let typeConnect = 2;
+      return this.checkHasNodeConnected(
+        'ConditionNodeModel',
+        nodesConnSource,
+        typeConnect,
+      );
+    }
+
+    return true;
   }
 }

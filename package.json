@@ -35,6 +35,7 @@
     "i18next-browser-languagedetector": "^5.0.0",
     "json-string-formatter": "^1.0.1",
     "lodash": "^4.17.21",
+    "material-ui-confirm": "^2.1.2",
     "notistack": "^1.0.3",
     "pathfinding": "^0.4.18",
     "paths-js": "^0.4.11",

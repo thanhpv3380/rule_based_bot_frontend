@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
+import { ConfirmProvider } from 'material-ui-confirm';
 import * as serviceWorker from './serviceWorker';
 import './languages';
 import Router from './router';
@@ -15,7 +16,9 @@ ReactDOM.render(
     <ThemeProvider theme={theme}>
       <Provider store={store()}>
         <SnackbarProvider>
-          <Router />
+          <ConfirmProvider>
+            <Router />
+          </ConfirmProvider>
         </SnackbarProvider>
       </Provider>
     </ThemeProvider>

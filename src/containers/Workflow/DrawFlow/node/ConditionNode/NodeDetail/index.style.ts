@@ -61,11 +61,21 @@ const useStyle = makeStyles({
     tableRowButton: {
         backgroundColor: '#ffff',
     },
+<<<<<<< HEAD
     paper: {
         width: 450
     },
     autocomplete: {
         //minWidth: 200
+=======
+
+    paper: {
+        width: "450px"
+    },
+    autocomplete: {
+        //minWidth: 200
+
+>>>>>>> 7467434830b0711b2f3f229899392d569cf2cc20
     }
 });
 
