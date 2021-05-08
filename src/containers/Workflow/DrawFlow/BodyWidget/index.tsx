@@ -18,6 +18,7 @@ import {
 import useStyles from './index.style';
 import { BaseNodeModel } from '../node/BaseNodeModel';
 import apis from '../../../../apis';
+import { ActionIcon, ConditionIcon, IntentIcon } from '../icon';
 
 export interface BodyWidgetProps {
   app: Application;
@@ -47,6 +48,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
     if (data && data.status) {
       node.id = data.result.node.id;
       props.app.getDiagramEngine().getModel().addNode(node);
+      props.app.getDiagramEngine().repaintCanvas();
       forceUpdate();
     } else {
       enqueueSnackbar((data && data.message) || 'Create node failed', {
@@ -66,6 +68,8 @@ const BodyWidget = (props: BodyWidgetProps) => {
 
   const handleAddAction = () => {
     var node: ActionNodeModel = new ActionNodeModel();
+    console.log('action');
+
     addNode(node);
   };
 
@@ -163,17 +167,17 @@ const BodyWidget = (props: BodyWidgetProps) => {
   return (
     <div className={classes.container}>
       <div className={classes.sideBar}>
-        <Box className={classes.sideBarItem}>
-          <RecordVoiceOverIcon onClick={handleAddIntent} />
+        <Box className={classes.sideBarItem} onClick={handleAddIntent}>
+          <IntentIcon className={classes.siderBarIcon} />
+        </Box>
+        <Box className={classes.sideBarItem} onClick={handleAddCondition}>
+          <ConditionIcon className={classes.siderBarIcon} />
+        </Box>
+        <Box className={classes.sideBarItem} onClick={handleAddAction}>
+          <ActionIcon className={classes.siderBarIcon} />
         </Box>
         <Box className={classes.sideBarItem}>
-          <DeviceHubSharpIcon onClick={handleAddCondition} />
-        </Box>
-        <Box className={classes.sideBarItem}>
-          <SmsIcon onClick={handleAddAction} />
-        </Box>
-        <Box className={classes.sideBarItem}>
-          <SaveIcon onClick={handleSave} />
+          <SaveIcon onClick={handleSave} className={classes.siderBarIconSave} />
         </Box>
         <Box className={classes.sideBarItem}>
           <CloseIcon />

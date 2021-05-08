@@ -39,7 +39,13 @@ import {
 import useStyle from './index.style';
 import { Conditions, Condition, Parameter } from '../Condition.types';
 
-const menuOperator: string[] = ['=', '!=', '>', '<', 'start with'];
+const menuOperator: string[] = [
+  'is',
+  'is not',
+  'greater than',
+  'less than',
+  'starts with',
+];
 const menuConnectCondition: string[] = ['and', 'or'];
 
 interface ConditionNodeDetail {
@@ -115,7 +121,7 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                         value={
                           (parameters &&
                             parameters.find(
-                              (item) => item.parameterName === el.parameter,
+                              (item) => item.id === el.parameter.id,
                             )) ||
                           null
                         }

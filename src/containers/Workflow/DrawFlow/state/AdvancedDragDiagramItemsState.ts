@@ -45,6 +45,8 @@ export class AdvancedDragDiagramItemsState extends MoveItemsState<AdvancedDiagra
                         item: item
                     };
                 }
+                console.log(item, model);
+
 
                 const pos = this.initialPositions[item.getID()].point;
 

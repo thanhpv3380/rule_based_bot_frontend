@@ -11,7 +11,10 @@ export interface Condition {
 }
 
 export interface Conditions {
-    parameter: string,
+    parameter: {
+        name: string,
+        id: string,
+    },
     operator: string,
     value: string,
     openMenuConnectCondition?: any,
