@@ -2,16 +2,23 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyle = makeStyles({
     root: {
-        borderRadius: 10,
+        borderRadius: 5,
         backgroundColor: '#ffff',
     },
     header: {
-        paddingTop: 10,
+        padding: 10,
+        backgroundColor: '#e7fff6',
+        borderTopRightRadius: 5,
+        borderTopLeftRadius: 5,
     },
     headerIcon: {
         position: 'relative',
         marginRight: 5,
         top: 2,
+    },
+    content: {
+        margin: '0px 20px',
+
     },
     table: {
         '& .MuiTableCell-root': {
@@ -20,9 +27,20 @@ const useStyle = makeStyles({
     },
     tableContainer: {
         minWidth: 280,
-        borderLeft: 'none',
-        borderRadius: 10,
-        paddingBottom: 2,
+        // borderLeft: 'none',
+        borderRadius: 5,
+        marginTop: 10,
+        backgroundColor: '#ffff',
+        // padding: 10,
+        cursor: 'pointer',
+        border: '2px solid rgb(224 224 224)',
+        '&:hover': {
+            border: '2px solid #88beee',
+            // border: '2px solid #ccc',
+        }
+    },
+    noneTableCon: {
+        minWidth: 280,
     },
     tableCell: {
         borderBottom: 'none',
@@ -42,7 +60,7 @@ const useStyle = makeStyles({
         padding: '6px 6px 0px 6px',
         backgroundColor: 'white',
         marginBottom: 8,
-        borderRadius: 10,
+        borderRadius: 5,
     },
     noneIconMenu: {
         display: 'inline-block',
@@ -56,6 +74,9 @@ const useStyle = makeStyles({
         fontSize: '1.15rem',
         marginLeft: 3,
         cursor: 'pointer',
+    },
+    btnAdCondition: {
+        padding: 5,
     },
 });
 

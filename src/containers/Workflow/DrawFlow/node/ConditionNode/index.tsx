@@ -9,36 +9,38 @@ import {
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 import { BaseModelOptions } from '@projectstorm/react-canvas-core';
 import { BaseNodeModel } from '../BaseNodeModel';
+import { NodeConnect } from '../Node.types';
 
 export interface ConditionNodeModelOptions extends BaseModelOptions {
   color?: string;
   id?: string;
   itemId?: string;
-  intentId?: string;
+  intents?: NodeConnect[];
+  nodeInfo?: any;
 }
 export class ConditionNodeModel extends BaseNodeModel {
-  intentId?: string;
+  intents?: NodeConnect[];
   constructor(options: ConditionNodeModelOptions = {}) {
     super({
       ...options,
       type: 'CONDITION',
     });
-    this.intentId = options.intentId;
+    this.intents = options.intents;
   }
-  setIntentId(intentId: string) {
-    this.intentId = intentId;
+  setIntent(intents: NodeConnect[]) {
+    this.intents = intents;
   }
   serialize() {
     return {
       ...super.serialize(),
       color: this.color,
-      intentId: this.intentId,
+      intents: this.intents,
     };
   }
   deserialize(event: DeserializeEvent<this>): void {
     super.deserialize(event);
     this.color = event.data.color;
-    this.intentId = event.data.intentId;
+    this.intents = event.data.intents;
   }
 }
 export class ConditionNodeFactory extends AbstractReactFactory<

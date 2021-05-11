@@ -2,8 +2,12 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyle = makeStyles({
     root: {
-        borderRadius: 10,
+        borderRadius: 5,
         backgroundColor: '#ffff',
+        // border: "3px solid #ffff",
+        // "&:hover": {
+        //     border: "3px solid #22AEDA",
+        // }
     },
     container: {
         width: 280,
@@ -16,7 +20,7 @@ const useStyle = makeStyles({
         padding: '6px 6px 0px 6px',
         backgroundColor: 'white',
         marginBottom: 8,
-        borderRadius: 10,
+        borderRadius: 5,
     },
     noneIconMenu: {
         display: 'inline-block',
@@ -32,7 +36,10 @@ const useStyle = makeStyles({
         cursor: 'pointer',
     },
     header: {
-        paddingTop: 10,
+        padding: 10,
+        backgroundColor: '#e8f8ff',
+        borderTopRightRadius: 5,
+        borderTopLeftRadius: 5,
     },
     headerIcon: {
         position: 'relative',
@@ -40,11 +47,56 @@ const useStyle = makeStyles({
         top: 2,
     },
     autoComplete: {
-        margin: '0px 20px',
+        margin: '0px 10px',
+        borderRadius: 5,
+        // backgroundColor: '#ffff',
     },
     textField: {
         margin: '10px 0px 5px 0px',
+    },
+    forcusBody: {
+        width: '100%',
+        backgroundColor: '#ffff',
+        margin: '10px 10px',
+        borderRadius: 5,
+        cursor: 'pointer',
+        border: '2px solid rgb(224 224 224)',
+        '&:hover': {
+            border: '2px solid #88beee',
+            // border: '2px solid #ccc',
+        }
+    },
+    unforcusBody: {
+        width: '100%',
+        backgroundColor: '#ffff',
+        margin: '10px 10px',
+        padding: 10,
+        borderRadius: 5,
+        cursor: 'pointer',
+        border: '2px solid rgb(224 224 224)',
+        '&:hover': {
+            border: '2px solid #88beee',
+            // border: '2px solid #ccc',
+        }
+    },
+    body: {
+        margin: '10px 20px',
+        padding: 10,
+        borderRadius: 5,
+        cursor: 'pointer',
+        border: '2px solid rgb(224 224 224)',
+        '&:hover': {
+            // border: '2px solid #88beee',
+            border: '2px solid #ccc',
+        }
+    },
+    underline: {
+        '&:after': {
+            border: '2px solid #ffff'
+        },
+
     }
+
 });
 
 export default useStyle;

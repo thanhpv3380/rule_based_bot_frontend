@@ -6,12 +6,14 @@ export interface BaseNodeModelOptions extends BaseModelOptions {
     color?: string;
     id?: string;
     itemId?: string;
+    nodeInfo?: any;
 }
 
 export class BaseNodeModel extends NodeModel {
     color?: string;
     id?: string;
     itemId?: string;
+    nodeInfo?: any;
     protected ports: {
         [s: string]: AdvancedPortModel;
     };
@@ -23,7 +25,7 @@ export class BaseNodeModel extends NodeModel {
         this.color = options.color || 'red';
         this.id = options.id
         this.itemId = options.itemId;
-
+        this.nodeInfo = options.nodeInfo;
         // setup an in and out port
         this.addPort(
             new AdvancedPortModel({
@@ -34,7 +36,19 @@ export class BaseNodeModel extends NodeModel {
         this.addPort(
             new AdvancedPortModel({
                 in: false,
-                name: 'out'
+                name: 'out-bottom'
+            })
+        );
+        this.addPort(
+            new AdvancedPortModel({
+                in: false,
+                name: 'out-left'
+            })
+        );
+        this.addPort(
+            new AdvancedPortModel({
+                in: false,
+                name: 'out-right'
             })
         );
     }
@@ -53,12 +67,14 @@ export class BaseNodeModel extends NodeModel {
     serialize() {
         return {
             ...super.serialize(),
-            color: this.color
+            color: this.color,
+            nodeInfo: this.nodeInfo
         };
     }
 
     deserialize(event: DeserializeEvent<this>): void {
         super.deserialize(event);
         this.color = event.data.color;
+        this.nodeInfo = event.data.nodeInfo;
     }
 }

@@ -74,12 +74,65 @@ export class AdvancedPortModel extends DefaultPortModel {
   }
 }
 
+const CustomLinkArrowWidget = (props) => {
+  const { point, previousPoint } = props;
+
+  const angle =
+    90 +
+    (Math.atan2(
+      point.getPosition().y - previousPoint.getPosition().y,
+      point.getPosition().x - previousPoint.getPosition().x,
+    ) *
+      180) /
+      Math.PI;
+  console.log(angle, point.getPosition().x, point.getPosition().y);
+
+  //translate(50, -10),
+  return (
+    <g
+      className="arrow"
+      transform={
+        'translate(' +
+        point.getPosition().x +
+        ', ' +
+        point.getPosition().y +
+        ')'
+      }
+    >
+      <g style={{ transform: 'rotate(' + 180 + 'deg)' }}>
+        <g transform={'translate(0, -3)'}>
+          <polygon
+            points="0,-1 8,20 -8,20"
+            fill={props.color}
+            data-id={point.getID()}
+            data-linkid={point.getLink().getID()}
+          />
+        </g>
+      </g>
+    </g>
+  );
+};
+
 export class AdvancedLinkWidget extends DefaultLinkWidget {
+  generateArrow(point: PointModel, previousPoint: PointModel): JSX.Element {
+    return (
+      <CustomLinkArrowWidget
+        key={point.getID()}
+        point={point as any}
+        previousPoint={previousPoint as any}
+        colorSelected={this.props.link.getOptions().selectedColor}
+        color={this.props.link.getOptions().color}
+      />
+    );
+  }
   render() {
     //ensure id is present for all points on the path
     var points: PointModel[] = this.props.link.getPoints();
     var paths = [];
     this.refPaths = [];
+
+    console.log(points);
+    const typePort = points[0].getParent().getSourcePort().getName();
 
     const pointX1 = points[0].getX();
     const pointY1 = points[0].getY();
@@ -90,7 +143,9 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
     const path =
       pointX1 === pointX2 || pointY2 === pointY1
         ? LinkWidget.generateLinePath(points[0], points[1])
-        : `M${pointX1},${pointY1} L ${pointX1},${averageY} L ${pointX2},${averageY} L ${pointX2}, ${pointY2}`;
+        : typePort === 'out-bottom'
+        ? `M${pointX1},${pointY1} L ${pointX1},${averageY} L ${pointX2},${averageY} L ${pointX2}, ${pointY2}`
+        : `M${pointX1},${pointY1} L ${pointX2},${pointY1} L ${pointX2}, ${pointY2}`;
     paths.push(
       this.generateLink(
         path,
@@ -104,6 +159,12 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
         1,
       ),
     );
+
+    // if (this.props.link.getTargetPort() !== null) {
+    //   paths.push(this.generateArrow(points[1], points[0]));
+    // } else {
+    //   paths.push(this.generatePoint(points[points.length - 1]));
+    // }
 
     return (
       <g data-default-link-test={this.props.link.getOptions().testName}>

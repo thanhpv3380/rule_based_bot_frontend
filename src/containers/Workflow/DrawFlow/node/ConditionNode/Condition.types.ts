@@ -11,7 +11,10 @@ export interface Condition {
 }
 
 export interface Conditions {
-    parameter: string,
+    parameter: {
+        name: string,
+        id: string,
+    },
     operator: string,
     value: string,
     openMenuConnectCondition?: any,
@@ -29,10 +32,13 @@ export interface Parameter {
 export interface IntentResponse {
     id: string,
     name: string,
-    parameters: Parameter[]
+    parameters: Parameter[],
+
 }
 
 export interface DataIntentResponse {
     status: number,
-    result?: IntentResponse
+    result?: IntentResponse,
+    message: string,
 }
+

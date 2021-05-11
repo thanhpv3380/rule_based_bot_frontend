@@ -4,13 +4,14 @@ import { Card, Divider, CardContent } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 // import { useSelector } from 'react-redux';
-import TranningPhrases from '../components/tranningPhrases';
+import TranningPhrases from '../components/patterns';
 import Parameters from '../components/parameter';
 import ActionMapping from '../components/actionMapping';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
 import { generateTitleItem } from '../../../utils/generateTitle';
+import groupConstant from '../../../constants/group';
 
 function CreateIntent(props) {
   const classes = useStyles();
@@ -19,8 +20,8 @@ function CreateIntent(props) {
   // const botId = useSelector((state) => state.bot.bot);
   const { groupItems, groupIntentId, handleCreate } = props;
   const [intent, setIntent] = useState({
-    name: generateTitleItem('intent'),
-    groupIntent: groupIntentId,
+    name: '',
+    groupIntent: '',
   });
   const [actions, setActions] = useState([]);
 
@@ -36,13 +37,21 @@ function CreateIntent(props) {
     fetchActions();
   }, []);
 
-  // Todo
+  useEffect(() => {
+    const temp = groupItems.find(
+      (el) => el.groupType === groupConstant.GROUP_SINGLE,
+    );
+    setIntent({
+      name: generateTitleItem('Intent'),
+      groupIntent: groupIntentId || (temp && temp.id),
+    });
+  }, [groupItems]);
+
   const handleKeyDown = async (value) => {
     intent.patterns = [value];
     const data = await apis.intent.createIntent(intent);
     if (data.status) {
       handleCreate(data.result);
-      // history.push(`detail/${data.result.id}`);
     } else {
       enqueueSnackbar(data.message, {
         variant: 'error',
@@ -94,15 +103,15 @@ function CreateIntent(props) {
     }
   };
 
-  // Todo chưa xử lý
   const handleSave = async () => {
     const newIntent = {
       name: intent.name,
       patterns: intent.patterns,
       isMappingAction: intent.isMappingAction,
       parameters: intent.parameters,
-      // groupIntentId: groupSelect.id ? groupSelect.id : null,
+      groupIntentId: intent.groupIntent || null,
     };
+    console.log(newIntent);
     const data = await apis.intent.createIntent(newIntent);
     if (data.status === 1) {
       handleCreate(data.result.action);

@@ -18,6 +18,7 @@ import {
 import useStyles from './index.style';
 import { BaseNodeModel } from '../node/BaseNodeModel';
 import apis from '../../../../apis';
+import { ActionIcon, ConditionIcon, IntentIcon } from '../icon';
 
 export interface BodyWidgetProps {
   app: Application;
@@ -25,26 +26,34 @@ export interface BodyWidgetProps {
 
 const BodyWidget = (props: BodyWidgetProps) => {
   const classes = useStyles();
+  const { app } = props;
   const forceUpdate: () => void = React.useState()[1].bind(null, {});
   const { workflowId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
   const addNode = async (node: BaseNodeModel) => {
-    node.setPosition(550, 300);
+    node.setPosition(
+      550 - app.getActiveDiagram().getOffsetX(),
+      300 - app.getActiveDiagram().getOffsetY(),
+    );
     const newNode = {
       type: node.getType(),
       position: {
         x: 550,
         y: 300,
       },
+      workflow: workflowId,
     };
-    const data = await apis.workflow.addNode(workflowId, newNode);
-    if (data.status) {
+    const data = await apis.node.createNode({ ...newNode });
+    if (data && data.status) {
       node.id = data.result.node.id;
       props.app.getDiagramEngine().getModel().addNode(node);
+      props.app.getDiagramEngine().repaintCanvas();
       forceUpdate();
     } else {
-      //Todo alert failed
+      enqueueSnackbar((data && data.message) || 'Create node failed', {
+        variant: 'error',
+      });
     }
   };
 
@@ -59,8 +68,23 @@ const BodyWidget = (props: BodyWidgetProps) => {
 
   const handleAddAction = () => {
     var node: ActionNodeModel = new ActionNodeModel();
+    console.log('action');
+
     addNode(node);
   };
+  const getChildren = (typePort, node, children) => {
+    const linkSourcesPortRight = node.getPort(typePort).getLinks();
+    Object.keys(linkSourcesPortRight).forEach((el) => {
+      const nodeEle: any = linkSourcesPortRight[el].getTargetPort().getParent();
+      children.push({
+        node: nodeEle.id,
+        type: nodeEle.getType(),
+        typePort: typePort,
+      });
+    });
+    return children;
+  };
+
   const handleSave = async () => {
     const nodes = props.app
       .getDiagramEngine()
@@ -68,13 +92,17 @@ const BodyWidget = (props: BodyWidgetProps) => {
       .getNodes() as BaseNodeModel[];
     const newNodes = nodes.map((el: BaseNodeModel) => {
       const linkTargets = el.getPort('in').getLinks();
-      let parent = Object.keys(linkTargets).map((el) =>
-        (linkTargets[el].getSourcePort().getParent() as BaseNodeModel).getID(),
-      );
-      const linkSources = el.getPort('out').getLinks();
-      const children = Object.keys(linkSources).map((el) =>
-        (linkSources[el].getTargetPort().getParent() as BaseNodeModel).getID(),
-      );
+      let parent = Object.keys(linkTargets).map((el) => {
+        const nodeEle: any = linkTargets[el].getSourcePort().getParent();
+        return {
+          node: nodeEle.id,
+          type: nodeEle.getType(),
+        };
+      });
+      let children = [];
+      children = getChildren('out-bottom', el, children);
+      children = getChildren('out-right', el, children);
+      children = getChildren('out-left', el, children);
 
       switch (el.getType()) {
         case 'START':
@@ -125,8 +153,6 @@ const BodyWidget = (props: BodyWidgetProps) => {
           };
       }
     });
-    console.log(newNodes, 'newsNodes');
-    console.log(props.app.getActiveDiagram());
 
     const newWorkflow = {
       nodes: newNodes,
@@ -134,13 +160,15 @@ const BodyWidget = (props: BodyWidgetProps) => {
       offsetY: props.app.getActiveDiagram().getOffsetY(),
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
+    console.log(newWorkflow);
+
     const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
-    if (data.status) {
-      enqueueSnackbar('update workflow success', {
+    if (data && data.status) {
+      enqueueSnackbar('Update workflow success', {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar('update workflow failed', {
+      enqueueSnackbar('Update workflow failed', {
         variant: 'error',
       });
     }
@@ -149,17 +177,17 @@ const BodyWidget = (props: BodyWidgetProps) => {
   return (
     <div className={classes.container}>
       <div className={classes.sideBar}>
-        <Box className={classes.sideBarItem}>
-          <RecordVoiceOverIcon onClick={handleAddIntent} />
+        <Box className={classes.sideBarItem} onClick={handleAddIntent}>
+          <IntentIcon className={classes.siderBarIcon} />
+        </Box>
+        <Box className={classes.sideBarItem} onClick={handleAddCondition}>
+          <ConditionIcon className={classes.siderBarIcon} />
+        </Box>
+        <Box className={classes.sideBarItem} onClick={handleAddAction}>
+          <ActionIcon className={classes.siderBarIcon} />
         </Box>
         <Box className={classes.sideBarItem}>
-          <DeviceHubSharpIcon onClick={handleAddCondition} />
-        </Box>
-        <Box className={classes.sideBarItem}>
-          <SmsIcon onClick={handleAddAction} />
-        </Box>
-        <Box className={classes.sideBarItem}>
-          <SaveIcon onClick={handleSave} />
+          <SaveIcon onClick={handleSave} className={classes.siderBarIconSave} />
         </Box>
         <Box className={classes.sideBarItem}>
           <CloseIcon />

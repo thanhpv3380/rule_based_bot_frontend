@@ -11,6 +11,8 @@ import {
 } from './node';
 import { AdvancedLinkModel, AdvancedPortModel } from './customLink';
 import { NodeModel } from '@projectstorm/react-diagrams-core';
+import { NodeConnect } from './node/Node.types';
+
 export interface Node {
   id: string;
   action: {
@@ -25,12 +27,15 @@ export interface Node {
     id: string;
     name: string;
   };
-  parent: string[];
+  parent: NodeConnect[];
+  children: NodeConnect[];
   position: {
     x: number;
     y: number;
   };
   type: 'START' | 'INTENT' | 'CONDITION' | 'ACTION';
+  workflow: string;
+  bot: string;
 }
 
 const DrawFlow = () => {
@@ -40,9 +45,9 @@ const DrawFlow = () => {
   const [application, setApplication] = React.useState<Application>(
     new Application(),
   );
-  const drawNodes = (nodes: Node[], map: Map<string, NodeModel>) => {
+  const drawNodes = async (nodes: Node[], map: Map<string, NodeModel>) => {
     const listNodeCondition: Node[] = [];
-    nodes.map(async (node: Node) => {
+    await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel;
       switch (node.type) {
         case 'START':
@@ -56,6 +61,7 @@ const DrawFlow = () => {
           nodeDraw = new IntentNodeModel({
             id: node.id,
             itemId: (node.intent && node.intent.id) || null,
+            nodeInfo: node.intent || null,
           });
           nodeDraw.setPosition(node.position.x, node.position.y);
 
@@ -67,6 +73,7 @@ const DrawFlow = () => {
           nodeDraw = new ActionNodeModel({
             id: node.id,
             itemId: (node.action && node.action.id) || null,
+            nodeInfo: node.action || null,
           });
           nodeDraw.setPosition(node.position.x, node.position.y);
           application.getActiveDiagram().addNode(nodeDraw);
@@ -80,34 +87,33 @@ const DrawFlow = () => {
     });
 
     listNodeCondition.map((el) => {
-      let sourceNodeId: string;
-      if (el.parent) {
-        const sourceNode: IntentNodeModel = map.get(
-          el.parent[0],
-        ) as IntentNodeModel;
-        sourceNodeId = sourceNode && sourceNode.itemId;
-      }
+      const intents = el.parent.filter((ele) => ele.type === 'INTENT');
       const nodeDraw = new ConditionNodeModel({
         id: el.id,
         itemId: (el.condition && el.condition.id) || null,
-        intentId: sourceNodeId,
+        intents,
+        nodeInfo: el.condition || null,
       });
-      nodeDraw.setPosition(el.position.x, el.position.y);
+      nodeDraw.setPosition(el.position.x || 0, el.position.y || 0);
       application.getActiveDiagram().addNode(nodeDraw);
       map.set(el.id, nodeDraw);
     });
   };
 
-  const drawLinks = (nodes: Node[], map: Map<string, NodeModel>) => {
-    nodes.map(async (node: Node) => {
+  const drawLinks = async (nodes: Node[], map: Map<string, NodeModel>) => {
+    await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel = map.get(node.id);
-      if (node.parent) {
-        node.parent.map((nodeId: string) => {
-          const parentNode = map.get(nodeId);
+      if (node.children) {
+        node.children.map((el: any) => {
+          const childrenNode = map.get(el.node);
           const link = new AdvancedLinkModel();
-          link.setSourcePort(parentNode.getPort('out') as AdvancedPortModel);
-          link.setTargetPort(nodeDraw.getPort('in') as AdvancedPortModel);
-          application.getActiveDiagram().addLink(link);
+          if (childrenNode) {
+            link.setSourcePort(
+              nodeDraw.getPort(el.typePort) as AdvancedPortModel,
+            );
+            link.setTargetPort(childrenNode.getPort('in') as AdvancedPortModel);
+            application.getActiveDiagram().addLink(link);
+          }
         });
       }
     });
@@ -119,16 +125,14 @@ const DrawFlow = () => {
     zoom: number,
   ) => {
     const map: Map<string, NodeModel> = new Map();
-    application.getActiveDiagram().setOffsetX(ox);
-    application.getActiveDiagram().setOffsetY(oy);
-    application.getActiveDiagram().setZoomLevel(zoom);
+    application.getActiveDiagram().setOffsetX(ox || 0);
+    application.getActiveDiagram().setOffsetY(oy || 0);
+    application.getActiveDiagram().setZoomLevel(zoom || 100);
     await drawNodes(nodes, map);
     await drawLinks(nodes, map);
     application.getDiagramEngine().repaintCanvas();
   };
   const fetchWorkFlow = async () => {
-    console.log(workflowId, 'fetch');
-
     const data = await apis.workflow.getWorkflowById(workflowId);
     if (data.status) {
       const { nodes, offsetX, offsetY, zoom } = data.result.workflow;

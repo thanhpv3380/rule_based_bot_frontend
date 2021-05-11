@@ -1,8 +1,14 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useSnackbar } from 'notistack';
 import { useParams } from 'react-router-dom';
 import { PortWidget } from '@projectstorm/react-diagrams-core';
-import { Action, InputType } from '@projectstorm/react-canvas-core';
+import {
+  Action,
+  DragCanvasState,
+  InputType,
+  StateMachine,
+} from '@projectstorm/react-canvas-core';
 import {
   Box,
   TextField,
@@ -10,6 +16,7 @@ import {
   Typography,
   Grid,
   Divider,
+  InputBase,
 } from '@material-ui/core';
 import {
   MoreVert as MoreVertIcon,
@@ -18,6 +25,7 @@ import {
   FileCopy as FileCopyIcon,
   RecordVoiceOver as RecordVoiceOverIcon,
 } from '@material-ui/icons';
+import { IntentIcon } from '../../icon';
 import useStyle from './intentNodeWidget.style';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { IntentNodeModel } from './';
@@ -41,17 +49,19 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const { node, engine } = props;
   const { workflowId } = useParams();
   const classes = useStyle();
+  const { enqueueSnackbar } = useSnackbar();
   const [isHover, setIsHover] = useState(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [actionMouseWheel, setActionMouseWheel] = useState<Action>(
+  const [actionMouseWheel] = useState<Action>(
     engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
   );
   const [intent, setIntent] = useState<IntentsResponse>();
-  const [intents, setIntents] = useState<IntentsResponse[]>();
+  const [intents, setIntents] = useState<IntentsResponse[]>([]);
+  const [isForcus, setIsForcus] = useState<boolean>(false);
 
   const fetchIntents = async () => {
     const data: DataResponse = await apis.intent.getIntents();
-    if (data.status) {
+    if (data && data.status) {
       setIntents(data.result);
       if (node.itemId) {
         setIntent(data.result.find((el) => el.id === node.itemId));
@@ -65,12 +75,16 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
 
   const handleOpenEdit = () => {
     setOpenEdit(true);
+
+    // engine.getActionEventBus().deregisterAction(actionMove);
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
   };
 
   const handleCloseEdit = () => {
     setOpenEdit(false);
+    setIsHover(false);
+    // engine.getActionEventBus().registerAction(actionMove);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
   };
@@ -85,14 +99,17 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
             console.log('remove');
-            const data = await apis.workflow.removeNode(
+            const data = await apis.node.deleteNode(
               workflowId,
               (model as BaseNodeModel).id,
-              'INTENT',
             );
-            if (data.status) {
+            if (data && data.status) {
               model.remove();
               engine.repaintCanvas();
+            } else {
+              enqueueSnackbar((data && data.message) || 'Delete node failed', {
+                variant: 'error',
+              });
             }
           }
         });
@@ -116,23 +133,24 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
     engine.repaintCanvas();
   };
 
-  const handleFocus = () => {
+  const handleOpenAutocomplete = () => {
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
   };
 
-  const handleMouseLeave = () => {
-    setIsHover(false);
+  const handleCloseAutocomplete = () => {
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
   };
 
+  const handleMouseEnterItem = (e: any) => {
+    // e.target.style.border = '2px solid #88beee';
+  };
+  const handleMouseLeaveItem = (e: any) => {
+    // e.target.style.border = '2px solid rgb(224 224 224)';
+  };
   return (
-    <Box
-      className={classes.container}
-      onMouseOver={() => setIsHover(true)}
-      onMouseLeave={() => handleMouseLeave()}
-    >
+    <Box onMouseLeave={() => setIsHover(false)} className={classes.container}>
       {isHover ? (
         <Box className={classes.iconMenu}>
           <EditIcon
@@ -155,37 +173,93 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
         <Box className={classes.noneIconMenu} />
       )}
 
-      <Paper style={{ borderRadius: 10 }}>
+      <Paper
+        elevation={5}
+        onMouseOver={() => setIsHover(true)}
+        className={classes.root}
+      >
         <PortWidget
           engine={props.engine}
           port={props.node.getPort('in')}
         ></PortWidget>
         <Grid container justify="center" className={classes.header}>
-          <RecordVoiceOverIcon className={classes.headerIcon} />
+          <IntentIcon
+            className={classes.headerIcon}
+            style={{ width: '2em', height: '2em' }}
+          />
           <Typography variant="h6">Intent</Typography>
         </Grid>
-        <Autocomplete
-          className={classes.autoComplete}
-          size="small"
-          value={intent || null}
-          options={intents}
-          onChange={(e: React.ChangeEvent<{}>, value: any, reason: string) => {
-            node.itemId = (value && value.id) || null;
-            setIntent(value);
-          }}
-          onFocus={handleFocus}
-          getOptionSelected={(option, value) => option.id === value.id}
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              className={classes.textField}
-              placeholder="Search intent"
-            />
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <PortWidget
+            engine={props.engine}
+            port={props.node.getPort('out-left')}
+          >
+            <div className="circle-port" />
+          </PortWidget>
+          {!isForcus ? (
+            <Grid
+              onMouseLeave={() => setIsForcus(false)}
+              onMouseDown={() => setIsForcus(true)}
+              className={classes.unforcusBody}
+            >
+              {intent ? (
+                <Typography>{intent.name}</Typography>
+              ) : (
+                <Typography style={{ color: 'rgba(138, 138, 138, 0.87)' }}>
+                  Select intent
+                </Typography>
+              )}
+            </Grid>
+          ) : (
+            <Grid
+              onBlur={() => setIsForcus(false)}
+              onMouseDown={() => setIsForcus(true)}
+              className={classes.forcusBody}
+            >
+              <Autocomplete
+                className={classes.autoComplete}
+                size="small"
+                value={intent || null}
+                options={intents}
+                onChange={(
+                  e: React.ChangeEvent<{}>,
+                  value: any,
+                  reason: string,
+                ) => {
+                  node.itemId = (value && value.id) || null;
+                  node.nodeInfo = value;
+                  setIntent(value);
+                }}
+                onOpen={handleOpenAutocomplete}
+                onClose={handleCloseAutocomplete}
+                getOptionSelected={(option, value) => option.id === value.id}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    className={classes.textField}
+                    InputProps={{
+                      ...params.InputProps,
+                      disableUnderline: true,
+                    }}
+                    placeholder="Select intent"
+                  />
+                )}
+              />
+            </Grid>
           )}
-        />
+          <PortWidget
+            engine={props.engine}
+            port={props.node.getPort('out-right')}
+          >
+            <div className="circle-port" />
+          </PortWidget>
+        </Box>
         <Grid container alignItems="center" justify="center">
-          <PortWidget engine={props.engine} port={props.node.getPort('out')}>
+          <PortWidget
+            engine={props.engine}
+            port={props.node.getPort('out-bottom')}
+          >
             <div className="circle-port" />
           </PortWidget>
         </Grid>

@@ -9,6 +9,7 @@ export interface IntentNodeModelOptions extends BaseModelOptions {
   color?: string;
   id?: string;
   itemId?: string;
+  nodeInfo?: any;
 }
 
 export class IntentNodeModel extends BaseNodeModel {

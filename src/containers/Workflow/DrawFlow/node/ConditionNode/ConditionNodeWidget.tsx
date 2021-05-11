@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { useSnackbar } from 'notistack';
 import { useParams } from 'react-router-dom';
 import { PortWidget } from '@projectstorm/react-diagrams-core';
 import {
@@ -28,7 +29,7 @@ import {
   DeviceHubSharp as DeviceHubSharpIcon,
   Add as AddIcon,
 } from '@material-ui/icons';
-
+import { ConditionIcon } from '../../icon';
 import { ConditionNodeModel } from './index';
 import * as _ from 'lodash';
 import ConditionNodeDetail from './NodeDetail';
@@ -43,6 +44,7 @@ import {
 } from './Condition.types';
 import { BaseNodeModel } from '../BaseNodeModel';
 import apis from '../../../../../apis';
+import { NodeConnect } from '../Node.types';
 
 export interface ConditionNodeWidgetProps {
   node: ConditionNodeModel;
@@ -54,9 +56,12 @@ export interface ConditionNodeWidgetState {
   open: boolean;
 }
 
-const conditionsDefault: Conditions = {
-  parameter: '',
-  operator: '=',
+const conditionsDefault = {
+  parameter: {
+    name: '',
+    id: '',
+  },
+  operator: 'is',
   value: '',
   openMenuConnectCondition: null,
   openMenuOperator: null,
@@ -66,25 +71,23 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const { engine, node } = props;
   const { workflowId } = useParams();
   const classes = useStyle();
+  const { enqueueSnackbar } = useSnackbar();
   const [condition, setCondition] = useState<Condition>();
   const [subConditions, setSubConditions] = useState<Conditions[]>([]);
   const [isHover, setIsHover] = useState<boolean>(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
-  const [actionMouseWheel, setActionMouseWheel] = useState<Action>();
+  const [actionMouseWheel] = useState<Action>(
+    engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
+  );
   const [intent, setIntent] = useState<IntentResponse>();
   const [parameters, setParameters] = useState<Parameter[]>();
 
   const fetchCondition = async (id: string) => {
     const data = await apis.condition.getConditionById(id);
-    if (data.status) {
+
+    if (data && data.status) {
       setCondition(data.result);
       setSubConditions(data.result.conditions);
-    }
-  };
-  const fetchIntent = async (intentId: string) => {
-    const data: DataIntentResponse = await apis.intent.getIntent(intentId);
-    if (data.status) {
-      setParameters(data.result.parameters);
     }
   };
 
@@ -92,33 +95,46 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     if (node.itemId) {
       fetchCondition(node.itemId);
     }
-    if (node.intentId) {
-      fetchIntent(node.intentId);
-    }
-    console.log('reset');
-  }, [node.intentId]);
+  }, []);
 
-  const handleOpenEdit = () => {
+  const handleOpenEdit = async () => {
+    let tempParameters = [];
+    let listNode = [];
+    const getIntentParent = (tempNode) => {
+      const links = tempNode.getPort('in').getLinks();
+      Object.keys(links).forEach((el: string) => {
+        const nodeEle: any = links[el].getSourcePort().getParent();
+
+        if (listNode.indexOf(nodeEle.id) <= 0) {
+          listNode.push(nodeEle.id);
+          if (nodeEle.getType() === 'INTENT') {
+            if (nodeEle.itemId) {
+              console.log(nodeEle, 'ele');
+              tempParameters.push(...nodeEle.nodeInfo.parameters);
+            }
+          }
+          getIntentParent(nodeEle);
+        }
+      });
+    };
+    getIntentParent(node);
+
+    setParameters(tempParameters || []);
     setOpenEdit(true);
-    const action: Action = engine
-      .getActionEventBus()
-      .getActionsForType(InputType.MOUSE_WHEEL)[0];
-    engine.getActionEventBus().deregisterAction(action);
+    engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
-    setActionMouseWheel(action);
   };
 
   const handleCloseEdit = async () => {
     setOpenEdit(false);
+    setIsHover(false);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
     if (subConditions) {
-      console.log(subConditions, 'subCondition', condition);
       const newCondition = {
         conditions: subConditions.map((el) => {
           return {
             parameter: el.parameter,
-            intent: node.intentId,
             value: el.value,
             operator: el.operator,
           };
@@ -127,10 +143,10 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       };
       console.log(node.itemId, newCondition);
 
-      const data = await apis.condition.updateCondition(
-        node.itemId,
-        newCondition,
-      );
+      // const data = await apis.condition.updateCondition(
+      //   node.itemId,
+      //   newCondition,
+      // );
     }
   };
 
@@ -167,14 +183,17 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
         _.forEach(selectedEntities, async (model: any) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
-            const data = await apis.workflow.removeNode(
+            const data = await apis.node.deleteNode(
               workflowId,
               (model as BaseNodeModel).id,
-              'CONDITION',
             );
-            if (data.status) {
+            if (data && data.status) {
               await model.remove();
               engine.repaintCanvas();
+            } else {
+              enqueueSnackbar((data && data.message) || 'Delete node failed', {
+                variant: 'error',
+              });
             }
           }
         });
@@ -200,7 +219,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   const handleAddCondition = () => {
     const newConditions = [...subConditions];
-    newConditions.push(conditionsDefault);
+    newConditions.push({ ...conditionsDefault });
     setSubConditions(newConditions);
     if (!condition) {
       const newCondition: Condition = {
@@ -219,28 +238,28 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     setSubConditions(newConditions);
   };
 
-  const handleChangeCondition = (e: any, pos: number, parameter: any) => {
-    const { name, value } = e.target;
+  const handleChangeCondition = (name: string, value: any, pos: number) => {
     console.log(subConditions, 'old', name, value, pos);
 
     if (name === 'subOperator') {
-      var newSubConditions: Conditions[] = [...subConditions];
-      newSubConditions[pos].operator = value;
+      const newSubConditions: Conditions[] = [...subConditions];
+      newSubConditions[pos].operator = value.toString();
       setSubConditions(newSubConditions);
     } else if (name === 'operator') {
-      var newCondition = { ...condition };
-      newCondition.operator = value;
+      const newCondition = { ...condition };
+      newCondition.operator = value.toString();
       setCondition(newCondition);
     } else if (name === 'value') {
-      var newSubConditions: Conditions[] = [...subConditions];
+      // console.log(value.toString());
+      const newSubConditions: Conditions[] = [...subConditions];
       newSubConditions[pos].value = value;
       setSubConditions(newSubConditions);
-    } else {
-      console.log(pos, 'pos');
-
-      var newSubConditions: Conditions[] = [...subConditions];
-      newSubConditions[pos].parameter = parameter.parameterName;
-      console.log(newSubConditions[pos], newSubConditions);
+    } else if (name === 'parameter') {
+      const newSubConditions: Conditions[] = [...subConditions];
+      newSubConditions[pos].parameter = value && {
+        id: value.id,
+        name: value.parameterName,
+      };
 
       setSubConditions(newSubConditions);
     }
@@ -248,7 +267,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   return (
     <Box
-      // style={{ width: 280, borderRadius: 10 }}
       onMouseOver={() => {
         setIsHover(true);
       }}
@@ -279,26 +297,44 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       )}
 
       <Paper elevation={5} className={classes.root}>
-        {/*  */}
         <Box display="flex" alignItems="center" flexDirection="column">
           <PortWidget engine={props.engine} port={props.node.getPort('in')} />
           <Grid container justify="center" className={classes.header}>
-            <DeviceHubSharpIcon className={classes.headerIcon} />
+            {/* <DeviceHubSharpIcon className={classes.headerIcon} /> */}
+            <ConditionIcon
+              className={classes.headerIcon}
+              style={{ width: '2em', height: '2em' }}
+              backgroundColor="#e7fff6"
+            />
             <Typography variant="h6">Condition</Typography>
           </Grid>
-          <Box>
+          <Box className={classes.content}>
             <TableContainer
               component={Paper}
               elevation={0}
-              className={classes.tableContainer}
+              className={
+                subConditions.length !== 0
+                  ? classes.tableContainer
+                  : classes.noneTableCon
+              }
+              onClick={handleOpenEdit}
             >
               <Table>
                 <TableBody>
                   {subConditions &&
                     subConditions.map((el, index) => (
                       <TableRow>
+                        <TableCell className={classes.tableCell} align="left">
+                          if
+                        </TableCell>
                         <TableCell className={classes.tableCell}>
-                          {el.parameter}
+                          {el.parameter.name || (
+                            <Typography
+                              style={{ color: 'rgba(138, 138, 138, 0.87)' }}
+                            >
+                              parameter
+                            </Typography>
+                          )}
                         </TableCell>
                         <TableCell className={classes.tableCell} align="left">
                           {el.operator}
@@ -308,29 +344,53 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                           style={{ minWidth: 80 }}
                           align="left"
                         >
-                          {el.value}
+                          {el.value || (
+                            <Typography
+                              style={{ color: 'rgba(138, 138, 138, 0.87)' }}
+                            >
+                              empty
+                            </Typography>
+                          )}
                         </TableCell>
                         <TableCell className={classes.tableCell} align="left">
                           {condition ? condition.operator : 'and'}
                         </TableCell>
                       </TableRow>
                     ))}
-                  {!subConditions ||
-                    (subConditions.length === 0 && (
-                      <TableRow>
-                        <Button fullWidth onClick={handleOpenEdit}>
-                          <AddIcon />
-                          Thêm điều kiện
-                        </Button>
-                      </TableRow>
-                    ))}
+                  {/* {!subConditions ||
+                    (subConditions.length === 0 && ( */}
+                  {/* <TableRow container > */}
+
+                  {/* </TableRow> */}
+                  {/* ))} */}
                 </TableBody>
               </Table>
             </TableContainer>
-            <Grid container alignItems="center" justify="center">
+            <Grid
+              container
+              alignItems="center"
+              justify="center"
+              className={classes.btnAdCondition}
+            >
+              <Button
+                onClick={() => {
+                  handleOpenEdit();
+                  handleAddCondition();
+                }}
+              >
+                <AddIcon />
+                Add condition
+              </Button>
+            </Grid>
+            <Grid
+              container
+              alignItems="center"
+              justify="center"
+              // className={classes.btnAdCondition}
+            >
               <PortWidget
                 engine={props.engine}
-                port={props.node.getPort('out')}
+                port={props.node.getPort('out-bottom')}
               >
                 <div className="circle-port" />
               </PortWidget>

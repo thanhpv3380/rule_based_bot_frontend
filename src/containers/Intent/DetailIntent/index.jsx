@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import TrainingPhrases from '../components/trainingPhrases';
+import TrainingPhrases from '../components/patterns';
 import Parameters from '../components/parameter';
 import ActionMapping from '../components/actionMapping';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
@@ -89,8 +89,9 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       enqueueSnackbar('Update intent success', {
         variant: 'success',
       });
+      console.log(result);
       handleUpdate(result, oldGroupId);
-      setOldGroupId(result.intent.intent);
+      setOldGroupId(result.groupIntent);
     } else {
       const { code } = data;
       enqueueSnackbar(`Cannot fetch data  ${code}`, {

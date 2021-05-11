@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import {
   List,
   ListItem,
@@ -23,6 +24,7 @@ import {
 } from '../';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 import apis from '../../../../../apis';
+import { checkAllowConnect } from '../../../../../utils/checkConnectNode';
 export interface MenuNodeWidgetProps {
   node: MenuNodeModel;
   engine: AdvancedDiagramEngine;
@@ -53,11 +55,13 @@ const items = [
 const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
   const { engine, node } = props;
   const { workflowId } = useParams();
-
+  const { enqueueSnackbar } = useSnackbar();
   const handleClick = async (id) => {
     const listNode = engine.getModel().getActiveNodeLayer().getModels();
     const keys = Object.keys(listNode);
     const lastNode = listNode[keys[keys.length - 1]];
+
+    // check allow connect
 
     if (lastNode instanceof MenuNodeModel) {
       // get position of last node
@@ -76,8 +80,6 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
 
       node.setPosition(positionX, positionY);
 
-      console.log(node, 'node');
-
       // get port in of new node
       const element_select_port = node.getPort('in');
 
@@ -86,6 +88,26 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
       const listKeysLink = Object.keys(links);
       const link = links[listKeysLink[listKeysLink.length - 1]];
 
+      const portSourceNode = link.getSourcePort();
+      const sourceNode = portSourceNode && portSourceNode.getParent();
+
+      const listPortSourceNode = sourceNode.getPorts();
+      const portOutSourceNode =
+        (listPortSourceNode && listPortSourceNode['out-bottom']) || null;
+
+      // check allow connect
+      const isConnect = checkAllowConnect(
+        sourceNode,
+        node,
+        portOutSourceNode.getLinks(),
+      );
+      if (!isConnect) {
+        enqueueSnackbar('Node is connected', {
+          variant: 'error',
+        });
+        return;
+      }
+
       link.getLastPoint().setPosition(positionX, positionY);
       if (link.getSourcePort().canLinkToPort(element_select_port)) {
         link.setTargetPort(element_select_port);
@@ -93,9 +115,16 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
       }
 
       // call api add node
-      const parent = [(link.getSourcePort().getParent() as BaseNodeModel).id];
+      const nodeConnect: any = link.getSourcePort().getParent();
+      const parent = [
+        {
+          node: nodeConnect.id,
+          type: nodeConnect.getType(),
+        },
+      ];
 
       node.setPosition(positionX, positionY);
+
       const newNode = {
         type: node.getType(),
         position: {
@@ -103,15 +132,22 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
           y: positionY,
         },
         parent,
+        workflow: workflowId,
       };
 
-      const data = await apis.workflow.addNode(workflowId, newNode);
-      if (data.status) {
+      const data = await apis.node.createNode({ ...newNode });
+      if (data && data.status) {
         node.id = data.result.node.id;
         if (node instanceof ConditionNodeModel) {
-          node.intentId = (link
-            .getSourcePort()
-            .getParent() as BaseNodeModel).id;
+          const sourceNode = link.getSourcePort().getParent();
+          if (sourceNode instanceof IntentNodeModel) {
+            node.intents = [
+              {
+                node: sourceNode.id,
+                type: 'INTENT',
+              },
+            ];
+          }
           node.itemId = data.result.node.condition;
         }
       }

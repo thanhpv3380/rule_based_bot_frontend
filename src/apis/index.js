@@ -13,6 +13,8 @@ import * as condition from './condition';
 import * as workflow from './workflow';
 import * as groupWorkflow from './groupWorkflow';
 import * as slot from './slot';
+import * as node from './node';
+import * as dashboard from './dashboard';
 
 export default {
   auth,
@@ -30,4 +32,6 @@ export default {
   groupWorkflow,
   workflow,
   slot,
+  node,
+  dashboard,
 };

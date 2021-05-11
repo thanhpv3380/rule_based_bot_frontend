@@ -1,9 +1,13 @@
 import api from './authApi';
 
-export async function getIntents() {
+export async function getIntents(data) {
   const response = await api({
     method: 'GET',
     url: '/intents',
+    params: {
+      fields: data && data.fields,
+      sort: data && data.sort,
+    },
   });
   return response;
 }
@@ -74,6 +78,15 @@ export async function removeParameter(id, parameter) {
     method: 'PUT',
     url: `/intents/${id}/removeParameter`,
     data: { parameter },
+  });
+  return response;
+}
+
+export async function getParametersByList(intents) {
+  const response = await api({
+    method: 'POST',
+    url: `/intents/getParametersByList`,
+    data: { list: intents },
   });
   return response;
 }
