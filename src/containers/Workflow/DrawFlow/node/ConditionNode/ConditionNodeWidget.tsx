@@ -390,7 +390,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
             >
               <PortWidget
                 engine={props.engine}
-                port={props.node.getPort('out')}
+                port={props.node.getPort('out-bottom')}
               >
                 <div className="circle-port" />
               </PortWidget>

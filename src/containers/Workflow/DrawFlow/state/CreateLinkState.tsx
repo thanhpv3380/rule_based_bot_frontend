@@ -59,7 +59,8 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
             const portInCurrentNode =
               (listPortCurrentNode && listPortCurrentNode['in']) || null;
             const portOutCurrentNode =
-              (listPortCurrentNode && listPortCurrentNode['out']) || null;
+              (listPortCurrentNode && listPortCurrentNode['out-bottom']) ||
+              null;
 
             const listLinkCurrentNode = [
               ...Object.keys(portInCurrentNode.getLinks()),
@@ -79,7 +80,8 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
                 const portInSourceNode =
                   (listPortSourceNode && listPortSourceNode['in']) || null;
                 const portOutSourceNode =
-                  (listPortSourceNode && listPortSourceNode['out']) || null;
+                  (listPortSourceNode && listPortSourceNode['out-bottom']) ||
+                  null;
 
                 const listLinkSourceNode = [
                   ...Object.keys(portInSourceNode.getLinks()),

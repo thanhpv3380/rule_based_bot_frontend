@@ -55,8 +55,9 @@ const useStyle = makeStyles({
         margin: '10px 0px 5px 0px',
     },
     forcusBody: {
+        width: '100%',
         backgroundColor: '#ffff',
-        margin: '10px 20px',
+        margin: '10px 10px',
         borderRadius: 5,
         cursor: 'pointer',
         border: '2px solid rgb(224 224 224)',
@@ -66,8 +67,9 @@ const useStyle = makeStyles({
         }
     },
     unforcusBody: {
+        width: '100%',
         backgroundColor: '#ffff',
-        margin: '10px 20px',
+        margin: '10px 10px',
         padding: 10,
         borderRadius: 5,
         cursor: 'pointer',

@@ -103,13 +103,15 @@ const DrawFlow = () => {
   const drawLinks = async (nodes: Node[], map: Map<string, NodeModel>) => {
     await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel = map.get(node.id);
-      if (node.parent) {
-        node.parent.map((el: any) => {
-          const parentNode = map.get(el.node);
+      if (node.children) {
+        node.children.map((el: any) => {
+          const childrenNode = map.get(el.node);
           const link = new AdvancedLinkModel();
-          if (parentNode) {
-            link.setSourcePort(parentNode.getPort('out') as AdvancedPortModel);
-            link.setTargetPort(nodeDraw.getPort('in') as AdvancedPortModel);
+          if (childrenNode) {
+            link.setSourcePort(
+              nodeDraw.getPort(el.typePort) as AdvancedPortModel,
+            );
+            link.setTargetPort(childrenNode.getPort('in') as AdvancedPortModel);
             application.getActiveDiagram().addLink(link);
           }
         });

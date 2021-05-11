@@ -14,6 +14,7 @@ import * as workflow from './workflow';
 import * as groupWorkflow from './groupWorkflow';
 import * as slot from './slot';
 import * as node from './node';
+import * as dashboard from './dashboard';
 
 export default {
   auth,
@@ -32,4 +33,5 @@ export default {
   workflow,
   slot,
   node,
+  dashboard,
 };

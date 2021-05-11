@@ -93,7 +93,7 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
 
       const listPortSourceNode = sourceNode.getPorts();
       const portOutSourceNode =
-        (listPortSourceNode && listPortSourceNode['out']) || null;
+        (listPortSourceNode && listPortSourceNode['out-bottom']) || null;
 
       // check allow connect
       const isConnect = checkAllowConnect(

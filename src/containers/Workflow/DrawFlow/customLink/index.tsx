@@ -131,6 +131,9 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
     var paths = [];
     this.refPaths = [];
 
+    console.log(points);
+    const typePort = points[0].getParent().getSourcePort().getName();
+
     const pointX1 = points[0].getX();
     const pointY1 = points[0].getY();
     const pointX2 = points[1].getX();
@@ -140,7 +143,9 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
     const path =
       pointX1 === pointX2 || pointY2 === pointY1
         ? LinkWidget.generateLinePath(points[0], points[1])
-        : `M${pointX1},${pointY1} L ${pointX1},${averageY} L ${pointX2},${averageY} L ${pointX2}, ${pointY2}`;
+        : typePort === 'out-bottom'
+        ? `M${pointX1},${pointY1} L ${pointX1},${averageY} L ${pointX2},${averageY} L ${pointX2}, ${pointY2}`
+        : `M${pointX1},${pointY1} L ${pointX2},${pointY1} L ${pointX2}, ${pointY2}`;
     paths.push(
       this.generateLink(
         path,
@@ -154,7 +159,7 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
         1,
       ),
     );
-    
+
     // if (this.props.link.getTargetPort() !== null) {
     //   paths.push(this.generateArrow(points[1], points[0]));
     // } else {

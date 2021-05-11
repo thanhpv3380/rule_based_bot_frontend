@@ -72,6 +72,18 @@ const BodyWidget = (props: BodyWidgetProps) => {
 
     addNode(node);
   };
+  const getChildren = (typePort, node, children) => {
+    const linkSourcesPortRight = node.getPort(typePort).getLinks();
+    Object.keys(linkSourcesPortRight).forEach((el) => {
+      const nodeEle: any = linkSourcesPortRight[el].getTargetPort().getParent();
+      children.push({
+        node: nodeEle.id,
+        type: nodeEle.getType(),
+        typePort: typePort,
+      });
+    });
+    return children;
+  };
 
   const handleSave = async () => {
     const nodes = props.app
@@ -87,14 +99,10 @@ const BodyWidget = (props: BodyWidgetProps) => {
           type: nodeEle.getType(),
         };
       });
-      const linkSources = el.getPort('out').getLinks();
-      const children = Object.keys(linkSources).map((el) => {
-        const nodeEle: any = linkSources[el].getTargetPort().getParent();
-        return {
-          node: nodeEle.id,
-          type: nodeEle.getType(),
-        };
-      });
+      let children = [];
+      children = getChildren('out-bottom', el, children);
+      children = getChildren('out-right', el, children);
+      children = getChildren('out-left', el, children);
 
       switch (el.getType()) {
         case 'START':
@@ -152,6 +160,8 @@ const BodyWidget = (props: BodyWidgetProps) => {
       offsetY: props.app.getActiveDiagram().getOffsetY(),
       zoom: props.app.getActiveDiagram().getZoomLevel(),
     };
+    console.log(newWorkflow);
+
     const data = await apis.workflow.updateWorkflow(workflowId, newWorkflow);
     if (data && data.status) {
       enqueueSnackbar('Update workflow success', {

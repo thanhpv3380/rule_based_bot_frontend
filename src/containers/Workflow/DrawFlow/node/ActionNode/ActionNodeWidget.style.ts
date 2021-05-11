@@ -55,8 +55,9 @@ export default makeStyles((theme) => ({
     // backgroundColor: '#ffff',
   },
   forcusBody: {
+    width: '100%',
     backgroundColor: '#ffff',
-    margin: '10px 20px',
+    margin: '10px 10px',
     borderRadius: 5,
     cursor: 'pointer',
     border: '2px solid rgb(224 224 224)',
@@ -66,8 +67,9 @@ export default makeStyles((theme) => ({
     }
   },
   unforcusBody: {
+    width: '100%',
     backgroundColor: '#ffff',
-    margin: '10px 20px',
+    margin: '10px 10px',
     padding: 10,
     borderRadius: 5,
     cursor: 'pointer',

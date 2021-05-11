@@ -280,54 +280,74 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
 
           <SettingsIcon fontSize="small" className={classes.iconSetting} />
         </Grid>
-        {!isForcus ? (
-          <Grid
-            onMouseLeave={() => setIsForcus(false)}
-            onMouseDown={() => setIsForcus(true)}
-            className={classes.unforcusBody}
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <PortWidget
+            engine={props.engine}
+            port={props.node.getPort('out-left')}
           >
-            {action ? (
-              <Typography>{action.name}</Typography>
-            ) : (
-              <Typography style={{ color: 'rgba(138, 138, 138, 0.87)' }}>
-                Select action
-              </Typography>
-            )}
-          </Grid>
-        ) : (
-          <Grid
-            onMouseDown={() => setIsForcus(true)}
-            className={classes.forcusBody}
-          >
-            <Autocomplete
-              className={classes.autoComplete}
-              size="small"
-              options={actions || []}
-              value={action || null}
-              onChange={(
-                e: React.ChangeEvent<{}>,
-                value: any,
-                reason: string,
-              ) => {
-                node.itemId = (value && value.id) || null;
-                setAction(value);
-              }}
-              onOpen={handleOpenAutocomplete}
-              onClose={handleCloseAutocomplete}
-              getOptionSelected={(option, value) => option.id === value.id}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{ ...params.InputProps, disableUnderline: true }}
-                  className={classes.textField}
-                />
+            <div className="circle-port" />
+          </PortWidget>
+          {!isForcus ? (
+            <Grid
+              onMouseLeave={() => setIsForcus(false)}
+              onMouseDown={() => setIsForcus(true)}
+              className={classes.unforcusBody}
+            >
+              {action ? (
+                <Typography>{action.name}</Typography>
+              ) : (
+                <Typography style={{ color: 'rgba(138, 138, 138, 0.87)' }}>
+                  Select action
+                </Typography>
               )}
-            />
-          </Grid>
-        )}
+            </Grid>
+          ) : (
+            <Grid
+              onMouseDown={() => setIsForcus(true)}
+              className={classes.forcusBody}
+            >
+              <Autocomplete
+                className={classes.autoComplete}
+                size="small"
+                options={actions || []}
+                value={action || null}
+                onChange={(
+                  e: React.ChangeEvent<{}>,
+                  value: any,
+                  reason: string,
+                ) => {
+                  node.itemId = (value && value.id) || null;
+                  setAction(value);
+                }}
+                onOpen={handleOpenAutocomplete}
+                onClose={handleCloseAutocomplete}
+                getOptionSelected={(option, value) => option.id === value.id}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    InputProps={{
+                      ...params.InputProps,
+                      disableUnderline: true,
+                    }}
+                    className={classes.textField}
+                  />
+                )}
+              />
+            </Grid>
+          )}
+          <PortWidget
+            engine={props.engine}
+            port={props.node.getPort('out-right')}
+          >
+            <div className="circle-port" />
+          </PortWidget>
+        </Box>
         <Grid container alignItems="center" justify="center">
-          <PortWidget engine={props.engine} port={props.node.getPort('out')}>
+          <PortWidget
+            engine={props.engine}
+            port={props.node.getPort('out-bottom')}
+          >
             <div className="circle-port" />
           </PortWidget>
         </Grid>

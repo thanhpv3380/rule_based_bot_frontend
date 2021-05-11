@@ -39,7 +39,7 @@ const StartNodeWidget = (props: StartNodeWidgetProps) => {
   return (
     <Paper className={classes.root}>
       <Typography variant="h6">Start</Typography>
-      <PortWidget engine={engine} port={node.getPort('out')}>
+      <PortWidget engine={engine} port={node.getPort('out-bottom')}>
         <div className={`circle-port ${classes.port}`} />
       </PortWidget>
     </Paper>

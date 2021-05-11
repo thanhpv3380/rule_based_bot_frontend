@@ -36,7 +36,19 @@ export class BaseNodeModel extends NodeModel {
         this.addPort(
             new AdvancedPortModel({
                 in: false,
-                name: 'out'
+                name: 'out-bottom'
+            })
+        );
+        this.addPort(
+            new AdvancedPortModel({
+                in: false,
+                name: 'out-left'
+            })
+        );
+        this.addPort(
+            new AdvancedPortModel({
+                in: false,
+                name: 'out-right'
             })
         );
     }
