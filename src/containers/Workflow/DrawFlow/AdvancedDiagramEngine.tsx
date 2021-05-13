@@ -19,6 +19,7 @@ export class AdvancedDiagramEngine extends DiagramEngine {
     }
   }
   getModel(): AdvancedDiagramModel {
+    console.log('haha');
     return this.model;
   }
 }

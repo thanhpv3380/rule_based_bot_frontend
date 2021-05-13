@@ -19,48 +19,33 @@ import useStyles from './index.style';
 import { BaseNodeModel } from '../node/BaseNodeModel';
 import apis from '../../../../apis';
 import { ActionIcon, ConditionIcon, IntentIcon } from '../icon';
-
+import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
 export interface BodyWidgetProps {
   app: Application;
 }
 
 const BodyWidget = (props: BodyWidgetProps) => {
-  const classes = useStyles();
   const { app } = props;
-  const forceUpdate: () => void = React.useState()[1].bind(null, {});
-  const { workflowId } = useParams();
+  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const { workflowId } = useParams();
+
+  const forceUpdate: () => void = React.useState()[1].bind(null, {});
 
   const addNode = async (node: BaseNodeModel) => {
     node.setPosition(
       550 - app.getActiveDiagram().getOffsetX(),
       300 - app.getActiveDiagram().getOffsetY(),
     );
-    const newNode = {
-      type: node.getType(),
-      position: {
-        x: 550,
-        y: 300,
-      },
-      workflow: workflowId,
-    };
-    const data = await apis.node.createNode({ ...newNode });
-    if (data && data.status) {
-      node.id = data.result.node.id;
-      props.app.getDiagramEngine().getModel().addNode(node);
-      props.app.getDiagramEngine().repaintCanvas();
-      forceUpdate();
-    } else {
-      enqueueSnackbar((data && data.message) || 'Create node failed', {
-        variant: 'error',
-      });
-    }
+    const engine = app.getDiagramEngine() as AdvancedDiagramEngine;
+    node.create(engine, null, workflowId);
   };
 
   const handleAddIntent = (event: any) => {
     var node: IntentNodeModel = new IntentNodeModel();
     addNode(node);
   };
+
   const handleAddCondition = () => {
     var node: ConditionNodeModel = new ConditionNodeModel();
     addNode(node);
@@ -68,10 +53,9 @@ const BodyWidget = (props: BodyWidgetProps) => {
 
   const handleAddAction = () => {
     var node: ActionNodeModel = new ActionNodeModel();
-    console.log('action');
-
     addNode(node);
   };
+
   const getChildren = (typePort, node, children) => {
     const linkSourcesPortRight = node.getPort(typePort).getLinks();
     Object.keys(linkSourcesPortRight).forEach((el) => {

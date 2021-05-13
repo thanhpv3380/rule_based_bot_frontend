@@ -28,7 +28,6 @@ export class AdvancedLinkModel extends DefaultLinkModel {
     });
   }
   setSourcePort(port: AdvancedPortModel): void {
-    console.log(this, 'this');
     if (port !== null) {
       port.addLink(this);
     }
@@ -85,8 +84,6 @@ const CustomLinkArrowWidget = (props) => {
     ) *
       180) /
       Math.PI;
-  console.log(angle, point.getPosition().x, point.getPosition().y);
-
   //translate(50, -10),
   return (
     <g
@@ -131,7 +128,6 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
     var paths = [];
     this.refPaths = [];
 
-    console.log(points);
     const typePort = points[0].getParent().getSourcePort().getName();
 
     const pointX1 = points[0].getX();

@@ -90,32 +90,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   };
 
   const handleDeleteNode = async () => {
-    const selectedEntities = engine.getModel().getSelectedEntities();
-    if (selectedEntities.length > 0) {
-      const confirm = window.confirm('Are you sure you want to delete?');
-
-      if (confirm) {
-        _.forEach(selectedEntities, async (model) => {
-          // only delete items which are not locked
-          if (!model.isLocked()) {
-            console.log('remove');
-            const data = await apis.node.deleteNode(
-              workflowId,
-              (model as BaseNodeModel).id,
-            );
-            if (data && data.status) {
-              model.remove();
-              engine.repaintCanvas();
-            } else {
-              enqueueSnackbar((data && data.message) || 'Delete node failed', {
-                variant: 'error',
-              });
-            }
-          }
-        });
-        // engine.repaintCanvas();
-      }
-    }
+    await node.delete(engine, workflowId);
   };
 
   const handleDuplicateNode = () => {

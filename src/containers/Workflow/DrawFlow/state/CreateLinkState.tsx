@@ -9,11 +9,8 @@ import {
 import { MenuNodeModel } from '../node/MenuNode';
 import { AdvancedLinkModel, AdvancedPortModel } from '../customLink';
 import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
-import { BaseNodeModel } from '../node/BaseNodeModel';
-import { ActionNodeModel, ConditionNodeModel, IntentNodeModel } from '../node';
-import { NodeModel } from '@projectstorm/react-diagrams-core';
-import { checkAllowConnect } from '../../../../utils/checkConnectNode';
-
+import { BaseNodeModel } from '../node';
+import { getRealPosition } from '../../../../utils/node';
 /**
  * This state is controlling the creation of a link.
  */
@@ -29,89 +26,41 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
       new Action({
         type: InputType.MOUSE_UP,
         fire: (actionEvent: ActionEvent<any>) => {
-          console.log('link down');
+          //get current element
           const element = this.engine
             .getActionEventBus()
             .getModelForEvent(actionEvent);
+
+          // get position
           const {
             event: { clientX, clientY },
           } = actionEvent;
-
-          // get position and zoom level
-          const ox = this.engine.getModel().getOffsetX();
-          const oy = this.engine.getModel().getOffsetY();
-          const zoomLevel = this.engine.getModel().getZoomLevel() / 100;
-          const posX = (clientX - ox) / zoomLevel;
-          const posY = (clientY - oy) / zoomLevel;
+          // get real position
+          const { posX, posY } = getRealPosition(this.engine, clientX, clientY);
 
           if (element instanceof AdvancedPortModel && !this.sourcePort) {
             this.sourcePort = element;
             const link = this.sourcePort.createLinkModel();
             link.setSourcePort(this.sourcePort);
-
             link.getFirstPoint().setPosition(posX, posY);
             link.getLastPoint().setPosition(posX, posY);
 
             this.link = this.engine.getModel().addLink(link);
           } else if (element instanceof BaseNodeModel) {
-            // get links in target node
-            const listPortCurrentNode = element.getPorts();
-            const portInCurrentNode =
-              (listPortCurrentNode && listPortCurrentNode['in']) || null;
-            const portOutCurrentNode =
-              (listPortCurrentNode && listPortCurrentNode['out-bottom']) ||
-              null;
+            const portInCurrentNode = element.getPortsByType('in')[0];
 
-            const listLinkCurrentNode = [
-              ...Object.keys(portInCurrentNode.getLinks()),
-              ...Object.keys(portOutCurrentNode.getLinks()),
-            ];
-
+            const sourceNode = this.link
+              .getSourcePort()
+              .getParent() as BaseNodeModel;
             if (
               portInCurrentNode &&
               portInCurrentNode instanceof AdvancedPortModel &&
               this.sourcePort &&
               portInCurrentNode !== this.sourcePort
             ) {
-              const sourceNode = this.link.getSourcePort().getParent();
               if (this.sourcePort.canLinkToPort(portInCurrentNode)) {
-                // get links in source node
-                const listPortSourceNode = sourceNode.getPorts();
-                const portInSourceNode =
-                  (listPortSourceNode && listPortSourceNode['in']) || null;
-                const portOutSourceNode =
-                  (listPortSourceNode && listPortSourceNode['out-bottom']) ||
-                  null;
-
-                const listLinkSourceNode = [
-                  ...Object.keys(portInSourceNode.getLinks()),
-                  ...Object.keys(portOutSourceNode.getLinks()),
-                ];
-
-                const listKeyLinkPortInCurrentNode = Object.keys(
-                  portInCurrentNode.getLinks(),
-                );
-                if (listKeyLinkPortInCurrentNode.length > 0) {
-                  this.showNotification();
-                  return;
-                }
-                // check allow connect
-                const isConnect = checkAllowConnect(
-                  sourceNode,
-                  element,
-                  portOutSourceNode.getLinks(),
-                );
-                if (!isConnect) {
-                  this.showNotification();
-                  return;
-                }
-
-                // check 2 node is connected
-                const mutualNodeId = this.checkMutualNodeId(
-                  listLinkCurrentNode,
-                  listLinkSourceNode,
-                );
-                if (mutualNodeId) {
+                //check connect 2 node
+                if (!sourceNode.checkConnect(element)) {
                   this.showNotification();
                   return;
                 }
@@ -126,8 +75,12 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
             element instanceof AdvancedLinkModel &&
             element['points'][1] === this.link.getLastPoint()
           ) {
+            const sourceNode = this.link
+              .getSourcePort()
+              .getParent() as BaseNodeModel;
+            // create menu node
             const node = new MenuNodeModel({
-              isIntent: true,
+              nodeConnect: sourceNode,
             });
             node.setPosition(posX, posY);
             const model = this.engine.getModel();
@@ -150,16 +103,11 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
       new Action({
         type: InputType.MOUSE_MOVE,
         fire: (actionEvent: ActionEvent<any>) => {
-          console.log('link move');
           if (!this.link) return;
           const {
             event: { clientX, clientY },
           } = actionEvent;
-          const ox = this.engine.getModel().getOffsetX();
-          const oy = this.engine.getModel().getOffsetY();
-          const zoomLevel = this.engine.getModel().getZoomLevel() / 100;
-          const posX = (clientX - ox) / zoomLevel;
-          const posY = (clientY - oy) / zoomLevel;
+          const { posX, posY } = getRealPosition(this.engine, clientX, clientY);
           this.link.getLastPoint().setPosition(posX, posY);
           this.engine.repaintCanvas();
         },
@@ -170,7 +118,6 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
       new Action({
         type: InputType.KEY_UP,
         fire: (actionEvent: ActionEvent<any>) => {
-          console.log('link up');
           // on esc press remove any started link and pop back to default state
           if (actionEvent.event.keyCode === 27) {
             this.link.remove();
@@ -181,11 +128,6 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
         },
       }),
     );
-  }
-
-  checkMutualNodeId(itemsA: Array<String>, itemsB: Array<String>) {
-    const mutualNodeId = itemsA.find((el) => itemsB.indexOf(el) >= 0);
-    return mutualNodeId;
   }
 
   clearState() {

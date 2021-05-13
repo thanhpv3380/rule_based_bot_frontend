@@ -22,20 +22,19 @@ import {
   Settings as SettingsIcon,
 } from '@material-ui/icons';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { ActionNodeModel } from './';
-import { ActionAskAgainNodeModel } from '../';
-import ActionNodeDetail from './NodeDetail/index';
+import { ActionAskAgainNodeModel } from '.';
 import * as _ from 'lodash';
-import useStyles from './ActionNodeWidget.style';
+import useStyles from './ActionAskAgainNodeWidget.style';
 import { Action, InputType } from '@projectstorm/react-canvas-core';
-import { DataResponse, ActionsResponse } from './ActionNodeWidget.type';
-import apis from '../.././../../../apis';
+import { DataResponse, ActionsResponse } from './ActionAskAgainNodeWidget.type';
+import apis from '../../../../../apis';
 import { BaseNodeModel } from '../BaseNodeModel';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 import { ActionIcon } from '../../icon';
 import textDefault from '../../../../../constants/textDefault';
+
 export interface ActionNodeWidgetProps {
-  node: ActionNodeModel;
+  node: ActionAskAgainNodeModel;
   engine: AdvancedDiagramEngine;
 }
 
@@ -52,6 +51,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   const [action, setAction] = useState<ActionsResponse>();
   const [actions, setActions] = useState<ActionsResponse[]>();
   const [isFocus, setIsFocus] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const fetchActions = async () => {
     const data: DataResponse = await apis.action.getActions();
@@ -71,23 +71,40 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
     engine.repaintCanvas();
   };
 
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
-    setIsHover(false);
-    engine.getActionEventBus().registerAction(actionMouseWheel);
-    engine.repaintCanvas();
-  };
-
   const handleDeleteNode = async () => {
-    await node.delete(engine, workflowId);
+    const selectedEntities = engine.getModel().getSelectedEntities();
+    if (selectedEntities.length > 0) {
+      const confirm = window.confirm('Are you sure you want to delete?');
+
+      if (confirm) {
+        _.forEach(selectedEntities, async (model) => {
+          // only delete items which are not locked
+          if (!model.isLocked()) {
+            const data = await apis.node.deleteNode(
+              workflowId,
+              (model as BaseNodeModel).id,
+            );
+            if (data && data.status) {
+              model.remove();
+              engine.repaintCanvas();
+            } else {
+              enqueueSnackbar((data && data.message) || 'Delete node failed', {
+                variant: 'error',
+              });
+            }
+          }
+        });
+        engine.repaintCanvas();
+      }
+    }
   };
 
   const handleDuplicateNode = () => {
     const selectedEntities = engine
       .getModel()
-      .getSelectedEntities()[0] as ActionNodeModel;
+      .getSelectedEntities()[0] as ActionAskAgainNodeModel;
 
-    const newNode = new ActionNodeModel();
+    const newNode = new ActionAskAgainNodeModel();
     newNode.setPosition(
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
@@ -107,57 +124,6 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
     engine.repaintCanvas();
   };
 
-  const handleCreateAAAgainNode = async () => {
-    const posX = node.getX();
-    const posY = node.getY();
-
-    const sourcePortOutRight = node.getPort('out-right');
-    const link = sourcePortOutRight.createLinkModel();
-    link.setSourcePort(sourcePortOutRight);
-    link.getFirstPoint().setPosition(posX, posY);
-
-    // create action ask again node
-    const actionAskAgainNode = new ActionAskAgainNodeModel();
-    actionAskAgainNode.setPosition(posX + 300, posY);
-    const targetPortIn = actionAskAgainNode.getPort('in');
-    link
-      .getLastPoint()
-      .setPosition(actionAskAgainNode.getX(), actionAskAgainNode.getY());
-
-    if (link.getSourcePort().canLinkToPort(targetPortIn)) {
-      link.setTargetPort(targetPortIn);
-      targetPortIn.reportPosition();
-    }
-
-    // call api add node
-    const newNode = {
-      type: actionAskAgainNode.getType(),
-      position: {
-        x: actionAskAgainNode.getX(),
-        y: actionAskAgainNode.getY(),
-      },
-      parent: [
-        {
-          node: node.id,
-          type: node.getType(),
-        },
-      ],
-      workflow: workflowId,
-    };
-
-    const data = await apis.node.createNode({ ...newNode });
-    if (data && data.status) {
-      actionAskAgainNode.id = data.result.node.id;
-    }
-
-    // add node to model
-    const model = engine.getModel();
-    model.addNode(actionAskAgainNode);
-
-    // update canvas
-    engine.repaintCanvas();
-  };
-
   return (
     <Box
       className={classes.boxContainer}
@@ -166,11 +132,6 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
     >
       {isHover ? (
         <Box className={classes.iconMenu}>
-          <EditIcon
-            fontSize="small"
-            className={classes.iconMenuItem}
-            onClick={handleOpenEdit}
-          />
           <DeleteOutlineIcon
             fontSize="small"
             onClick={() => handleDeleteNode()}
@@ -181,6 +142,11 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
             className={classes.fileCopyIcon}
           />
           <MoreVertIcon fontSize="small" className={classes.iconMenuItem} />
+          <SettingsIcon
+            fontSize="small"
+            onClick={() => setOpenModal(true)}
+            className={classes.iconMenuItem}
+          />
         </Box>
       ) : (
         <Box className={classes.noneIconMenu} />
@@ -198,14 +164,9 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
           <ActionIcon
             backgroundColor="#ebe0f1"
             className={classes.iconHeader}
+            onClick={() => setOpenModal(true)}
           />
-          <Typography variant="h6">Action</Typography>
-
-          <SettingsIcon
-            fontSize="small"
-            className={classes.iconSetting}
-            onClick={handleCreateAAAgainNode}
-          />
+          <Typography variant="h6">Action Ask Again</Typography>
         </Grid>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <PortWidget
@@ -214,55 +175,82 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
           >
             <div className="circle-port" />
           </PortWidget>
-          {!isFocus ? (
-            <Grid
-              onMouseLeave={() => setIsFocus(false)}
-              onMouseDown={() => setIsFocus(true)}
-              className={classes.unforcusBody}
+          <div className={classes.paper}>
+            <form //onSubmit={handleSubmit}
             >
-              {action ? (
-                <Typography>{action.name}</Typography>
-              ) : (
-                <Typography style={{ color: 'rgba(138, 138, 138, 0.87)' }}>
-                  Select action
-                </Typography>
-              )}
-            </Grid>
-          ) : (
-            <Grid
-              onMouseDown={() => setIsFocus(true)}
-              className={classes.forcusBody}
-            >
-              <Autocomplete
-                className={classes.autoComplete}
-                size="small"
-                options={actions || []}
-                value={action || null}
-                onChange={(
-                  e: React.ChangeEvent<{}>,
-                  value: any,
-                  reason: string,
-                ) => {
-                  node.itemId = (value && value.id) || null;
-                  setAction(value);
-                }}
-                onOpen={handleOpenAutocomplete}
-                onClose={handleCloseAutocomplete}
-                getOptionSelected={(option, value) => option.id === value.id}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    InputProps={{
-                      ...params.InputProps,
-                      disableUnderline: true,
+              <Grid>
+                <Typography variant="h6">Setting ask again</Typography>
+                <FormControl fullWidth className={classes.formControl}>
+                  <Typography>{textDefault.ACTION_ASK_AGAIN}</Typography>
+
+                  <Autocomplete
+                    size="medium"
+                    options={actions}
+                    getOptionSelected={(option, value) =>
+                      option.id === value.id
+                    }
+                    getOptionLabel={(option) => option.name}
+                    name="actionAskAgain"
+                    onChange={(e, value) => {
+                      // setActionAskAgain(value);
                     }}
-                    className={classes.textField}
+                    // value={actionAskAgain || {}}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        classes={{
+                          root: classes.textInput,
+                        }}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-          )}
+                </FormControl>
+                <FormControl className={classes.formControl}>
+                  <Typography>{textDefault.NUMBER_OF_LOOP}</Typography>
+                  <TextField
+                    // onChange={handleNumberOfLoop}
+                    name="numberOfLoop"
+                    type="number"
+                    // defaultValue={numberOfLoop}
+                    classes={{
+                      root: classes.mutiInput,
+                    }}
+                    variant="outlined"
+                  />
+                </FormControl>
+                <FormControl
+                  fullWidth
+                  variant="outlined"
+                  className={classes.formControl}
+                >
+                  <Typography>{textDefault.ACTION_BREAK}</Typography>
+                  <Autocomplete
+                    size="medium"
+                    options={actions}
+                    getOptionSelected={(option, value) =>
+                      option.id === value.id
+                    }
+                    getOptionLabel={(option) => option.name}
+                    name="actionBreak"
+                    onChange={(e, value) => {
+                      // setActionBreak(value);
+                    }}
+                    // value={actionBreak || {}}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        classes={{
+                          root: classes.textInput,
+                        }}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+            </form>
+          </div>
           <PortWidget
             engine={props.engine}
             port={props.node.getPort('out-right')}
@@ -279,7 +267,6 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
           </PortWidget>
         </Grid>
       </Paper>
-      <ActionNodeDetail open={openEdit} handleCloseEdit={handleCloseEdit} />
     </Box>
   );
 };

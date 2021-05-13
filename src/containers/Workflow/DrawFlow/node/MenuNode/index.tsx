@@ -7,16 +7,16 @@ import { BaseModelOptions } from '@projectstorm/react-canvas-core';
 import { BaseNodeModel } from '../BaseNodeModel';
 export interface MenuNodeModelOptions extends BaseModelOptions {
   color?: string;
-  isIntent?: boolean;
+  nodeConnect?: BaseNodeModel;
 }
 export class MenuNodeModel extends BaseNodeModel {
-  isIntent?: boolean;
+  nodeConnect?: BaseNodeModel;
   constructor(options: MenuNodeModelOptions = {}) {
     super({
       ...options,
       type: 'MENU',
     });
-    this.isIntent = options.isIntent;
+    this.nodeConnect = options.nodeConnect;
   }
 }
 export class MenuNodeFactory extends AbstractReactFactory<
