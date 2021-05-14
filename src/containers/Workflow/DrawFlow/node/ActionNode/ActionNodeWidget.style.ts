@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
   boxContainer: {
-    width: 280,
+    width: 350,
     position: 'relative'
   },
   iconMenu: {
@@ -31,30 +31,26 @@ export default makeStyles((theme) => ({
     borderRadius: 5
   },
   iconHeader: {
-    position: 'relative',
-    marginRight: 10,
+    marginRight: 5,
     width: '2em',
     height: '2em'
   },
   iconSetting: {
-    position: 'relative',
-    marginRight: 10,
-    left: 75,
-    top: 7,
     cursor: 'pointer'
   },
   grid: {
-    padding: 10,
+    display: "flex",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: theme.spacing(1, 2.5),
     backgroundColor: '#ebe0f1',
     borderTopRightRadius: 5,
     borderTopLeftRadius: 5,
   },
   autoComplete: {
-    margin: '0px 10px',
     borderRadius: 5,
-    // backgroundColor: '#ffff',
   },
-  forcusBody: {
+  focusBody: {
     width: '100%',
     backgroundColor: '#ffff',
     margin: '10px 10px',
@@ -66,10 +62,9 @@ export default makeStyles((theme) => ({
       // border: '2px solid #ccc',
     }
   },
-  unforcusBody: {
+  unfocusBody: {
     width: '100%',
     backgroundColor: '#ffff',
-    margin: '10px 10px',
     padding: 10,
     borderRadius: 5,
     cursor: 'pointer',
@@ -80,7 +75,9 @@ export default makeStyles((theme) => ({
     }
   },
   textField: {
-    margin: '10px 0px 5px 0px',
+    margin: '20px 0px 20px 0px',
+    paddingTop: '10px',
+    paddingBottom: '10px'
   },
 
 
@@ -128,5 +125,8 @@ export default makeStyles((theme) => ({
       borderRadius: 10,
       fontSize: 20,
     },
+  },
+  content: {
+    padding: theme.spacing(2, 4, 3),
   },
 }));

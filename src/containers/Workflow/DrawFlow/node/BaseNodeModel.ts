@@ -1,3 +1,5 @@
+import { ConditionNodeModel } from './ConditionNode/index';
+import { IntentNodeModel } from './IntentNode/index';
 import { NodeModel, PortModel } from '@projectstorm/react-diagrams';
 import { BaseModelOptions, DeserializeEvent } from '@projectstorm/react-canvas-core';
 import { AdvancedLinkModel, AdvancedPortModel } from '../customLink';
@@ -10,6 +12,7 @@ import {
     checkMutualNodeId,
     checkAllowConnect
 } from '../../../../utils/node';
+import { ActionNodeModel } from '.';
 export interface BaseNodeModelOptions extends BaseModelOptions {
     color?: string;
     id?: string;
@@ -117,6 +120,25 @@ export class BaseNodeModel extends NodeModel {
             listLinkId = [...listLinkId, ...Object.keys(listLinkObj).map(keyLink => keyLink)]
         })
         return listLinkId;
+    }
+
+    duplicateNode(engine: AdvancedDiagramEngine, posX?: number, posY?: number): void {
+        const typeNode = this.getType();
+        let newNode: BaseNodeModel;
+        if (typeNode === 'ACTION') {
+            newNode = new ActionNodeModel();
+        } else if (typeNode === 'INTENT') {
+            newNode = new IntentNodeModel();
+        } else if (typeNode === 'CONDITION') {
+            newNode = new ConditionNodeModel();
+        }
+
+        newNode.setPosition(
+            posX || 0,
+            posY || 0
+        );
+        engine.getModel().addNode(newNode);
+        engine.repaintCanvas();
     }
 
     async create(

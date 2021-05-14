@@ -8,6 +8,7 @@ import {
   IntentNodeModel,
   ActionNodeModel,
   ConditionNodeModel,
+  ActionAskAgainNodeModel,
 } from './node';
 import { AdvancedLinkModel, AdvancedPortModel } from './customLink';
 import { NodeModel } from '@projectstorm/react-diagrams-core';
@@ -26,6 +27,11 @@ export interface Node {
   intent: {
     id: string;
     name: string;
+  };
+  actionAskAgain: {
+    numberOfLoop: number;
+    actionFail: string;
+    actionAskAgain: string;
   };
   parent: NodeConnect[];
   children: NodeConnect[];
@@ -74,6 +80,7 @@ const DrawFlow = () => {
             id: node.id,
             itemId: (node.action && node.action.id) || null,
             nodeInfo: node.action || null,
+            actionAskAgain: node.actionAskAgain || null,
           });
           nodeDraw.setPosition(node.position.x, node.position.y);
           application.getActiveDiagram().addNode(nodeDraw);

@@ -32,33 +32,36 @@ const Sidebar = ({
   const location = useLocation();
 
   const isActiveRoute = (route) => {
-    return matchPath(location.pathname, { path: route, exact: true });
+    const listNameUrl = location.pathname.split('/');
+    return route.indexOf(listNameUrl[3]) >= 0;
   };
 
   useEffect(() => {
-    menu.every((key, index) => {
-      const checked = isActiveRoute(key.route);
-      if (checked) {
-        setMenuActive(index);
-        setExpandMenu(index);
-        return false;
-      }
+    menu.find((key, index) => {
       if (key.subMenus) {
-        const checkedNestedMenu = key.subMenus.every((subMenu) => {
-          const checkSubmenu = isActiveRoute(subMenu.route);
-          if (checkSubmenu) {
-            setMenuActive(index);
-            setExpandMenu(index);
-            return false;
-          }
-          return true;
-        });
-        if (!checkedNestedMenu) return false;
-      }
-      return true;
-    });
-  }, [location.pathname]);
+        const indexActive =
+          key.subMenus &&
+          key.subMenus.findIndex((el) => isActiveRoute(el.route));
 
+        if (indexActive >= 0) {
+          setMenuActive(index);
+          setExpandMenu(index);
+          return true;
+        }
+      }
+      if (key.route) {
+        const checkActive = isActiveRoute(key.route);
+        if (checkActive) {
+          setMenuActive(index);
+          setExpandMenu(index);
+          return true;
+        }
+      }
+      return false;
+    });
+  }, []);
+
+  console.log({ menuActive, expandMenu });
   const handleCollapseMenu = (index) => {
     if (expandMenu === index) setExpandMenu('');
     else {

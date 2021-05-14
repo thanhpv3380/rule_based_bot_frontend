@@ -98,14 +98,11 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
       .getModel()
       .getSelectedEntities()[0] as IntentNodeModel;
 
-    const newNode = new IntentNodeModel();
-    newNode.setPosition(
+    node.duplicateNode(
+      engine,
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
     );
-    // props.engine.getModel().addNode(newNode);
-    engine.getModel().addNode(newNode);
-    engine.repaintCanvas();
   };
 
   const handleOpenAutocomplete = () => {
@@ -157,13 +154,13 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
           engine={props.engine}
           port={props.node.getPort('in')}
         ></PortWidget>
-        <Grid container justify="center" className={classes.header}>
+        <Box className={classes.grid}>
           <IntentIcon
-            className={classes.headerIcon}
-            style={{ width: '2em', height: '2em' }}
+            backgroundColor="#e8f8ff"
+            className={classes.iconHeader}
           />
           <Typography variant="h6">Intent</Typography>
-        </Grid>
+        </Box>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <PortWidget
             engine={props.engine}

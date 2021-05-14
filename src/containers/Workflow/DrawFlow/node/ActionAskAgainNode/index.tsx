@@ -10,13 +10,16 @@ export interface ActionAskAgainNodeModelOptions extends BaseModelOptions {
   id?: string;
   itemId?: string;
   nodeInfo?: any;
+  actionNodeId?: string;
 }
 export class ActionAskAgainNodeModel extends BaseNodeModel {
+  actionNodeId?: string;
   constructor(options: ActionAskAgainNodeModelOptions = {}) {
     super({
       ...options,
       type: 'ACTION_ASK_AGAIN',
     });
+    this.actionNodeId = options.actionNodeId;
   }
 }
 export class ActionAskAgainNodeFactory extends AbstractReactFactory<

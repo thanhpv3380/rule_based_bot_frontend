@@ -25,7 +25,7 @@ export default makeStyles(() => ({
     marginBottom: 2,
     cursor: 'pointer',
     background: '#fff',
-    boxShadow: '0 10px 6px -6px #777'
+    border: '1px solid #ccc'
   },
   siderBarIcon: {
     width: '2em', height: '2em'

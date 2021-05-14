@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
   boxContainer: {
-    width: 280,
+    width: 350,
     position: 'relative'
   },
   iconMenu: {
@@ -93,23 +93,9 @@ export default makeStyles((theme) => ({
     // alignItems: 'center',
     justifyContent: 'center',
   },
-  paper: {
-    position: 'absolute',
-    width: '30%',
-    border: '2px solid #fff',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
+  content: {
     padding: theme.spacing(2, 4, 3),
-    outline: 'none',
-    borderRadius: 10,
   },
-  //   formControl: {
-  //     '& .MuiOutlinedInput-root': {
-  //       borderRadius: 10,
-  //       backgroundColor: 'white',
-  //     },
-  //     marginTop: '4%',
-  //   },
   mutiInput: {
     '& .MuiOutlinedInput-root': {
       borderRadius: 10,
@@ -125,7 +111,7 @@ export default makeStyles((theme) => ({
   },
   textInput: {
     '& .MuiOutlinedInput-root': {
-      borderRadius: 10,
+      borderRadius: 5,
       fontSize: 20,
     },
   },

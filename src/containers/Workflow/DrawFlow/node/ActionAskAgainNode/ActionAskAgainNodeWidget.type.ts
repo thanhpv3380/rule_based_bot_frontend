@@ -1,13 +1,17 @@
-export interface Action {
+export interface ActionAskAgain {
 
 }
-
-export interface ActionsResponse {
+export interface ActionAskAgainResponse {
+    numberOfLoop: Number,
+    actionFail: string,
+    actionAskAgain: string
+}
+export interface ActionResponse {
     id: string;
     name: string;
 }
 
 export interface DataResponse {
-    result?: { actions: ActionsResponse[] },
+    result?: { actions: ActionResponse[] },
     status: number
 }

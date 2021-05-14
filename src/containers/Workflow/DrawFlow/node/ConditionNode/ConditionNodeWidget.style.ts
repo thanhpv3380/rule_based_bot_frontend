@@ -1,20 +1,29 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const useStyle = makeStyles({
+const useStyle = makeStyles((theme) => ({
     root: {
         borderRadius: 5,
         backgroundColor: '#ffff',
     },
-    header: {
-        padding: 10,
+    grid: {
+        display: "flex",
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        padding: theme.spacing(1, 2.5),
         backgroundColor: '#e7fff6',
         borderTopRightRadius: 5,
         borderTopLeftRadius: 5,
     },
-    headerIcon: {
-        position: 'relative',
+    iconHeader: {
         marginRight: 5,
-        top: 2,
+        width: '2em',
+        height: '2em'
+    },
+    headerIcon: {
+        marginRight: 5,
+        width: '2em',
+        height: '2em',
+        backgroundColor: "#e7fff6"
     },
     content: {
         margin: '0px 20px',
@@ -78,6 +87,6 @@ const useStyle = makeStyles({
     btnAdCondition: {
         padding: 5,
     },
-});
+}));
 
 export default useStyle;

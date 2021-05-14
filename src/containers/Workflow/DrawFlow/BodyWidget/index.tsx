@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { CanvasWidget } from '@projectstorm/react-canvas-core';
 import { Application } from '../Application';
@@ -7,7 +7,7 @@ import DemoCanvasWidget from './DemoCanvasWidget/index';
 
 import { IntentNodeModel, ConditionNodeModel, ActionNodeModel } from '../node';
 
-import { Box, Drawer } from '@material-ui/core';
+import { Box, Drawer, Tooltip, Button, IconButton } from '@material-ui/core';
 import {
   RecordVoiceOver as RecordVoiceOverIcon,
   Sms as SmsIcon,
@@ -26,9 +26,10 @@ export interface BodyWidgetProps {
 
 const BodyWidget = (props: BodyWidgetProps) => {
   const { app } = props;
+  const history = useHistory();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { workflowId } = useParams();
+  const { workflowId, id } = useParams();
 
   const forceUpdate: () => void = React.useState()[1].bind(null, {});
 
@@ -112,10 +113,14 @@ const BodyWidget = (props: BodyWidgetProps) => {
             },
           };
         case 'ACTION':
+          const actionNode = el as ActionNodeModel;
           return {
             id: el.id,
             type: el.getType(),
             action: el.itemId,
+            actionAskAgain: {
+              ...(el as ActionNodeModel).actionAskAgain,
+            },
             parent,
             children,
             position: {
@@ -158,6 +163,10 @@ const BodyWidget = (props: BodyWidgetProps) => {
     }
   };
 
+  const handleClose = () => {
+    history.push(`/bot/${id}/workflows/detail/${workflowId}`);
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.sideBar}>
@@ -170,11 +179,15 @@ const BodyWidget = (props: BodyWidgetProps) => {
         <Box className={classes.sideBarItem} onClick={handleAddAction}>
           <ActionIcon className={classes.siderBarIcon} />
         </Box>
-        <Box className={classes.sideBarItem}>
-          <SaveIcon onClick={handleSave} className={classes.siderBarIconSave} />
+        <Box className={classes.sideBarItem} onClick={handleSave}>
+          <Tooltip title="Save" aria-label="add" placement="right">
+            <SaveIcon className={classes.siderBarIconSave} />
+          </Tooltip>
         </Box>
-        <Box className={classes.sideBarItem}>
-          <CloseIcon />
+        <Box className={classes.sideBarItem} onClick={handleClose}>
+          <Tooltip title="Close" aria-label="add" placement="right">
+            <CloseIcon />
+          </Tooltip>
         </Box>
       </div>
 

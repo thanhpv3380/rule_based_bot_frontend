@@ -26,50 +26,48 @@ import { ActionAskAgainNodeModel } from '.';
 import * as _ from 'lodash';
 import useStyles from './ActionAskAgainNodeWidget.style';
 import { Action, InputType } from '@projectstorm/react-canvas-core';
-import { DataResponse, ActionsResponse } from './ActionAskAgainNodeWidget.type';
+import {
+  DataResponse,
+  ActionAskAgainResponse,
+  ActionResponse,
+} from './ActionAskAgainNodeWidget.type';
 import apis from '../../../../../apis';
 import { BaseNodeModel } from '../BaseNodeModel';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 import { ActionIcon } from '../../icon';
 import textDefault from '../../../../../constants/textDefault';
 
-export interface ActionNodeWidgetProps {
+export interface ActionAskAgainNodeWidgetProps {
   node: ActionAskAgainNodeModel;
   engine: AdvancedDiagramEngine;
 }
 
-const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
+const ActionAskAgainNodeNodeWidget = (props: ActionAskAgainNodeWidgetProps) => {
   const { node, engine } = props;
   const { workflowId } = useParams();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [isHover, setIsHover] = useState(false);
-  const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [actionMouseWheel] = useState<Action>(
     engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
   );
-  const [action, setAction] = useState<ActionsResponse>();
-  const [actions, setActions] = useState<ActionsResponse[]>();
+  const [
+    actionAskAgain,
+    setActionAskAgain,
+  ] = useState<ActionAskAgainResponse>();
+  const [actions, setActions] = useState<ActionResponse[]>();
   const [isFocus, setIsFocus] = useState<boolean>(false);
-  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const fetchActions = async () => {
     const data: DataResponse = await apis.action.getActions();
     if (data && data.status) {
       setActions(data.result.actions);
-      setAction(data.result.actions.find((el) => el.id === node.itemId));
     }
   };
 
   useEffect(() => {
     fetchActions();
-  }, [action]);
-
-  const handleOpenEdit = () => {
-    setOpenEdit(true);
-    engine.getActionEventBus().deregisterAction(actionMouseWheel);
-    engine.repaintCanvas();
-  };
+  }, []);
 
   const handleDeleteNode = async () => {
     const selectedEntities = engine.getModel().getSelectedEntities();
@@ -80,48 +78,17 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
         _.forEach(selectedEntities, async (model) => {
           // only delete items which are not locked
           if (!model.isLocked()) {
-            const data = await apis.node.deleteNode(
-              workflowId,
-              (model as BaseNodeModel).id,
-            );
-            if (data && data.status) {
-              model.remove();
-              engine.repaintCanvas();
-            } else {
-              enqueueSnackbar((data && data.message) || 'Delete node failed', {
-                variant: 'error',
-              });
-            }
+            model.remove();
+            engine.repaintCanvas();
+          } else {
+            enqueueSnackbar('Delete node failed', {
+              variant: 'error',
+            });
           }
         });
         engine.repaintCanvas();
       }
     }
-  };
-
-  const handleDuplicateNode = () => {
-    const selectedEntities = engine
-      .getModel()
-      .getSelectedEntities()[0] as ActionAskAgainNodeModel;
-
-    const newNode = new ActionAskAgainNodeModel();
-    newNode.setPosition(
-      selectedEntities.getPosition().x + 20,
-      selectedEntities.getPosition().y + 20,
-    );
-    engine.getModel().addNode(newNode);
-    // engine.getModel().addNode(newNode);
-    engine.repaintCanvas();
-  };
-
-  const handleOpenAutocomplete = () => {
-    engine.getActionEventBus().deregisterAction(actionMouseWheel);
-    engine.repaintCanvas();
-  };
-
-  const handleCloseAutocomplete = () => {
-    engine.getActionEventBus().registerAction(actionMouseWheel);
-    engine.repaintCanvas();
   };
 
   return (
@@ -137,16 +104,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
             onClick={() => handleDeleteNode()}
             className={classes.iconMenuItem}
           />
-          <FileCopyIcon
-            onClick={() => handleDuplicateNode()}
-            className={classes.fileCopyIcon}
-          />
           <MoreVertIcon fontSize="small" className={classes.iconMenuItem} />
-          <SettingsIcon
-            fontSize="small"
-            onClick={() => setOpenModal(true)}
-            className={classes.iconMenuItem}
-          />
         </Box>
       ) : (
         <Box className={classes.noneIconMenu} />
@@ -164,20 +122,12 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
           <ActionIcon
             backgroundColor="#ebe0f1"
             className={classes.iconHeader}
-            onClick={() => setOpenModal(true)}
           />
           <Typography variant="h6">Action Ask Again</Typography>
         </Grid>
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <PortWidget
-            engine={props.engine}
-            port={props.node.getPort('out-left')}
-          >
-            <div className="circle-port" />
-          </PortWidget>
-          <div className={classes.paper}>
-            <form //onSubmit={handleSubmit}
-            >
+          <div className={classes.content}>
+            <form>
               <Grid>
                 <Typography variant="h6">Setting ask again</Typography>
                 <FormControl fullWidth className={classes.formControl}>
@@ -251,24 +201,10 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
               </Grid>
             </form>
           </div>
-          <PortWidget
-            engine={props.engine}
-            port={props.node.getPort('out-right')}
-          >
-            <div className="circle-port" />
-          </PortWidget>
         </Box>
-        <Grid container alignItems="center" justify="center">
-          <PortWidget
-            engine={props.engine}
-            port={props.node.getPort('out-bottom')}
-          >
-            <div className="circle-port" />
-          </PortWidget>
-        </Grid>
       </Paper>
     </Box>
   );
 };
 
-export default ActionNodeNodeWidget;
+export default ActionAskAgainNodeNodeWidget;

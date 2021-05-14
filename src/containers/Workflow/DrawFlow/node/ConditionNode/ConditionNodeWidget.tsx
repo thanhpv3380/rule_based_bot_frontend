@@ -179,18 +179,15 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   };
 
   const handleDuplicateNode = () => {
-    console.log('duplicate');
     const selectedEntities = engine
       .getModel()
       .getSelectedEntities()[0] as ConditionNodeModel;
 
-    const newNode = new ConditionNodeModel();
-    newNode.setPosition(
+    node.duplicateNode(
+      engine,
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
     );
-    engine.getModel().addNode(newNode);
-    engine.repaintCanvas();
   };
 
   const handleAddCondition = () => {
@@ -273,17 +270,16 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       )}
 
       <Paper elevation={5} className={classes.root}>
-        <Box display="flex" alignItems="center" flexDirection="column">
+        <Box display="flex" flexDirection="column">
           <PortWidget engine={props.engine} port={props.node.getPort('in')} />
-          <Grid container justify="center" className={classes.header}>
-            {/* <DeviceHubSharpIcon className={classes.headerIcon} /> */}
+          <Box className={classes.grid}>
             <ConditionIcon
-              className={classes.headerIcon}
-              style={{ width: '2em', height: '2em' }}
               backgroundColor="#e7fff6"
+              className={classes.iconHeader}
             />
             <Typography variant="h6">Condition</Typography>
-          </Grid>
+          </Box>
+
           <Box className={classes.content}>
             <TableContainer
               component={Paper}
