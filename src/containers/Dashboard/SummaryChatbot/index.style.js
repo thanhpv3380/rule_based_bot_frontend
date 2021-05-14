@@ -26,4 +26,33 @@ export default makeStyles((theme) => ({
   fontBold: {
     fontWeight: '600',
   },
+  headerBody: {
+    display: 'flex',
+    WebkitBoxAlign: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  dateRangePicker: {
+    border: '1px solid',
+    borderRadius: 10,
+    padding: '0px 15px',
+    display: 'flex',
+  },
+  dividerDateRange: {
+    display: 'flex',
+    WebkitBoxAlign: 'center',
+    alignItems: 'center',
+    fontSize: 28,
+  },
+  dateStart: {
+    width: 100,
+    paddingRight: 4,
+  },
+  dateEnd: {
+    width: 100,
+    paddingLeft: 5,
+  },
+  gridItem: {
+    maxWidth: '20%',
+  },
 }));

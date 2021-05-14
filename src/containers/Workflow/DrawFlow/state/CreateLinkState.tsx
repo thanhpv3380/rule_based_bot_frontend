@@ -77,6 +77,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
               if (this.sourcePort.canLinkToPort(portInCurrentNode)) {
                 // get links in source node
                 const listPortSourceNode = sourceNode.getPorts();
+                sourceNode.getPort('in').getOptions();
                 const portInSourceNode =
                   (listPortSourceNode && listPortSourceNode['in']) || null;
                 const portOutSourceNode =

@@ -8,6 +8,7 @@ import Intent from '../pages/Intent';
 import Entity from '../pages/Entity';
 import Workflow from '../pages/Workflow';
 import DrawFlow from '../pages/DrawFlow';
+import Settings from '../pages/settting';
 
 export default [
   {
@@ -90,5 +91,14 @@ export default [
     isPrivate: true,
     isLayout: false,
     isHeader: false,
+  },
+  {
+    path: routes.SETTINGS,
+    component: Settings,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+    isHeader: true,
   },
 ];

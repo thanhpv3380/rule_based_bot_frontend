@@ -13,7 +13,12 @@ import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+import {
+  // format,
+  // formatDistance,
+  // formatRelative,
+  subDays,
+} from 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import { Info as InfoIcon } from '@material-ui/icons';
 import Highcharts from 'highcharts';
@@ -135,79 +140,16 @@ const SummaryChatbot = () => {
   //   },
   // ]);
   const [typeDateSelected, setTypeDateSelected] = useState('TODAY');
-
-  const highChartsRender = () => {
-    Highcharts.chart({
-      chart: {
-        type: 'line',
-        renderTo: 'graph-summary-chatbot',
-      },
-      title: {
-        text: 'Effective',
-      },
-      xAxis: {
-        title: {
-          text: 'Day',
-        },
-        categories: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
-        ],
-      },
-      yAxis: {
-        title: {
-          text: 'Total request',
-        },
-      },
-      legend: {
-        layout: 'horizontal',
-        align: 'center',
-        verticalAlign: 'top',
-        borderWidth: 0,
-        itemDistance: 30,
-        margin: 5,
-      },
-      series: [
-        {
-          name: 'Total request',
-          data: [900, 850, 990, 1200, 780, 930, 1700],
-          color: '#4991e2',
-        },
-        {
-          name: 'Answered',
-          data: [300, 400, 200, 250, 540, 120, 800],
-          color: '#48bb78',
-        },
-        {
-          name: 'Not understand',
-          data: [200, 100, 300, 450, 140, 200, 520],
-          color: '#f16a73',
-        },
-        {
-          name: 'Need confirm',
-          data: [100, 100, 100, 150, 140, 20, 500],
-          color: '#f6a61f',
-        },
-      ],
-    });
-  };
+  const [openStartDate, setOpenStartDate] = useState(false);
+  const [openEndDate, setOpenEndDate] = useState(false);
 
   const bindDataAnalysts = (statistics) => {
     const {
       totalUsersay,
-      // defaultUsersay,
+      defaultUsersay,
       answeredUsersay,
       notUnderstandUsersay,
+      needConfirmUsersay,
       percent,
     } = statistics;
     const dataAnalysts = [
@@ -240,16 +182,16 @@ const SummaryChatbot = () => {
         description: 'Bot confirm action',
         color: '#f6a61f',
         key: '',
-        numberRequest: 0,
-        percent: 0,
+        numberRequest: needConfirmUsersay,
+        percent: Number(percent.needConfirmUsersay * 100).toFixed(2),
       },
       {
         heading: 'Default reply',
         description: 'Default reply',
         color: '#9f7aea',
         key: '',
-        numberRequest: 0,
-        percent: Number(100).toFixed(2),
+        numberRequest: defaultUsersay,
+        percent: Number(percent.defaultUsersay * 100).toFixed(2),
       },
     ];
     setAnalysts(dataAnalysts);
@@ -278,14 +220,18 @@ const SummaryChatbot = () => {
           data: data.map((el) => el.notUnderstandUsersay),
           color: '#f16a73',
         },
-        // {
-        //   name: 'Need confirm',
-        //   data: [100, 100, 100, 150, 140, 20, 500],
-        //   color: '#f6a61f',
-        // },
+        {
+          name: 'Need confirm',
+          data: data.map((el) => el.needConfirmUsersay),
+          color: '#f6a61f',
+        },
+        {
+          name: 'Default reply',
+          data: data.map((el) => el.defaultUsersay),
+          color: '#9f7aea',
+        },
       ],
     };
-    console.log(hightChart);
     Highcharts.chart(hightChart);
   };
 
@@ -294,29 +240,51 @@ const SummaryChatbot = () => {
 
     if (data.status) {
       bindDataAnalysts(data.result.statistics);
-      console.log(data.result.dashboards);
       // setSummary(data.result.statistics);
       bindDataHightChart(data.result.dashboards);
     }
   };
 
   useEffect(() => {
-    // highChartsRender();
+    fetchDashboard();
+  }, [dateSelected]);
+
+  useEffect(() => {
     fetchDashboard();
   }, []);
+
+  const handleChangeTypeSelect = (value) => {
+    if (value === 'TODAY') {
+      setDateSelected({
+        startDate: subDays(new Date(), 1),
+        endDate: new Date(),
+      });
+    } else if (value === 'WEEK') {
+      setDateSelected({
+        startDate: subDays(new Date(), 7),
+        endDate: new Date(),
+      });
+    } else {
+      setDateSelected({
+        startDate: subDays(new Date(), 31),
+        endDate: new Date(),
+      });
+    }
+  };
   return (
     <>
       <Box className={classes.heading} mt={2} mb={2}>
         <Typography variant="h6" gutterBottom>
           SUMMARY OF CHATBOT EFFICIENCY
         </Typography>
-        <Box>
+        <Box className={classes.headerBody}>
           {btnList.map((el) => (
             <Button
               variant={typeDateSelected === el.value ? 'contained' : 'outlined'}
               color="primary"
               onClick={() => {
                 setTypeDateSelected(el.value);
+                handleChangeTypeSelect(el.value);
               }}
               className={classes.btn}
             >
@@ -324,38 +292,55 @@ const SummaryChatbot = () => {
             </Button>
           ))}
 
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
-              margin="normal"
-              label="Date picker dialog"
-              format="MM/dd/yyyy"
-              value={dateSelected.startDate}
-              onChange={(date) => {
-                setDateSelected({
-                  ...dateSelected,
-                  startDate: date,
-                });
-              }}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-            />
-            <KeyboardDatePicker
-              margin="normal"
-              label="Date picker dialog"
-              format="MM/dd/yyyy"
-              value={dateSelected.endDate}
-              onChange={(date) => {
-                setDateSelected({
-                  ...dateSelected,
-                  endDate: date,
-                });
-              }}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-            />
-          </MuiPickersUtilsProvider>
+          <Grid className={classes.dateRangePicker}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                open={openStartDate}
+                onClick={() => setOpenStartDate(true)}
+                onClose={() => setOpenStartDate(false)}
+                maxDate={new Date()}
+                className={classes.dateStart}
+                margin="normal"
+                // label="Date picker dialog"
+                format="MM/dd/yyyy"
+                value={dateSelected.startDate}
+                onChange={(date) => {
+                  setDateSelected({
+                    ...dateSelected,
+                    startDate: date,
+                  });
+                }}
+                allowKeyboardControl
+                KeyboardButtonProps={{
+                  disabled: true,
+                  style: { display: 'none' },
+                }}
+              />
+              <Box className={classes.dividerDateRange}>-</Box>
+              <KeyboardDatePicker
+                open={openEndDate}
+                onClick={() => setOpenEndDate(true)}
+                onClose={() => setOpenEndDate(false)}
+                maxDate={new Date()}
+                className={classes.dateEnd}
+                margin="normal"
+                // label="Date picker dialog"
+                format="MM/dd/yyyy"
+                value={dateSelected.endDate}
+                onChange={(date) => {
+                  setDateSelected({
+                    ...dateSelected,
+                    endDate: date,
+                  });
+                }}
+                allowKeyboardControl
+                KeyboardButtonProps={{
+                  disabled: true,
+                  style: { display: 'none' },
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </Grid>
         </Box>
       </Box>
       <Divider />
@@ -363,7 +348,7 @@ const SummaryChatbot = () => {
         <Grid container spacing={3}>
           {analysts &&
             analysts.map((el) => (
-              <Grid item xs={3}>
+              <Grid item xs={3} className={classes.gridItem}>
                 <Paper
                   className={classes.paper}
                   elevation={2}
