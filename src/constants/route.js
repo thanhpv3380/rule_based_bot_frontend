@@ -25,4 +25,5 @@ export default {
     DETAIL_WORKFLOW: '/bot/:id/workflows/detail/:workflowId',
     DRAW_FLOW: '/bot/:id/draw-workflows/:workflowId',
   },
+  SETTINGS: '/bot/:id/settings',
 };
