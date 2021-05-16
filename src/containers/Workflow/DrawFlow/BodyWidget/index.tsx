@@ -39,7 +39,7 @@ const BodyWidget = (props: BodyWidgetProps) => {
       300 - app.getActiveDiagram().getOffsetY(),
     );
     const engine = app.getDiagramEngine() as AdvancedDiagramEngine;
-    node.create(engine, null, workflowId);
+    await node.create(engine, null, workflowId);
   };
 
   const handleAddIntent = (event: any) => {

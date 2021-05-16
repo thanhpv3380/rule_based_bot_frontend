@@ -6,17 +6,10 @@ import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams';
 import {
   Box,
   TextField,
-  Paper,
   Typography,
   Grid,
-  Button,
-  Modal,
   FormControl,
   Collapse,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Divider,
 } from '@material-ui/core';
 import { Loop as LoopIcon, ExpandLess, ExpandMore } from '@material-ui/icons';
@@ -42,6 +35,15 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
   const handleToggle = () => {
     setOpen((prev) => !prev);
   };
+
+  const findActionById = (actionId) => {
+    if (actions) {
+      const action = actions.find((el) => el.id === actionId);
+      return action;
+    }
+    return null;
+  };
+
   return (
     <Box mt={2} className={classes.root}>
       <Box className={classes.buttonShow} onClick={handleToggle}>
@@ -63,7 +65,9 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
             <Autocomplete
               size="small"
               options={actions || []}
-              value={actionAskAgain.actionAskAgain || null}
+              value={
+                actionAskAgain && findActionById(actionAskAgain.actionAskAgain)
+              }
               onChange={(
                 e: React.ChangeEvent<{}>,
                 value: any,
@@ -71,7 +75,7 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
               ) => {
                 handleChange('actionAskAgain', (value && value.id) || null);
               }}
-              getOptionSelected={(option, value) => option.id === value.id}
+              getOptionSelected={(option, value) => option.id === value}
               getOptionLabel={(option) => option.name}
               name="actionAskAgain"
               renderInput={(params) => (
@@ -95,7 +99,7 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
                 root: classes.mutiInput,
               }}
               variant="outlined"
-              value={actionAskAgain.numberOfLoop || ''}
+              value={(actionAskAgain && actionAskAgain.numberOfLoop) || ''}
               onChange={(e) => {
                 const { value } = e.target;
                 handleChange('numberOfLoop', value);
@@ -111,7 +115,9 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
             <Autocomplete
               size="small"
               options={actions || []}
-              value={actionAskAgain.actionFail || null}
+              value={
+                actionAskAgain && findActionById(actionAskAgain.actionFail)
+              }
               onChange={(
                 e: React.ChangeEvent<{}>,
                 value: any,
@@ -119,7 +125,7 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
               ) => {
                 handleChange('actionFail', (value && value.id) || null);
               }}
-              getOptionSelected={(option, value) => option.id === value.id}
+              getOptionSelected={(option, value) => option.id === value}
               getOptionLabel={(option) => option.name}
               name="actionFail"
               renderInput={(params) => (

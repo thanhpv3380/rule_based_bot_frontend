@@ -13,6 +13,7 @@ export default makeStyles((theme) => ({
     backgroundColor: 'white',
     marginBottom: 8,
     borderRadius: 5,
+    border: '1px solid #ccc'
   },
   noneIconMenu: {
     display: 'inline-block',
@@ -28,7 +29,8 @@ export default makeStyles((theme) => ({
     cursor: 'pointer',
   },
   customRadius: {
-    borderRadius: 5
+    borderRadius: 5,
+    border: '1px solid #ccc'
   },
   iconHeader: {
     marginRight: 5,
@@ -48,12 +50,24 @@ export default makeStyles((theme) => ({
     borderTopLeftRadius: 5,
   },
   autoComplete: {
+    margin: '0px 10px',
     borderRadius: 5,
+    // backgroundColor: '#ffff',
+  },
+  textField: {
+    margin: '10px 0px 5px 0px',
+  },
+  inputComplete: {
+
+  },
+  inputRoot: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
   focusBody: {
     width: '100%',
     backgroundColor: '#ffff',
-    margin: '10px 10px',
+    boxSizing: 'border-box',
     borderRadius: 5,
     cursor: 'pointer',
     border: '2px solid rgb(224 224 224)',
@@ -74,11 +88,7 @@ export default makeStyles((theme) => ({
       // border: '2px solid #ccc',
     }
   },
-  textField: {
-    margin: '20px 0px 20px 0px',
-    paddingTop: '10px',
-    paddingBottom: '10px'
-  },
+
 
 
   formControl: {
@@ -95,7 +105,7 @@ export default makeStyles((theme) => ({
     width: '30%',
     border: '2px solid #fff',
     backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
+    boxShadow: theme.shadows[1],
     padding: theme.spacing(2, 4, 3),
     outline: 'none',
     borderRadius: 10,

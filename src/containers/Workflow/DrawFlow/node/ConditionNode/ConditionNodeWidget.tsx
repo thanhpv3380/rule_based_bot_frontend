@@ -45,6 +45,7 @@ import {
 import { BaseNodeModel } from '../BaseNodeModel';
 import apis from '../../../../../apis';
 import { NodeConnect } from '../Node.types';
+import { useConfirm } from 'material-ui-confirm';
 
 export interface ConditionNodeWidgetProps {
   node: ConditionNodeModel;
@@ -71,6 +72,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   const { engine, node } = props;
   const { workflowId } = useParams();
   const classes = useStyle();
+  const confirm = useConfirm();
   const { enqueueSnackbar } = useSnackbar();
   const [condition, setCondition] = useState<Condition>();
   const [subConditions, setSubConditions] = useState<Conditions[]>([]);
@@ -175,7 +177,16 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   };
 
   const handleDeleteNode = async () => {
-    await node.delete(engine, workflowId);
+    confirm({
+      description: `Are you sure you want to delete ${node.id}?`,
+    }).then(async () => {
+      const status = await node.delete(engine, workflowId);
+      if (status) {
+        enqueueSnackbar('Delete node success', { variant: 'success' });
+      } else {
+        enqueueSnackbar('Delete node failed', { variant: 'error' });
+      }
+    });
   };
 
   const handleDuplicateNode = () => {
@@ -183,11 +194,13 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       .getModel()
       .getSelectedEntities()[0] as ConditionNodeModel;
 
-    node.duplicateNode(
-      engine,
+    let newNode = new ConditionNodeModel();
+    newNode.setPosition(
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
     );
+    engine.getModel().addNode(newNode);
+    engine.repaintCanvas();
   };
 
   const handleAddCondition = () => {
@@ -263,13 +276,12 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
             onClick={() => handleDuplicateNode()}
             className={classes.fileCopyIcon}
           />
-          <MoreVertIcon fontSize="small" className={classes.iconMenuItem} />
         </Box>
       ) : (
         <Box className={classes.noneIconMenu} />
       )}
 
-      <Paper elevation={5} className={classes.root}>
+      <Paper elevation={2} className={classes.root}>
         <Box display="flex" flexDirection="column">
           <PortWidget engine={props.engine} port={props.node.getPort('in')} />
           <Box className={classes.grid}>
@@ -280,80 +292,105 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
             <Typography variant="h6">Condition</Typography>
           </Box>
 
-          <Box className={classes.content}>
-            <TableContainer
-              component={Paper}
-              elevation={0}
-              className={
-                subConditions.length !== 0
-                  ? classes.tableContainer
-                  : classes.noneTableCon
-              }
-              onClick={handleOpenEdit}
-            >
-              <Table>
-                <TableBody>
-                  {subConditions &&
-                    subConditions.map((el, index) => (
-                      <TableRow>
-                        <TableCell className={classes.tableCell} align="left">
-                          if
-                        </TableCell>
-                        <TableCell className={classes.tableCell}>
-                          {el.parameter.name || (
-                            <Typography
-                              style={{ color: 'rgba(138, 138, 138, 0.87)' }}
-                            >
-                              parameter
-                            </Typography>
-                          )}
-                        </TableCell>
-                        <TableCell className={classes.tableCell} align="left">
-                          {el.operator}
-                        </TableCell>
-                        <TableCell
-                          className={classes.tableCell}
-                          style={{ minWidth: 80 }}
-                          align="left"
-                        >
-                          {el.value || (
-                            <Typography
-                              style={{ color: 'rgba(138, 138, 138, 0.87)' }}
-                            >
-                              empty
-                            </Typography>
-                          )}
-                        </TableCell>
-                        <TableCell className={classes.tableCell} align="left">
-                          {condition ? condition.operator : 'and'}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  {/* {!subConditions ||
-                    (subConditions.length === 0 && ( */}
-                  {/* <TableRow container > */}
-
-                  {/* </TableRow> */}
-                  {/* ))} */}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Grid
-              container
-              alignItems="center"
-              justify="center"
-              className={classes.btnAdCondition}
-            >
-              <Button
-                onClick={() => {
-                  handleOpenEdit();
-                  handleAddCondition();
-                }}
+          <Box>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <PortWidget
+                engine={props.engine}
+                port={props.node.getPort('out-left')}
               >
-                <AddIcon />
-                Add condition
-              </Button>
-            </Grid>
+                <div className="circle-port" />
+              </PortWidget>
+              <Box m={2}>
+                <TableContainer
+                  component={Paper}
+                  elevation={0}
+                  className={
+                    subConditions.length !== 0
+                      ? classes.tableContainer
+                      : classes.noneTableCon
+                  }
+                  onClick={handleOpenEdit}
+                >
+                  <Table>
+                    <TableBody>
+                      {subConditions &&
+                        subConditions.map((el, index) => (
+                          <TableRow>
+                            <TableCell
+                              className={classes.tableCell}
+                              align="left"
+                            >
+                              if
+                            </TableCell>
+                            <TableCell className={classes.tableCell}>
+                              {el.parameter.name || (
+                                <Typography
+                                  style={{ color: 'rgba(138, 138, 138, 0.87)' }}
+                                >
+                                  parameter
+                                </Typography>
+                              )}
+                            </TableCell>
+                            <TableCell
+                              className={classes.tableCell}
+                              align="left"
+                            >
+                              {el.operator}
+                            </TableCell>
+                            <TableCell
+                              className={classes.tableCell}
+                              style={{ minWidth: 80 }}
+                              align="left"
+                            >
+                              {el.value || (
+                                <Typography
+                                  style={{ color: 'rgba(138, 138, 138, 0.87)' }}
+                                >
+                                  empty
+                                </Typography>
+                              )}
+                            </TableCell>
+                            <TableCell
+                              className={classes.tableCell}
+                              align="left"
+                            >
+                              {condition ? condition.operator : 'and'}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      {/* {!subConditions ||
+                    (subConditions.length === 0 && ( */}
+                      {/* <TableRow container > */}
+
+                      {/* </TableRow> */}
+                      {/* ))} */}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <Grid
+                  container
+                  alignItems="center"
+                  justify="center"
+                  className={classes.btnAdCondition}
+                >
+                  <Button
+                    onClick={() => {
+                      handleOpenEdit();
+                      handleAddCondition();
+                    }}
+                  >
+                    <AddIcon />
+                    Add condition
+                  </Button>
+                </Grid>
+              </Box>
+              <PortWidget
+                engine={props.engine}
+                port={props.node.getPort('out-right')}
+              >
+                <div className="circle-port" />
+              </PortWidget>
+            </Box>
             <Grid
               container
               alignItems="center"

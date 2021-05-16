@@ -24,7 +24,7 @@ export class AdvancedLinkModel extends DefaultLinkModel {
   constructor() {
     super({
       type: 'advanced',
-      width: 4,
+      width: 3,
     });
   }
   setSourcePort(port: AdvancedPortModel): void {
@@ -100,7 +100,7 @@ const CustomLinkArrowWidget = (props) => {
         <g transform={'translate(0, -3)'}>
           <polygon
             points="0,-1 8,20 -8,20"
-            fill={props.color}
+            fill="#ccc"
             data-id={point.getID()}
             data-linkid={point.getLink().getID()}
           />

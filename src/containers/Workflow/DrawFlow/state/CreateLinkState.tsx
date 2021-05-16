@@ -136,7 +136,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
   }
 
   showNotification() {
-    this.enqueueSnackbar('Node is connected', {
+    this.enqueueSnackbar("Can't connect", {
       variant: 'error',
     });
   }

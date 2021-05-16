@@ -4,13 +4,10 @@ const useStyle = makeStyles((theme) => ({
     root: {
         borderRadius: 5,
         backgroundColor: '#ffff',
-        // border: "3px solid #ffff",
-        // "&:hover": {
-        //     border: "3px solid #22AEDA",
-        // }
+        border: '1px solid #ccc'
     },
     container: {
-        width: 280,
+        width: 350,
         position: 'relative'
     },
     iconMenu: {
@@ -21,6 +18,7 @@ const useStyle = makeStyles((theme) => ({
         backgroundColor: 'white',
         marginBottom: 8,
         borderRadius: 5,
+        border: '1px solid #ccc'
     },
     grid: {
         display: "flex",
@@ -68,10 +66,9 @@ const useStyle = makeStyles((theme) => ({
     textField: {
         margin: '10px 0px 5px 0px',
     },
-    forcusBody: {
+    focusBody: {
         width: '100%',
         backgroundColor: '#ffff',
-        margin: '10px 10px',
         borderRadius: 5,
         cursor: 'pointer',
         border: '2px solid rgb(224 224 224)',
@@ -80,10 +77,9 @@ const useStyle = makeStyles((theme) => ({
             // border: '2px solid #ccc',
         }
     },
-    unforcusBody: {
+    unfocusBody: {
         width: '100%',
         backgroundColor: '#ffff',
-        margin: '10px 10px',
         padding: 10,
         borderRadius: 5,
         cursor: 'pointer',

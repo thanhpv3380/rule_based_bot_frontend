@@ -32,7 +32,6 @@ import {
   ActionResponse,
 } from './ActionAskAgainNodeWidget.type';
 import apis from '../../../../../apis';
-import { BaseNodeModel } from '../BaseNodeModel';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 import { ActionIcon } from '../../icon';
 import textDefault from '../../../../../constants/textDefault';

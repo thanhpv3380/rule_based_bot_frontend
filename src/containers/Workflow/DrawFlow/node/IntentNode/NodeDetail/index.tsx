@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Grid, Modal, Paper } from '@material-ui/core';
+import { Grid, Modal, Paper, Box, Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import IntentDetail from '../../../../../Intent/DetailIntent';
 import IntentCreate from '../../../../../Intent/CreateIntent';
@@ -11,15 +11,16 @@ interface IntentNodeDetail {
   open: boolean;
   handleCloseEdit: Function;
   intentId?: string;
+  handleCreateItem: Function;
 }
 
 const IntentNodeDetail = (props: IntentNodeDetail) => {
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
-  const { open, handleCloseEdit, intentId } = props;
+  const { open, handleCloseEdit, intentId, handleCreateItem } = props;
   const [groupAndItems, setGroupAndItems] = useState([]);
   const [groupIdSelected, setGroupIdSelected] = useState();
-
+  const [currentIntentId, setCurrentIntentId] = useState<string>();
   const fetchGroupAndItems = async (keyword) => {
     const data = await apis.groupIntent.getGroupAndItems({ keyword });
     if (data.status) {
@@ -32,40 +33,15 @@ const IntentNodeDetail = (props: IntentNodeDetail) => {
   };
 
   useEffect(() => {
+    setCurrentIntentId(intentId);
     fetchGroupAndItems('');
-  }, []);
+  }, [open]);
 
   const handleUpdate = (data, oldGroupAction) => {
-    const newGroupAndItems = [...groupAndItems];
-    const intentData = {
-      id: data.id,
-      name: data.name,
-      groupIntent: data.groupIntent,
-      actions: data.actions,
-    };
-    const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
-    newGroupAndItems[pos].status = true;
-    const childrenPos = newGroupAndItems[pos].children.findIndex(
-      (el) => el.id === data.id,
-    );
-    if (childrenPos < 0) {
-      const tempPos = newGroupAndItems.findIndex(
-        (el) => el.id === oldGroupAction,
-      );
-      const newItems = newGroupAndItems[tempPos].children.filter(
-        (el) => el.id !== data.id,
-      );
-      newGroupAndItems[tempPos] = {
-        ...newGroupAndItems[tempPos],
-        children: [...newItems],
-      };
-      newGroupAndItems[pos].children.unshift(intentData);
-    } else {
-      newGroupAndItems[pos].children[childrenPos] = intentData;
-    }
-    setGroupAndItems(newGroupAndItems);
+    console.log('update intent in flow');
   };
-  const handleCreateItem = (data) => {
+
+  const handleCreate = (data) => {
     const newGroupAndItems = [...groupAndItems];
     const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
     newGroupAndItems[pos].children.unshift({
@@ -76,7 +52,8 @@ const IntentNodeDetail = (props: IntentNodeDetail) => {
     });
     newGroupAndItems[pos].status = true;
     setGroupAndItems(newGroupAndItems);
-    // history.push(`/bot/${botId}/intents/detail/${data.id}`);
+    setCurrentIntentId(data.id);
+    handleCreateItem(data);
   };
   return (
     <Modal
@@ -84,9 +61,14 @@ const IntentNodeDetail = (props: IntentNodeDetail) => {
       className={classes.modal}
       onClose={() => handleCloseEdit()}
     >
-      <Paper className={classes.root}>
-        <Grid className={classes.content}>
-          {intentId ? (
+      <div className={classes.root}>
+        <Box>
+          <Typography variant="h6" gutterBottom>
+            Intent Detail
+          </Typography>
+        </Box>
+        <Box className={classes.content}>
+          {currentIntentId ? (
             <IntentDetail
               groupItems={groupAndItems}
               flowIntentId={intentId}
@@ -96,11 +78,11 @@ const IntentNodeDetail = (props: IntentNodeDetail) => {
             <IntentCreate
               groupItems={groupAndItems}
               groupIntentId={groupIdSelected}
-              handleCreate={handleCreateItem}
+              handleCreate={handleCreate}
             />
           )}
-        </Grid>
-      </Paper>
+        </Box>
+      </div>
     </Modal>
   );
 };

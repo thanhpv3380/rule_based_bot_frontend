@@ -2,9 +2,11 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
   root: {
+    width: '100%',
     border: '1px solid #ccc',
     borderRadius: '5px',
-    padding: theme.spacing(1, 1.5),
+    boxSizing: 'border-box',
+    padding: theme.spacing(1.5, 1.5),
   },
   formControl: {
     marginTop: theme.spacing(1),
@@ -27,12 +29,16 @@ export default makeStyles((theme) => ({
 
   },
   textIcon: {
-    marginLeft: '5px'
+    marginLeft: '5px',
+    fontWeight: 'bold',
   },
   actionAABox: {
     marginBottom: theme.spacing(1)
   },
   divider: {
     margin: theme.spacing(1, 0)
+  },
+  title: {
+    color: '#ccc'
   }
 }))

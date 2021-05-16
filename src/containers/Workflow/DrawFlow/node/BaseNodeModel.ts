@@ -5,9 +5,7 @@ import { BaseModelOptions, DeserializeEvent } from '@projectstorm/react-canvas-c
 import { AdvancedLinkModel, AdvancedPortModel } from '../customLink';
 import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
 import apis from '../../../../apis';
-import { useConfirm } from 'material-ui-confirm';
 import * as _ from 'lodash';
-import { useSnackbar } from 'notistack';
 import {
     checkMutualNodeId,
     checkAllowConnect
@@ -28,8 +26,6 @@ export class BaseNodeModel extends NodeModel {
     protected ports: {
         [s: string]: AdvancedPortModel;
     }
-    enqueueSnackbar?: any;
-    confirm?: any;
 
     constructor(options: BaseNodeModelOptions = {}) {
         super({
@@ -39,8 +35,6 @@ export class BaseNodeModel extends NodeModel {
         this.id = options.id
         this.itemId = options.itemId;
         this.nodeInfo = options.nodeInfo;
-        // this.enqueueSnackbar = useSnackbar().enqueueSnackbar;
-        //this.confirm = useConfirm();
         // setup an in and out port
         this.addPort(
             new AdvancedPortModel({
@@ -122,40 +116,21 @@ export class BaseNodeModel extends NodeModel {
         return listLinkId;
     }
 
-    duplicateNode(engine: AdvancedDiagramEngine, posX?: number, posY?: number): void {
-        const typeNode = this.getType();
-        let newNode: BaseNodeModel;
-        if (typeNode === 'ACTION') {
-            newNode = new ActionNodeModel();
-        } else if (typeNode === 'INTENT') {
-            newNode = new IntentNodeModel();
-        } else if (typeNode === 'CONDITION') {
-            newNode = new ConditionNodeModel();
-        }
-
-        newNode.setPosition(
-            posX || 0,
-            posY || 0
-        );
-        engine.getModel().addNode(newNode);
-        engine.repaintCanvas();
-    }
-
     async create(
         engine: AdvancedDiagramEngine,
         parentNode?: BaseNodeModel,
         workflowId?: String,
-    ): Promise<void> {
-        let parent = null;
+    ): Promise<Boolean> {
+        let parent = [];
         if (parentNode) {
             const linkPortIn = this.getArrayLinkByPortType('in')[0];
             console.log(linkPortIn);
             const typePort = linkPortIn && linkPortIn.getSourcePort().getName() || 'out-bottom';
-            parent = {
+            parent = [{
                 node: parentNode.id,
                 type: parentNode.getType(),
                 typePort
-            }
+            }]
         }
         const newNode = {
             type: this.getType(),
@@ -171,49 +146,28 @@ export class BaseNodeModel extends NodeModel {
         if (data && data.status) {
             this.id = data.result.node.id;
         } else {
-            alert("fdsf")
-            // this.enqueueSnackbar((data && data.message) || 'Create node failed', {
-            //     variant: 'error',
-            // });
+            return false;
         }
         const model = engine.getModel();
         model.addNode(this);
         engine.repaintCanvas();
+        return true;
     }
 
     async delete(
         engine: AdvancedDiagramEngine,
         workflowId: String,
-    ): Promise<void> {
-        const selectedEntities = engine.getModel().getSelectedEntities();
-        if (selectedEntities.length > 0) {
-            const confirm = window.confirm('Are you sure you want to delete?');
-            if (confirm) {
-                _.forEach(selectedEntities, async (model) => {
-                    // only delete items which are not locked
-                    if (!model.isLocked()) {
-                        const data = await apis.node.deleteNode(
-                            workflowId,
-                            (model as BaseNodeModel).id,
-                        );
-                        if (data && data.status) {
-                            model.remove();
-                            engine.repaintCanvas();
-                        } else {
-                            alert("fdsf")
-                            // this.enqueueSnackbar(
-                            //     (data && data.message) || 'Delete node failed',
-                            //     {
-                            //         variant: 'error',
-                            //     },
-                            // );
-                        }
-                    }
-                });
-                //engine.repaintCanvas();
-            }
-
+    ): Promise<Boolean> {
+        const data = await apis.node.deleteNode(
+            workflowId,
+            this.id,
+        );
+        if (data && data.status) {
+            this.remove();
+            engine.repaintCanvas();
+            return true;
         }
+        return false;
     }
 
     checkConnect(targetNode: BaseNodeModel): Boolean {

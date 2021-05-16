@@ -15,32 +15,24 @@ export interface ConditionNodeModelOptions extends BaseModelOptions {
   color?: string;
   id?: string;
   itemId?: string;
-  intents?: NodeConnect[];
   nodeInfo?: any;
 }
 export class ConditionNodeModel extends BaseNodeModel {
-  intents?: NodeConnect[];
   constructor(options: ConditionNodeModelOptions = {}) {
     super({
       ...options,
       type: 'CONDITION',
     });
-    this.intents = options.intents;
-  }
-  setIntent(intents: NodeConnect[]) {
-    this.intents = intents;
   }
   serialize() {
     return {
       ...super.serialize(),
       color: this.color,
-      intents: this.intents,
     };
   }
   deserialize(event: DeserializeEvent<this>): void {
     super.deserialize(event);
     this.color = event.data.color;
-    this.intents = event.data.intents;
   }
 }
 export class ConditionNodeFactory extends AbstractReactFactory<

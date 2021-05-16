@@ -93,11 +93,15 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
           link.setTargetPort(portInTargetNode);
           portInTargetNode.reportPosition();
         }
-        await targetNode.create(engine, sourceNode, workflowId);
+        const status = await targetNode.create(engine, sourceNode, workflowId);
+        if (!status) {
+          enqueueSnackbar('Create node failed', { variant: 'error' });
+          return;
+        }
         lastNode.remove();
         engine.repaintCanvas();
       } else {
-        enqueueSnackbar("Node can't connect", { variant: 'error' });
+        enqueueSnackbar("Node doesn't init", { variant: 'error' });
       }
     }
   };

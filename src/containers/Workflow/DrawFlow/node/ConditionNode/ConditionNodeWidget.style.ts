@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyle = makeStyles((theme) => ({
     root: {
         borderRadius: 5,
-        backgroundColor: '#ffff',
+        backgroundColor: '#fff',
+        border: '1px solid #ccc'
     },
     grid: {
         display: "flex",
@@ -70,6 +71,7 @@ const useStyle = makeStyles((theme) => ({
         backgroundColor: 'white',
         marginBottom: 8,
         borderRadius: 5,
+        border: '1px solid #ccc'
     },
     noneIconMenu: {
         display: 'inline-block',
