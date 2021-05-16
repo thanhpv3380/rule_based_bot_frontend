@@ -19,7 +19,6 @@ export default makeStyles(() => ({
     padding: '8px 20px 8px 10px',
     marginTop: -20,
     borderRadius: 3,
-    backgroundColor: 'rgb(73, 145, 226)',
     boxShadow:
       'rgb(73 145 226 / 28%) 0px 12px 20px -10px, rgb(0 0 0 / 12%) 0px 4px 20px 0px, rgb(73 145 226 / 20%) 0px 7px 8px -5px',
     color: 'rgb(255, 255, 255)',

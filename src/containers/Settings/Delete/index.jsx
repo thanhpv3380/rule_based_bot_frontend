@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-wrap-multilines */
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Typography, Button } from '@material-ui/core';
@@ -7,6 +5,7 @@ import { Delete as DeleteIcon } from '@material-ui/icons';
 import useStyles from './index.style';
 
 const DeleteBot = () => {
+  // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   const classes = useStyles();
   return (

@@ -7,6 +7,7 @@ import 'date-fns';
 import useStyles from './index.style';
 
 const CardAdvanced = (props) => {
+  // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   const classes = useStyles();
   const { title, children } = props;

@@ -16,27 +16,28 @@ import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import Highcharts from 'highcharts';
 import useStyles from './index.style';
+import apis from '../../../apis';
 
-const analysts = [
-  {
-    heading: 'Intent',
-    description: 'Intent',
-    color: '#f6a61f',
-    key: '',
-  },
-  {
-    heading: 'Action',
-    description: 'Action',
-    color: '#f16a73',
-    key: '',
-  },
-  {
-    heading: 'Workflow',
-    description: 'Workflow',
-    color: '#4991e2',
-    key: '',
-  },
-];
+// const analysts = [
+//   {
+//     heading: 'Intent',
+//     description: 'Intent',
+//     color: '#f6a61f',
+//     key: '',
+//   },
+//   {
+//     heading: 'Action',
+//     description: 'Action',
+//     color: '#f16a73',
+//     key: '',
+//   },
+//   {
+//     heading: 'Workflow',
+//     description: 'Workflow',
+//     color: '#4991e2',
+//     key: '',
+//   },
+// ];
 
 const btnList = [
   {
@@ -59,6 +60,7 @@ const SummaryWorkingData = () => {
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [analysts, setAnalysts] = useState();
   const [typeDateSelected, setTypeDateSelected] = useState('TODAY');
 
   const highChartsRender = () => {
@@ -130,8 +132,44 @@ const SummaryWorkingData = () => {
     });
   };
 
+  const bindDataAnalysts = (data) => {
+    const { totalIntent, totalAction, totalWorkflow } = data;
+    const dataAnalysts = [
+      {
+        heading: 'Intent',
+        description: 'Intent',
+        color: '#4991e2',
+        key: '',
+        numberData: totalIntent,
+      },
+      {
+        heading: 'Action',
+        description: 'Action',
+        color: '#48bb78',
+        key: '',
+        numberData: totalAction,
+      },
+      {
+        heading: 'Workflow',
+        description: 'Workflow',
+        color: '#f16a73',
+        key: '',
+        numberData: totalWorkflow,
+      },
+    ];
+    setAnalysts(dataAnalysts);
+  };
+
+  const fetchStatisticWorkingData = async () => {
+    const data = await apis.dashboard.getStatisticWorkingData();
+    if (data.status) {
+      bindDataAnalysts(data.result);
+    }
+  };
+
   useEffect(() => {
-    highChartsRender();
+    // highChartsRender();
+    fetchStatisticWorkingData();
   }, []);
 
   const [selectedDate, setSelectedDate] = React.useState(
@@ -179,30 +217,31 @@ const SummaryWorkingData = () => {
       <Divider />
       <Box mt={2}>
         <Grid container spacing={3}>
-          {analysts.map((el) => (
-            <Grid item xs={4}>
-              <Paper
-                className={classes.paper}
-                elevation={2}
-                style={{ borderColor: el.color }}
-              >
-                <Box mr={0.5}>
-                  <Typography variant="h5" gutterBottom>
-                    {el.heading}
-                  </Typography>
-                </Box>
-                <Box mb={1} className={classes.totalBox}>
-                  {/* <Box mr={1.5}>
+          {analysts &&
+            analysts.map((el) => (
+              <Grid item xs={4}>
+                <Paper
+                  className={classes.paper}
+                  elevation={2}
+                  style={{ borderColor: el.color }}
+                >
+                  <Box mr={0.5}>
+                    <Typography variant="h5" gutterBottom>
+                      {el.heading}
+                    </Typography>
+                  </Box>
+                  <Box mb={1} className={classes.totalBox}>
+                    {/* <Box mr={1.5}>
                     <Typography variant="subtitle1">Total</Typography>
                   </Box> */}
 
-                  <Typography variant="h3" className={classes.fontBold}>
-                    0
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-          ))}
+                    <Typography variant="h3" className={classes.fontBold}>
+                      {el.numberData}
+                    </Typography>
+                  </Box>
+                </Paper>
+              </Grid>
+            ))}
         </Grid>
       </Box>
       <Box mt={2} className={classes.graph}>

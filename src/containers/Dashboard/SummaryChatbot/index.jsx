@@ -14,7 +14,7 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import {
-  // format,
+  format,
   // formatDistance,
   // formatRelative,
   subDays,
@@ -38,20 +38,7 @@ const dataHightChar = {
     title: {
       text: 'Day',
     },
-    categories: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ],
+    categories: [`${format(new Date(), 'đ-mm-yyyy')}`],
   },
   yAxis: {
     title: {
@@ -69,22 +56,22 @@ const dataHightChar = {
   series: [
     {
       name: 'Total request',
-      data: [900, 850, 990, 1200, 780, 930, 1700],
+      data: [0],
       color: '#4991e2',
     },
     {
       name: 'Answered',
-      data: [300, 400, 200, 250, 540, 120, 800],
+      data: [0],
       color: '#48bb78',
     },
     {
       name: 'Not understand',
-      data: [200, 100, 300, 450, 140, 200, 520],
+      data: [0],
       color: '#f16a73',
     },
     {
       name: 'Need confirm',
-      data: [100, 100, 100, 150, 140, 20, 500],
+      data: [0],
       color: '#f6a61f',
     },
   ],
@@ -250,6 +237,20 @@ const SummaryChatbot = () => {
   }, [dateSelected]);
 
   useEffect(() => {
+    bindDataAnalysts({
+      totalUsersay: 0,
+      defaultUsersay: 0,
+      answeredUsersay: 0,
+      notUnderstandUsersay: 0,
+      needConfirmUsersay: 0,
+      percent: {
+        defaultUsersay: 0,
+        answeredUsersay: 0,
+        notUnderstandUsersay: 0,
+        needConfirmUsersay: 0,
+      },
+    });
+    Highcharts.chart(dataHightChar);
     fetchDashboard();
   }, []);
 
