@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react';
-// import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   TextField,
@@ -14,19 +14,66 @@ import {
   TableCell,
   TableBody,
 } from '@material-ui/core';
-import {
-  //   PhotoCamera as PhotoCameraIcon,
-  //   Visibility as VisibilityIcon,
-  //   VisibilityOff as VisibilityOffIcon,
-  DeleteOutline as DeleteOutlineIcon,
-} from '@material-ui/icons';
+import { DeleteOutline as DeleteOutlineIcon } from '@material-ui/icons';
 import 'date-fns';
 import { Autocomplete } from '@material-ui/lab';
-// import useStyles from './index.style';
+import useStyles from './index.style';
+import apis from '../../../apis';
+import roleAccount from '../../../constants/role';
 
-const GeneralSetting = ({ bot }) => {
-  //   const { t } = useTranslation();
-  //   const classes = useStyles();
+const GeneralSetting = () => {
+  const { t } = useTranslation();
+  const classes = useStyles();
+  const [permissions, setPermissions] = useState([]);
+  const [accounts, setAccounts] = useState([]);
+  const [accountSelect, setAccountSelect] = useState();
+  const fetchPermissions = async () => {
+    const data = await apis.permission.getPermissionsByBot();
+    if (data && data.status) {
+      setPermissions(data.result.permissions);
+    }
+  };
+  const fetchAccount = async (keySearch) => {
+    const data = await apis.user.getUsers(keySearch);
+    if (data && data.status) {
+      setAccounts(data.result.accounts);
+    }
+  };
+
+  const handleChange = async (e) => {
+    const { value } = e.target;
+    console.log(value);
+    await fetchAccount(value);
+  };
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    const data = await apis.permission.createPermission({
+      userId: accountSelect.id,
+    });
+    if (data && data.status) {
+      const newPermission = {
+        ...data.result.permission,
+        user: { ...accountSelect },
+      };
+      setPermissions([...permissions, newPermission]);
+      setAccountSelect(null);
+    }
+  };
+  const handleDelete = (id) => async () => {
+    const data = await apis.permission.deletePermission(id);
+    if (data && data.status) {
+      const index = permissions.findIndex((el) => el.id === id);
+      const newPermissions = [...permissions];
+      newPermissions.splice(index, 1);
+      setPermissions([...newPermissions]);
+    }
+  };
+
+  useEffect(() => {
+    fetchPermissions();
+  }, []);
+
   return (
     <>
       <Typography variant="body1">
@@ -36,13 +83,19 @@ const GeneralSetting = ({ bot }) => {
       <Grid container xs={12} style={{ display: 'flex' }}>
         <Grid item xs={6}>
           <Autocomplete
-            options={[]}
+            options={accounts || []}
+            value={accountSelect || null}
+            onChange={(e, value) => {
+              setAccountSelect(value);
+            }}
+            getOptionSelected={(option, value) => option.id === value.id}
+            getOptionLabel={(option) => option.email}
             renderInput={(params) => (
               <TextField
                 {...params}
                 margin="normal"
                 placeholder="Enter Email"
-                // style={{ width: '50%' }}
+                onChange={handleChange}
               />
             )}
           />
@@ -56,7 +109,7 @@ const GeneralSetting = ({ bot }) => {
             padding: '10px 0px',
           }}
         >
-          <Button>add</Button>
+          <Button onClick={handleAdd}>add</Button>
         </Grid>
       </Grid>
       <TableContainer>
@@ -70,20 +123,18 @@ const GeneralSetting = ({ bot }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {bot &&
-              bot.users &&
-              bot.users.map((el) => (
-                <TableRow key="name">
+            {permissions.map((el) => (
+              <TableRow key="name">
+                <TableCell style={{ borderBottom: 'none' }} align="left">
+                  <Typography>{el.user && el.user.email}</Typography>
+                </TableCell>
+                {el.role === roleAccount.ROLE_EDITOR && (
                   <TableCell style={{ borderBottom: 'none' }} align="left">
-                    <Typography style={{ color: '#058833' }}>
-                      {el.email}
-                    </Typography>
+                    <DeleteOutlineIcon onClick={handleDelete(el.id)} />
                   </TableCell>
-                  <TableCell style={{ borderBottom: 'none' }} align="left">
-                    <DeleteOutlineIcon />
-                  </TableCell>
-                </TableRow>
-              ))}
+                )}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
