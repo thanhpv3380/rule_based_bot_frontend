@@ -8,13 +8,16 @@ const DeleteBot = () => {
   // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   const classes = useStyles();
+  const handleDelete = (e) => {
+    e.preventDefault();
+  };
   return (
     <>
       <Typography variant="body1">
         DANGER ZONE - Are you sure you want to delete this bot? This will
         destroy the bot with all corresponding data and cannot be undone!
       </Typography>
-      <Button className={classes.dangerButton}>
+      <Button className={classes.dangerButton} onClick={handleDelete}>
         <DeleteIcon fontSize="small" className={classes.dangerIcon} />
         Delete
       </Button>

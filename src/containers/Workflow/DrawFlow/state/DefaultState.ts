@@ -31,8 +31,6 @@ export class DefaultState extends State<AdvancedDiagramEngine> {
 				type: InputType.MOUSE_DOWN,
 				fire: (event: ActionEvent<any>) => {
 					const element = this.engine.getActionEventBus().getModelForEvent(event);
-					console.log(element);
-
 					// click on canvas
 					if (!element) {
 						console.log("1");

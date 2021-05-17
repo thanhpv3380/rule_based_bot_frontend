@@ -8,6 +8,7 @@ import {
   IntentNodeModel,
   ActionNodeModel,
   ConditionNodeModel,
+  ActionAskAgainNodeModel,
 } from './node';
 import { AdvancedLinkModel, AdvancedPortModel } from './customLink';
 import { NodeModel } from '@projectstorm/react-diagrams-core';
@@ -26,6 +27,11 @@ export interface Node {
   intent: {
     id: string;
     name: string;
+  };
+  actionAskAgain: {
+    numberOfLoop: number;
+    actionFail: string;
+    actionAskAgain: string;
   };
   parent: NodeConnect[];
   children: NodeConnect[];
@@ -46,16 +52,12 @@ const DrawFlow = () => {
     new Application(),
   );
   const drawNodes = async (nodes: Node[], map: Map<string, NodeModel>) => {
-    const listNodeCondition: Node[] = [];
     await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel;
       switch (node.type) {
         case 'START':
           nodeDraw = new StartNodeModel({ id: node.id });
-
           nodeDraw.setPosition(node.position.x, node.position.y);
-          application.getActiveDiagram().addNode(nodeDraw);
-          map.set(node.id, nodeDraw);
           break;
         case 'INTENT':
           nodeDraw = new IntentNodeModel({
@@ -63,40 +65,27 @@ const DrawFlow = () => {
             itemId: (node.intent && node.intent.id) || null,
             nodeInfo: node.intent || null,
           });
-          nodeDraw.setPosition(node.position.x, node.position.y);
-
-          nodeDraw.setPosition(node.position.x, node.position.y);
-          application.getActiveDiagram().addNode(nodeDraw);
-          map.set(node.id, nodeDraw);
           break;
         case 'ACTION': {
           nodeDraw = new ActionNodeModel({
             id: node.id,
             itemId: (node.action && node.action.id) || null,
             nodeInfo: node.action || null,
+            actionAskAgain: node.actionAskAgain || null,
           });
-          nodeDraw.setPosition(node.position.x, node.position.y);
-          application.getActiveDiagram().addNode(nodeDraw);
-          map.set(node.id, nodeDraw);
           break;
         }
         case 'CONDITION':
-          listNodeCondition.push(node);
+          nodeDraw = new ConditionNodeModel({
+            id: node.id,
+            itemId: (node.condition && node.condition.id) || null,
+            nodeInfo: node.condition || null,
+          });
           break;
       }
-    });
-
-    listNodeCondition.map((el) => {
-      const intents = el.parent.filter((ele) => ele.type === 'INTENT');
-      const nodeDraw = new ConditionNodeModel({
-        id: el.id,
-        itemId: (el.condition && el.condition.id) || null,
-        intents,
-        nodeInfo: el.condition || null,
-      });
-      nodeDraw.setPosition(el.position.x || 0, el.position.y || 0);
+      nodeDraw.setPosition(node.position.x || 0, node.position.y || 0);
       application.getActiveDiagram().addNode(nodeDraw);
-      map.set(el.id, nodeDraw);
+      map.set(node.id, nodeDraw);
     });
   };
 

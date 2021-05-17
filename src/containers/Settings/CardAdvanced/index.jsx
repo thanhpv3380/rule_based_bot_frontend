@@ -10,7 +10,7 @@ const CardAdvanced = (props) => {
   // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   const classes = useStyles();
-  const { title, children } = props;
+  const { title, children, isNoneSaveBtn } = props;
   return (
     <Box className={classes.card}>
       <Grid
@@ -23,7 +23,9 @@ const CardAdvanced = (props) => {
         <Typography variant="h5" className={classes.headerText}>
           {title}
         </Typography>
-        <Button className={classes.buttonIconHeader}>save</Button>
+        {!isNoneSaveBtn && (
+          <Button className={classes.buttonIconHeader}>save</Button>
+        )}
       </Grid>
       <Grid className={classes.cardBody}>{children}</Grid>
     </Box>

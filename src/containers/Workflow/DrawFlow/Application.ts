@@ -1,12 +1,10 @@
 import * as SRD from '@projectstorm/react-diagrams';
-import { DefaultNodeModel, DefaultPortModel, PathFindingLinkFactory } from '@projectstorm/react-diagrams';
 
 import { CustomDeleteItemsAction } from "./actionEvent/CustomDeleteItemsAction";
 import { DefaultState } from "./state/DefaultState";
+import { AdvancedLinkFactory } from "./customLink";
 
-import { AdvancedLinkFactory, AdvancedPortModel, AdvancedLinkModel } from "./customLink";
-
-import { StartNodeFactory, ActionNodeFactory, IntentNodeFactory, ConditionNodeFactory, MenuNodeFactory, StartNodeModel, ActionNodeModel, IntentNodeModel, ConditionNodeModel } from './node';
+import { StartNodeFactory, ActionNodeFactory, IntentNodeFactory, ConditionNodeFactory, MenuNodeFactory, ActionAskAgainNodeFactory } from './node';
 
 export class Application {
     protected activeModel: SRD.DiagramModel;
@@ -25,6 +23,7 @@ export class Application {
         this.diagramEngine.getNodeFactories().registerFactory(new ConditionNodeFactory());
         this.diagramEngine.getNodeFactories().registerFactory(new ActionNodeFactory());
         this.diagramEngine.getNodeFactories().registerFactory(new MenuNodeFactory());
+        this.diagramEngine.getNodeFactories().registerFactory(new ActionAskAgainNodeFactory());
         this.diagramEngine.getLinkFactories().registerFactory(new AdvancedLinkFactory());
 
         // const node = new StartNodeModel();

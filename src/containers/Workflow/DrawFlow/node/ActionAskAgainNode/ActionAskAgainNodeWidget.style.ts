@@ -13,7 +13,6 @@ export default makeStyles((theme) => ({
     backgroundColor: 'white',
     marginBottom: 8,
     borderRadius: 5,
-    border: '1px solid #ccc'
   },
   noneIconMenu: {
     display: 'inline-block',
@@ -29,22 +28,23 @@ export default makeStyles((theme) => ({
     cursor: 'pointer',
   },
   customRadius: {
-    borderRadius: 5,
-    border: '1px solid #ccc'
+    borderRadius: 5
   },
   iconHeader: {
-    marginRight: 5,
+    position: 'relative',
+    marginRight: 10,
     width: '2em',
     height: '2em'
   },
   iconSetting: {
+    position: 'relative',
+    marginRight: 10,
+    left: 75,
+    top: 7,
     cursor: 'pointer'
   },
   grid: {
-    display: "flex",
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: theme.spacing(1, 2.5),
+    padding: 10,
     backgroundColor: '#ebe0f1',
     borderTopRightRadius: 5,
     borderTopLeftRadius: 5,
@@ -54,20 +54,10 @@ export default makeStyles((theme) => ({
     borderRadius: 5,
     // backgroundColor: '#ffff',
   },
-  textField: {
-    margin: '10px 0px 5px 0px',
-  },
-  inputComplete: {
-
-  },
-  inputRoot: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-  },
-  focusBody: {
+  forcusBody: {
     width: '100%',
     backgroundColor: '#ffff',
-    boxSizing: 'border-box',
+    margin: '10px 10px',
     borderRadius: 5,
     cursor: 'pointer',
     border: '2px solid rgb(224 224 224)',
@@ -76,9 +66,10 @@ export default makeStyles((theme) => ({
       // border: '2px solid #ccc',
     }
   },
-  unfocusBody: {
+  unforcusBody: {
     width: '100%',
     backgroundColor: '#ffff',
+    margin: '10px 10px',
     padding: 10,
     borderRadius: 5,
     cursor: 'pointer',
@@ -88,7 +79,9 @@ export default makeStyles((theme) => ({
       // border: '2px solid #ccc',
     }
   },
-
+  textField: {
+    margin: '10px 0px 5px 0px',
+  },
 
 
   formControl: {
@@ -100,23 +93,9 @@ export default makeStyles((theme) => ({
     // alignItems: 'center',
     justifyContent: 'center',
   },
-  paper: {
-    position: 'absolute',
-    width: '30%',
-    border: '2px solid #fff',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[1],
+  content: {
     padding: theme.spacing(2, 4, 3),
-    outline: 'none',
-    borderRadius: 10,
   },
-  //   formControl: {
-  //     '& .MuiOutlinedInput-root': {
-  //       borderRadius: 10,
-  //       backgroundColor: 'white',
-  //     },
-  //     marginTop: '4%',
-  //   },
   mutiInput: {
     '& .MuiOutlinedInput-root': {
       borderRadius: 10,
@@ -132,11 +111,8 @@ export default makeStyles((theme) => ({
   },
   textInput: {
     '& .MuiOutlinedInput-root': {
-      borderRadius: 10,
+      borderRadius: 5,
       fontSize: 20,
     },
-  },
-  content: {
-    padding: theme.spacing(2, 4, 3),
   },
 }));

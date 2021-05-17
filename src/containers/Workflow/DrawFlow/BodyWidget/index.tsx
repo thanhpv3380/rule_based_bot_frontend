@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { CanvasWidget } from '@projectstorm/react-canvas-core';
 import { Application } from '../Application';
@@ -7,7 +7,7 @@ import DemoCanvasWidget from './DemoCanvasWidget/index';
 
 import { IntentNodeModel, ConditionNodeModel, ActionNodeModel } from '../node';
 
-import { Box, Drawer } from '@material-ui/core';
+import { Box, Drawer, Tooltip, Button, IconButton } from '@material-ui/core';
 import {
   RecordVoiceOver as RecordVoiceOverIcon,
   Sms as SmsIcon,
@@ -19,48 +19,34 @@ import useStyles from './index.style';
 import { BaseNodeModel } from '../node/BaseNodeModel';
 import apis from '../../../../apis';
 import { ActionIcon, ConditionIcon, IntentIcon } from '../icon';
-
+import { AdvancedDiagramEngine } from '../AdvancedDiagramEngine';
 export interface BodyWidgetProps {
   app: Application;
 }
 
 const BodyWidget = (props: BodyWidgetProps) => {
-  const classes = useStyles();
   const { app } = props;
-  const forceUpdate: () => void = React.useState()[1].bind(null, {});
-  const { workflowId } = useParams();
+  const history = useHistory();
+  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const { workflowId, id } = useParams();
+
+  const forceUpdate: () => void = React.useState()[1].bind(null, {});
 
   const addNode = async (node: BaseNodeModel) => {
     node.setPosition(
       550 - app.getActiveDiagram().getOffsetX(),
       300 - app.getActiveDiagram().getOffsetY(),
     );
-    const newNode = {
-      type: node.getType(),
-      position: {
-        x: 550,
-        y: 300,
-      },
-      workflow: workflowId,
-    };
-    const data = await apis.node.createNode({ ...newNode });
-    if (data && data.status) {
-      node.id = data.result.node.id;
-      props.app.getDiagramEngine().getModel().addNode(node);
-      props.app.getDiagramEngine().repaintCanvas();
-      forceUpdate();
-    } else {
-      enqueueSnackbar((data && data.message) || 'Create node failed', {
-        variant: 'error',
-      });
-    }
+    const engine = app.getDiagramEngine() as AdvancedDiagramEngine;
+    await node.create(engine, null, workflowId);
   };
 
   const handleAddIntent = (event: any) => {
     var node: IntentNodeModel = new IntentNodeModel();
     addNode(node);
   };
+
   const handleAddCondition = () => {
     var node: ConditionNodeModel = new ConditionNodeModel();
     addNode(node);
@@ -68,10 +54,9 @@ const BodyWidget = (props: BodyWidgetProps) => {
 
   const handleAddAction = () => {
     var node: ActionNodeModel = new ActionNodeModel();
-    console.log('action');
-
     addNode(node);
   };
+
   const getChildren = (typePort, node, children) => {
     const linkSourcesPortRight = node.getPort(typePort).getLinks();
     Object.keys(linkSourcesPortRight).forEach((el) => {
@@ -128,10 +113,14 @@ const BodyWidget = (props: BodyWidgetProps) => {
             },
           };
         case 'ACTION':
+          const actionNode = el as ActionNodeModel;
           return {
             id: el.id,
             type: el.getType(),
             action: el.itemId,
+            actionAskAgain: {
+              ...(el as ActionNodeModel).actionAskAgain,
+            },
             parent,
             children,
             position: {
@@ -174,6 +163,10 @@ const BodyWidget = (props: BodyWidgetProps) => {
     }
   };
 
+  const handleClose = () => {
+    history.push(`/bot/${id}/workflows/detail/${workflowId}`);
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.sideBar}>
@@ -186,11 +179,15 @@ const BodyWidget = (props: BodyWidgetProps) => {
         <Box className={classes.sideBarItem} onClick={handleAddAction}>
           <ActionIcon className={classes.siderBarIcon} />
         </Box>
-        <Box className={classes.sideBarItem}>
-          <SaveIcon onClick={handleSave} className={classes.siderBarIconSave} />
+        <Box className={classes.sideBarItem} onClick={handleSave}>
+          <Tooltip title="Save" aria-label="add" placement="right">
+            <SaveIcon className={classes.siderBarIconSave} />
+          </Tooltip>
         </Box>
-        <Box className={classes.sideBarItem}>
-          <CloseIcon />
+        <Box className={classes.sideBarItem} onClick={handleClose}>
+          <Tooltip title="Close" aria-label="add" placement="right">
+            <CloseIcon />
+          </Tooltip>
         </Box>
       </div>
 

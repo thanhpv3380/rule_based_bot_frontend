@@ -24,11 +24,10 @@ export class AdvancedLinkModel extends DefaultLinkModel {
   constructor() {
     super({
       type: 'advanced',
-      width: 4,
+      width: 3,
     });
   }
   setSourcePort(port: AdvancedPortModel): void {
-    console.log(this, 'this');
     if (port !== null) {
       port.addLink(this);
     }
@@ -85,8 +84,6 @@ const CustomLinkArrowWidget = (props) => {
     ) *
       180) /
       Math.PI;
-  console.log(angle, point.getPosition().x, point.getPosition().y);
-
   //translate(50, -10),
   return (
     <g
@@ -103,7 +100,7 @@ const CustomLinkArrowWidget = (props) => {
         <g transform={'translate(0, -3)'}>
           <polygon
             points="0,-1 8,20 -8,20"
-            fill={props.color}
+            fill="#ccc"
             data-id={point.getID()}
             data-linkid={point.getLink().getID()}
           />
@@ -131,7 +128,6 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
     var paths = [];
     this.refPaths = [];
 
-    console.log(points);
     const typePort = points[0].getParent().getSourcePort().getName();
 
     const pointX1 = points[0].getX();

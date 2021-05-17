@@ -1,42 +1,42 @@
 import * as React from 'react';
-import ActionNodeWidget from './ActionNodeWidget';
+import ActionAskAgainNodeWidget from './ActionAskAgainNodeWidget';
 import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
 import { BaseModelOptions } from '@projectstorm/react-canvas-core';
 import { BaseNodeModel } from '../BaseNodeModel';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 
-export interface ActionNodeModelOptions extends BaseModelOptions {
+export interface ActionAskAgainNodeModelOptions extends BaseModelOptions {
   color?: string;
   id?: string;
   itemId?: string;
   nodeInfo?: any;
-  actionAskAgain?: any;
+  actionNodeId?: string;
 }
-export class ActionNodeModel extends BaseNodeModel {
-  actionAskAgain?: any;
-  constructor(options: ActionNodeModelOptions = {}) {
+export class ActionAskAgainNodeModel extends BaseNodeModel {
+  actionNodeId?: string;
+  constructor(options: ActionAskAgainNodeModelOptions = {}) {
     super({
       ...options,
-      type: 'ACTION',
+      type: 'ACTION_ASK_AGAIN',
     });
-    this.actionAskAgain = options.actionAskAgain;
+    this.actionNodeId = options.actionNodeId;
   }
 }
-export class ActionNodeFactory extends AbstractReactFactory<
-  ActionNodeModel,
+export class ActionAskAgainNodeFactory extends AbstractReactFactory<
+  ActionAskAgainNodeModel,
   AdvancedDiagramEngine
 > {
   constructor() {
-    super('ACTION');
+    super('ACTION_ASK_AGAIN');
   }
 
   generateModel(initialConfig: any) {
-    return new ActionNodeModel();
+    return new ActionAskAgainNodeModel();
   }
 
   generateReactWidget(event: any): JSX.Element {
     return (
-      <ActionNodeWidget
+      <ActionAskAgainNodeWidget
         engine={this.engine as AdvancedDiagramEngine}
         node={event.model}
       />

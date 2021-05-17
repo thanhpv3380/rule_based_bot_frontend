@@ -4,4 +4,5 @@ export * from './StartNode';
 export * from './ConditionNode';
 export * from './ConditionNode';
 export * from './MenuNode';
+export * from './ActionAskAgainNode';
 export * from './BaseNodeModel';

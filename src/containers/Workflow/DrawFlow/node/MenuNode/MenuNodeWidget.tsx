@@ -23,8 +23,7 @@ import {
   ActionNodeModel,
 } from '../';
 import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
-import apis from '../../../../../apis';
-import { checkAllowConnect } from '../../../../../utils/checkConnectNode';
+
 export interface MenuNodeWidgetProps {
   node: MenuNodeModel;
   engine: AdvancedDiagramEngine;
@@ -61,113 +60,53 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
     const keys = Object.keys(listNode);
     const lastNode = listNode[keys[keys.length - 1]];
 
-    // check allow connect
-
     if (lastNode instanceof MenuNodeModel) {
       // get position of last node
       const positionX = lastNode.getX();
       const positionY = lastNode.getY();
-
-      //create node and set position
-      let node;
-      if (id === 1) {
-        node = new IntentNodeModel();
-      } else if (id === 2) {
-        node = new ConditionNodeModel();
-      } else {
-        node = new ActionNodeModel();
-      }
-
-      node.setPosition(positionX, positionY);
-
-      // get port in of new node
-      const element_select_port = node.getPort('in');
 
       // get link from last node
       const links = lastNode.getPorts()['in']['links'];
       const listKeysLink = Object.keys(links);
       const link = links[listKeysLink[listKeysLink.length - 1]];
 
-      const portSourceNode = link.getSourcePort();
-      const sourceNode = portSourceNode && portSourceNode.getParent();
-
-      const listPortSourceNode = sourceNode.getPorts();
-      const portOutSourceNode =
-        (listPortSourceNode && listPortSourceNode['out-bottom']) || null;
-
-      // check allow connect
-      const isConnect = checkAllowConnect(
-        sourceNode,
-        node,
-        portOutSourceNode.getLinks(),
-      );
-      if (!isConnect) {
-        enqueueSnackbar('Node is connected', {
-          variant: 'error',
-        });
-        return;
+      //create node and set position
+      let targetNode: BaseNodeModel;
+      if (id === 1) {
+        targetNode = new IntentNodeModel();
+      } else if (id === 2) {
+        targetNode = new ConditionNodeModel();
+      } else {
+        targetNode = new ActionNodeModel();
       }
 
-      link.getLastPoint().setPosition(positionX, positionY);
-      if (link.getSourcePort().canLinkToPort(element_select_port)) {
-        link.setTargetPort(element_select_port);
-        element_select_port.reportPosition();
-      }
+      targetNode.setPosition(positionX, positionY);
+      // get port in of new node
+      const portInTargetNode = targetNode.getPort('in');
 
-      // call api add node
-      const nodeConnect: any = link.getSourcePort().getParent();
-      const parent = [
-        {
-          node: nodeConnect.id,
-          type: nodeConnect.getType(),
-        },
-      ];
+      const sourceNode = node.nodeConnect;
+      const canConnect = sourceNode.checkConnect(targetNode);
 
-      node.setPosition(positionX, positionY);
-
-      const newNode = {
-        type: node.getType(),
-        position: {
-          x: positionX,
-          y: positionY,
-        },
-        parent,
-        workflow: workflowId,
-      };
-
-      const data = await apis.node.createNode({ ...newNode });
-      if (data && data.status) {
-        node.id = data.result.node.id;
-        if (node instanceof ConditionNodeModel) {
-          const sourceNode = link.getSourcePort().getParent();
-          if (sourceNode instanceof IntentNodeModel) {
-            node.intents = [
-              {
-                node: sourceNode.id,
-                type: 'INTENT',
-              },
-            ];
-          }
-          node.itemId = data.result.node.condition;
+      if (canConnect) {
+        link.getLastPoint().setPosition(positionX, positionY);
+        if (link.getSourcePort().canLinkToPort(portInTargetNode)) {
+          link.setTargetPort(portInTargetNode);
+          portInTargetNode.reportPosition();
         }
+        const status = await targetNode.create(engine, sourceNode, workflowId);
+        if (!status) {
+          enqueueSnackbar('Create node failed', { variant: 'error' });
+          return;
+        }
+        lastNode.remove();
+        engine.repaintCanvas();
+      } else {
+        enqueueSnackbar("Node doesn't init", { variant: 'error' });
       }
-
-      // add node to model
-      const model = engine.getModel();
-      model.addNode(node);
-
-      // remove last node
-      lastNode.remove();
-
-      // update canvas
-      engine.repaintCanvas();
     }
   };
 
   let menu = items;
-  if (!node.isIntent) {
-    menu = items.filter((el) => el.id !== 2);
-  }
   return (
     <List
       component="nav"

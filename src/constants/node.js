@@ -1,0 +1,8 @@
+export default {
+  INTENT: 'INTENT',
+  ACTION: 'ACTION',
+  CONDITION: 'CONDITION',
+  CONNECT_NONE: 0,
+  CONNECT_ONE_ONE: 1,
+  CONNECT_ONE_MANY: 2,
+};

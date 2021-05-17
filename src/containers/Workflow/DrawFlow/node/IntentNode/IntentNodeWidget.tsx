@@ -24,6 +24,7 @@ import {
   DeleteOutline as DeleteOutlineIcon,
   FileCopy as FileCopyIcon,
   RecordVoiceOver as RecordVoiceOverIcon,
+  Add as AddIcon,
 } from '@material-ui/icons';
 import { IntentIcon } from '../../icon';
 import useStyle from './intentNodeWidget.style';
@@ -35,6 +36,7 @@ import { AdvancedDiagramEngine } from '../../AdvancedDiagramEngine';
 import apis from '../../../../../apis';
 import { Intent, IntentsResponse, DataResponse } from './intentNodeWidget.type';
 import { BaseNodeModel } from '../BaseNodeModel';
+import { useConfirm } from 'material-ui-confirm';
 
 export interface IntentNodeWidgetProps {
   node: IntentNodeModel;
@@ -50,14 +52,16 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const { workflowId } = useParams();
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
+  const confirm = useConfirm();
   const [isHover, setIsHover] = useState(false);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
   const [actionMouseWheel] = useState<Action>(
     engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
   );
   const [intent, setIntent] = useState<IntentsResponse>();
+  const [intentEditId, setIntentEditId] = useState<any>();
   const [intents, setIntents] = useState<IntentsResponse[]>([]);
-  const [isForcus, setIsForcus] = useState<boolean>(false);
+  const [isFocus, setIsFocus] = useState<boolean>(false);
 
   const fetchIntents = async () => {
     const data: DataResponse = await apis.intent.getIntents();
@@ -74,6 +78,16 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   }, []);
 
   const handleOpenEdit = () => {
+    setIntentEditId(intent?.id);
+    setOpenEdit(true);
+
+    // engine.getActionEventBus().deregisterAction(actionMove);
+    engine.getActionEventBus().deregisterAction(actionMouseWheel);
+    engine.repaintCanvas();
+  };
+
+  const handleOpenAdd = () => {
+    setIntentEditId(null);
     setOpenEdit(true);
 
     // engine.getActionEventBus().deregisterAction(actionMove);
@@ -90,32 +104,16 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   };
 
   const handleDeleteNode = async () => {
-    const selectedEntities = engine.getModel().getSelectedEntities();
-    if (selectedEntities.length > 0) {
-      const confirm = window.confirm('Are you sure you want to delete?');
-
-      if (confirm) {
-        _.forEach(selectedEntities, async (model) => {
-          // only delete items which are not locked
-          if (!model.isLocked()) {
-            console.log('remove');
-            const data = await apis.node.deleteNode(
-              workflowId,
-              (model as BaseNodeModel).id,
-            );
-            if (data && data.status) {
-              model.remove();
-              engine.repaintCanvas();
-            } else {
-              enqueueSnackbar((data && data.message) || 'Delete node failed', {
-                variant: 'error',
-              });
-            }
-          }
-        });
-        // engine.repaintCanvas();
+    confirm({
+      description: `Are you sure you want to delete ${node.id}?`,
+    }).then(async () => {
+      const status = await node.delete(engine, workflowId);
+      if (status) {
+        enqueueSnackbar('Delete node success', { variant: 'success' });
+      } else {
+        enqueueSnackbar('Delete node failed', { variant: 'error' });
       }
-    }
+    });
   };
 
   const handleDuplicateNode = () => {
@@ -123,12 +121,11 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
       .getModel()
       .getSelectedEntities()[0] as IntentNodeModel;
 
-    const newNode = new IntentNodeModel();
+    let newNode = new IntentNodeModel();
     newNode.setPosition(
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
     );
-    // props.engine.getModel().addNode(newNode);
     engine.getModel().addNode(newNode);
     engine.repaintCanvas();
   };
@@ -149,10 +146,19 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const handleMouseLeaveItem = (e: any) => {
     // e.target.style.border = '2px solid rgb(224 224 224)';
   };
+
+  const handleCreateItem = (data) => {
+    setIntents([{ ...data }, ...intents]);
+  };
   return (
     <Box onMouseLeave={() => setIsHover(false)} className={classes.container}>
       {isHover ? (
         <Box className={classes.iconMenu}>
+          <AddIcon
+            fontSize="small"
+            className={classes.iconMenuItem}
+            onClick={handleOpenAdd}
+          />
           <EditIcon
             fontSize="small"
             className={classes.iconMenuItem}
@@ -167,14 +173,14 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
             onClick={() => handleDuplicateNode()}
             className={classes.fileCopyIcon}
           />
-          <MoreVertIcon fontSize="small" className={classes.iconMenuItem} />
+          {/* <MoreVertIcon fontSize="small" className={classes.iconMenuItem} /> */}
         </Box>
       ) : (
         <Box className={classes.noneIconMenu} />
       )}
 
       <Paper
-        elevation={5}
+        elevation={2}
         onMouseOver={() => setIsHover(true)}
         className={classes.root}
       >
@@ -182,13 +188,13 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
           engine={props.engine}
           port={props.node.getPort('in')}
         ></PortWidget>
-        <Grid container justify="center" className={classes.header}>
+        <Box className={classes.grid}>
           <IntentIcon
-            className={classes.headerIcon}
-            style={{ width: '2em', height: '2em' }}
+            backgroundColor="#e8f8ff"
+            className={classes.iconHeader}
           />
           <Typography variant="h6">Intent</Typography>
-        </Grid>
+        </Box>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <PortWidget
             engine={props.engine}
@@ -196,11 +202,12 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
           >
             <div className="circle-port" />
           </PortWidget>
-          {!isForcus ? (
-            <Grid
-              onMouseLeave={() => setIsForcus(false)}
-              onMouseDown={() => setIsForcus(true)}
-              className={classes.unforcusBody}
+          {!isFocus ? (
+            <Box
+              m={2}
+              onMouseLeave={() => setIsFocus(false)}
+              onMouseDown={() => setIsFocus(true)}
+              className={classes.unfocusBody}
             >
               {intent ? (
                 <Typography>{intent.name}</Typography>
@@ -209,12 +216,13 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
                   Select intent
                 </Typography>
               )}
-            </Grid>
+            </Box>
           ) : (
-            <Grid
-              onBlur={() => setIsForcus(false)}
-              onMouseDown={() => setIsForcus(true)}
-              className={classes.forcusBody}
+            <Box
+              m={2}
+              onBlur={() => setIsFocus(false)}
+              onMouseDown={() => setIsFocus(true)}
+              className={classes.focusBody}
             >
               <Autocomplete
                 className={classes.autoComplete}
@@ -246,7 +254,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
                   />
                 )}
               />
-            </Grid>
+            </Box>
           )}
           <PortWidget
             engine={props.engine}
@@ -268,7 +276,8 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
       <IntentNodeDetail
         open={openEdit}
         handleCloseEdit={handleCloseEdit}
-        intentId={intent?.id}
+        intentId={intentEditId}
+        handleCreateItem={handleCreateItem}
       />
     </Box>
   );

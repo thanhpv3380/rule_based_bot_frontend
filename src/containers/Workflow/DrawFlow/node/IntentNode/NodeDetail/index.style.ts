@@ -2,15 +2,17 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyle = makeStyles({
     root: {
-        backgroundColor: "#eaeaea",
+        backgroundColor: "#fff",
         height: "80%",
         width: "60%",
         "@media (min-width: 1600px)": {
             width: "45%",
         },
-        overflow: "auto",
-        borderRadius: 10,
+        overflow: "none",
+        padding: 25,
+        borderRadius: 10
     },
+
     modal: {
         "& :focus": {
             outline: "none",
@@ -18,11 +20,14 @@ const useStyle = makeStyles({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        borderRadius: 10
     },
     content: {
-        marginLeft: 40,
-        marginRight: 40,
-        marginTop: '3%'
+        height: '90%',
+        overflow: "auto",
+        border: '1px solid #eee',
+        borderRadius: 10,
+        boxSizing: 'border-box'
     }
 });
 

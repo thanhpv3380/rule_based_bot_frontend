@@ -145,21 +145,21 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
     ]);
   };
 
-  const handleAddLoop = () => {
-    setActions([
-      ...actions,
-      {
-        typeAction: actionsConstant.LOOP,
-        loop: {
-          intents: [],
-          parameters: [],
-          actionAskAgain: null,
-          numberOfLoop: 1,
-          actionFail: null,
-        },
-      },
-    ]);
-  };
+  // const handleAddLoop = () => {
+  //   setActions([
+  //     ...actions,
+  //     {
+  //       typeAction: actionsConstant.LOOP,
+  //       loop: {
+  //         intents: [],
+  //         parameters: [],
+  //         actionAskAgain: null,
+  //         numberOfLoop: 1,
+  //         actionFail: null,
+  //       },
+  //     },
+  //   ]);
+  // };
 
   const handleAddJsonApi = () => {
     setActions([
@@ -390,7 +390,6 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
   const handleSave = async (e) => {
     e.preventDefault();
 
-    console.log(actions);
     const data = await apis.action.updateAction(currentActionId, {
       name: actionData.name,
       actions,
@@ -526,11 +525,6 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
       heading: 'JSON API',
       icon: '',
       event: handleAddJsonApi,
-    },
-    {
-      heading: 'Loop',
-      icon: '',
-      event: handleAddLoop,
     },
   ];
 

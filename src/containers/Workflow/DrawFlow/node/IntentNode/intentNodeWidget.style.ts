@@ -1,16 +1,13 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
-const useStyle = makeStyles({
+const useStyle = makeStyles((theme) => ({
     root: {
         borderRadius: 5,
         backgroundColor: '#ffff',
-        // border: "3px solid #ffff",
-        // "&:hover": {
-        //     border: "3px solid #22AEDA",
-        // }
+        border: '1px solid #ccc'
     },
     container: {
-        width: 280,
+        width: 350,
         position: 'relative'
     },
     iconMenu: {
@@ -21,6 +18,21 @@ const useStyle = makeStyles({
         backgroundColor: 'white',
         marginBottom: 8,
         borderRadius: 5,
+        border: '1px solid #ccc'
+    },
+    grid: {
+        display: "flex",
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        padding: theme.spacing(1, 2.5),
+        backgroundColor: '#dceef6',
+        borderTopRightRadius: 5,
+        borderTopLeftRadius: 5,
+    },
+    iconHeader: {
+        marginRight: 5,
+        width: '2em',
+        height: '2em'
     },
     noneIconMenu: {
         display: 'inline-block',
@@ -54,10 +66,9 @@ const useStyle = makeStyles({
     textField: {
         margin: '10px 0px 5px 0px',
     },
-    forcusBody: {
+    focusBody: {
         width: '100%',
         backgroundColor: '#ffff',
-        margin: '10px 10px',
         borderRadius: 5,
         cursor: 'pointer',
         border: '2px solid rgb(224 224 224)',
@@ -66,10 +77,9 @@ const useStyle = makeStyles({
             // border: '2px solid #ccc',
         }
     },
-    unforcusBody: {
+    unfocusBody: {
         width: '100%',
         backgroundColor: '#ffff',
-        margin: '10px 10px',
         padding: 10,
         borderRadius: 5,
         cursor: 'pointer',
@@ -97,6 +107,6 @@ const useStyle = makeStyles({
 
     }
 
-});
+}));
 
 export default useStyle;

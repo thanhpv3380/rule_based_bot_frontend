@@ -28,8 +28,12 @@ function CreateIntent(props) {
   const fetchActions = async () => {
     const data = await apis.action.getActions();
 
-    if (data.status) {
+    if (data && data.status) {
       setActions(data.result.actions);
+    } else {
+      enqueueSnackbar('Fetch actions failed', {
+        variant: 'error',
+      });
     }
   };
 
@@ -50,10 +54,10 @@ function CreateIntent(props) {
   const handleKeyDown = async (value) => {
     intent.patterns = [value];
     const data = await apis.intent.createIntent(intent);
-    if (data.status) {
+    if (data && data.status) {
       handleCreate(data.result);
     } else {
-      enqueueSnackbar(data.message, {
+      enqueueSnackbar((data && data.message) || 'Create intent failed', {
         variant: 'error',
       });
     }
@@ -111,16 +115,15 @@ function CreateIntent(props) {
       parameters: intent.parameters,
       groupIntentId: intent.groupIntent || null,
     };
-    console.log(newIntent);
     const data = await apis.intent.createIntent(newIntent);
-    if (data.status === 1) {
+    if (data && data.status) {
       handleCreate(data.result.action);
       enqueueSnackbar('Create intent success', {
         variant: 'success',
       });
       history.push(`/intents/${data.result.id}`);
     } else {
-      enqueueSnackbar('Cannot fetch data', {
+      enqueueSnackbar('Create intent failed', {
         variant: 'error',
       });
     }

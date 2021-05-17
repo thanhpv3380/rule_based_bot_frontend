@@ -1,3 +1,4 @@
+import * as user from './user';
 import * as auth from './auth';
 import * as bot from './bot';
 import * as action from './action';
@@ -15,8 +16,10 @@ import * as groupWorkflow from './groupWorkflow';
 import * as slot from './slot';
 import * as node from './node';
 import * as dashboard from './dashboard';
+import * as permission from './permission';
 
 export default {
+  user,
   auth,
   bot,
   action,
@@ -34,4 +37,5 @@ export default {
   slot,
   node,
   dashboard,
+  permission,
 };
