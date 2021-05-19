@@ -62,6 +62,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       intent.parameters &&
       intent.parameters.map((el) => {
         return {
+          id: el.id,
           parameterName: el.parameterName,
           required: el.required || false,
           entity: el.entity.id,
