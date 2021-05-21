@@ -15,13 +15,12 @@ import {
   TableBody,
 } from '@material-ui/core';
 import { DeleteOutline as DeleteOutlineIcon } from '@material-ui/icons';
-import 'date-fns';
 import { Autocomplete } from '@material-ui/lab';
 import useStyles from './index.style';
 import apis from '../../../apis';
-import roleAccount from '../../../constants/role';
+import roleConstant from '../../../constants/role';
 
-const GeneralSetting = () => {
+const ShareBot = ({ role }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const [permissions, setPermissions] = useState([]);
@@ -81,36 +80,40 @@ const GeneralSetting = () => {
         the change to be affected.
       </Typography>
       <Grid container xs={12} style={{ display: 'flex' }}>
-        <Grid item xs={6}>
-          <Autocomplete
-            options={accounts || []}
-            value={accountSelect || null}
-            onChange={(e, value) => {
-              setAccountSelect(value);
-            }}
-            getOptionSelected={(option, value) => option.id === value.id}
-            getOptionLabel={(option) => option.email}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                margin="normal"
-                placeholder="Enter Email"
-                onChange={handleChange}
+        {role === roleConstant.ROLE_OWNER && (
+          <>
+            <Grid item xs={6}>
+              <Autocomplete
+                options={accounts || []}
+                value={accountSelect || null}
+                onChange={(e, value) => {
+                  setAccountSelect(value);
+                }}
+                getOptionSelected={(option, value) => option.id === value.id}
+                getOptionLabel={(option) => option.email}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    margin="normal"
+                    placeholder="Enter Email"
+                    onChange={handleChange}
+                  />
+                )}
               />
-            )}
-          />
-        </Grid>
-        <Grid
-          item
-          xs={4}
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            padding: '10px 0px',
-          }}
-        >
-          <Button onClick={handleAdd}>add</Button>
-        </Grid>
+            </Grid>
+            <Grid
+              item
+              xs={4}
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                padding: '10px 0px',
+              }}
+            >
+              <Button onClick={handleAdd}>add</Button>
+            </Grid>
+          </>
+        )}
       </Grid>
       <TableContainer>
         <Table aria-label="simple table">
@@ -128,11 +131,21 @@ const GeneralSetting = () => {
                 <TableCell style={{ borderBottom: 'none' }} align="left">
                   <Typography>{el.user && el.user.email}</Typography>
                 </TableCell>
-                {el.role === roleAccount.ROLE_EDITOR && (
-                  <TableCell style={{ borderBottom: 'none' }} align="left">
-                    <DeleteOutlineIcon onClick={handleDelete(el.id)} />
-                  </TableCell>
-                )}
+                <TableCell
+                  style={{
+                    borderBottom: 'none',
+                    color: '#ccc',
+                  }}
+                  align="left"
+                >
+                  <Typography variant="subtitle2">{el.role}</Typography>
+                </TableCell>
+                {el.role === roleConstant.ROLE_EDITOR &&
+                  role === roleConstant.ROLE_OWNER && (
+                    <TableCell style={{ borderBottom: 'none' }} align="left">
+                      <DeleteOutlineIcon onClick={handleDelete(el.id)} />
+                    </TableCell>
+                  )}
               </TableRow>
             ))}
           </TableBody>
@@ -142,4 +155,4 @@ const GeneralSetting = () => {
   );
 };
 
-export default GeneralSetting;
+export default ShareBot;

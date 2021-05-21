@@ -1,11 +1,9 @@
 import api from './authApi';
-import { renderQueryAll } from '../utils/query';
 
-export async function getBots(query) {
-  const newQuery = renderQueryAll(query);
+export async function getBots() {
   const response = await api({
     method: 'GET',
-    url: `/bots?${newQuery}`,
+    url: `/bots`,
   });
   return response;
 }
@@ -14,6 +12,14 @@ export async function getBotById(id) {
   const response = await api({
     method: 'GET',
     url: `/bots/${id}`,
+  });
+  return response;
+}
+
+export async function getRoleInBot(id) {
+  const response = await api({
+    method: 'GET',
+    url: `/bots/${id}/role`,
   });
   return response;
 }

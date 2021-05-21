@@ -8,6 +8,7 @@ export default function PrivateRoute({
   Component,
   isLayout,
   isHeader,
+  path,
   ...rest
 }) {
   const accessToken = useSelector((state) => state.auth.accessToken);

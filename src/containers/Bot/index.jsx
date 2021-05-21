@@ -4,15 +4,13 @@ import { useDispatch } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import { Box } from '@material-ui/core';
 import { setCookie } from '../../utils/cookie';
-
+import roleConstant from '../../constants/role';
 import ListBot from './ListBot';
 import CreateBotModal from './CreateBot';
 import SearchBox from './SearchBox';
 import apis from '../../apis';
 import useStyles from './index.styles';
 import actions from '../../redux/actions';
-
-let searchId = null;
 
 const Bot = () => {
   const classes = useStyles();
@@ -33,14 +31,13 @@ const Bot = () => {
     setOpenModal((prev) => !prev);
   };
 
-  const fetchBots = async (query) => {
-    const data = await apis.bot.getBots(query);
+  const fetchBots = async () => {
+    const data = await apis.bot.getBots();
     if (data && data.status) {
       setBots(data.result.bots);
       setPagination({
         ...pagination,
         count: data.result.metadata.count,
-        page: Math.floor(query.offset / query.limit),
       });
     } else {
       enqueueSnackbar('Cannot fetch data', {
@@ -50,18 +47,13 @@ const Bot = () => {
   };
 
   useEffect(() => {
-    fetchBots({
-      limit: pagination.rowsPerPage,
-      offset: 0,
-    });
+    fetchBots();
   }, []);
 
   const handleChangePage = async (event, newPage) => {
-    fetchBots({
-      key: keySearch,
-      searchFields: 'name',
-      limit: pagination.rowsPerPage,
-      offset: newPage * pagination.rowsPerPage,
+    setPagination({
+      ...pagination,
+      page: newPage,
     });
   };
 
@@ -74,25 +66,19 @@ const Bot = () => {
 
   const handleSearch = async (e) => {
     const { value } = e.target;
+    setPagination({
+      ...pagination,
+      page: 0,
+    });
     setKeySearch(value);
-    clearTimeout(searchId);
-    searchId = setTimeout(
-      () =>
-        fetchBots({
-          key: value,
-          searchFields: 'name',
-          limit: pagination.rowsPerPage,
-          offset: 0,
-        }),
-      1000,
-    );
   };
 
   const handleCreate = async (value) => {
     const data = await apis.bot.createBot(value);
     if (data && data.status) {
-      const { id } = data.result;
+      const { id } = data.result.bot;
       setCookie('bot-id', id);
+      dispatch(actions.bot.updateRole(roleConstant.ROLE_OWNER));
       dispatch(actions.bot.changeBot(id));
       history.push(`/bot/${id}/dashboard`);
     } else {
@@ -102,8 +88,9 @@ const Bot = () => {
     }
   };
 
-  const handleView = (id) => {
+  const handleView = (id, role) => {
     setCookie('bot-id', id);
+    dispatch(actions.bot.updateRole(role));
     dispatch(actions.bot.changeBot(id));
     history.push(`/bot/${id}/dashboard`);
   };
@@ -126,6 +113,7 @@ const Bot = () => {
         handleView={handleView}
         items={bots}
         pagination={pagination}
+        keySearch={keySearch}
       />
     </Box>
   );

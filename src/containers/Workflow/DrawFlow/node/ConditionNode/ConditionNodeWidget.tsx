@@ -83,10 +83,20 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   );
   const [intent, setIntent] = useState<IntentResponse>();
   const [parameters, setParameters] = useState<Parameter[]>();
+  const [slots, setSlots] = useState([]);
+
+  const fetchSlots = async () => {
+    const data = await apis.slot.getSlots();
+    if (data && data.status) {
+      setSlots(data.result.slots);
+      return data.result.slots;
+    }
+    return [];
+  };
 
   const fetchCondition = async (id: string) => {
     const data = await apis.condition.getConditionById(id);
-
+    console.log({ condition: data });
     if (data && data.status) {
       setCondition(data.result);
       setSubConditions(data.result.conditions);
@@ -100,7 +110,13 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
   }, []);
 
   const handleOpenEdit = async () => {
-    let tempParameters = [];
+    setOpenEdit(true);
+    const listSlot = await fetchSlots();
+    const newListSlot = listSlot.map((el) => ({
+      ...el,
+      parameterName: el.name,
+    }));
+    let tempParameters = [...newListSlot];
     let listNode = [];
     const getIntentParent = (tempNode) => {
       const links = tempNode.getPort('in').getLinks();
@@ -120,9 +136,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       });
     };
     getIntentParent(node);
-
     setParameters(tempParameters || []);
-    setOpenEdit(true);
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
   };

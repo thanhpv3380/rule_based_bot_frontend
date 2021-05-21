@@ -134,48 +134,8 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
     engine.repaintCanvas();
   };
 
-  const handleCreateAAAgainNode = async (data?: any) => {
-    const listPortOut = node.getArrayLinkByPortType('out');
-    const checkExistAAANode = listPortOut.find(
-      (el) => el.getTargetPort().getParent() instanceof ActionAskAgainNodeModel,
-    );
-
-    if (!checkExistAAANode) {
-      const posX = node.getX();
-      const posY = node.getY();
-
-      const sourcePortOutRight = node.getPort('out-right');
-      const link = sourcePortOutRight.createLinkModel();
-      link.setSourcePort(sourcePortOutRight);
-      link.getFirstPoint().setPosition(posX, posY);
-
-      const actionAskAgainNode = new ActionAskAgainNodeModel({
-        nodeInfo: data,
-        actionNodeId: node.id,
-      });
-      actionAskAgainNode.setPosition(posX + 300, posY);
-      link
-        .getLastPoint()
-        .setPosition(actionAskAgainNode.getX(), actionAskAgainNode.getY());
-      // create action ask again node
-      const targetPortIn = actionAskAgainNode.getPort('in');
-
-      if (link.getSourcePort().canLinkToPort(targetPortIn)) {
-        link.setTargetPort(targetPortIn);
-        targetPortIn.reportPosition();
-        const model = engine.getModel();
-        model.addNode(actionAskAgainNode);
-        model.addLink(link);
-        engine.repaintCanvas();
-      } else {
-        link.remove();
-      }
-    }
-  };
-
   useEffect(() => {
     if (node && node.actionAskAgain) {
-      //handleCreateAAAgainNode(node.actionAskAgain);
       setActionAskAgain(node.actionAskAgain);
     }
   }, []);
@@ -192,6 +152,12 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
 
   const handleCreateItem = (data) => {
     setActions([{ ...data }, ...actions]);
+  };
+
+  const handleOpenAAADetail = (status) => {
+    let size = 250;
+    if (!status) size = -250;
+    node.updatePositionOutNodeConnect(engine, 0, size);
   };
 
   return (
@@ -242,7 +208,6 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
             />
             <Typography variant="h6">Action</Typography>
           </Box>
-          <SettingsIcon onClick={() => handleCreateAAAgainNode()} />
         </Box>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <PortWidget
@@ -288,6 +253,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
                 actions={actions}
                 actionAskAgain={actionAskAgain}
                 handleChange={handleChangeActionAskAgain}
+                handleOpenAAADetail={handleOpenAAADetail}
               />
             </Box>
           </Box>
