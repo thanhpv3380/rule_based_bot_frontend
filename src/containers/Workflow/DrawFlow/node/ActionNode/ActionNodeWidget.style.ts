@@ -17,7 +17,7 @@ export default makeStyles((theme) => ({
   },
   noneIconMenu: {
     display: 'inline-block',
-    padding: '13px 0px',
+    padding: '14px 0px',
     marginBottom: 8,
   },
   iconMenuItem: {

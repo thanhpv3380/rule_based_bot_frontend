@@ -20,6 +20,11 @@ const useStyle = makeStyles((theme) => ({
         borderRadius: 5,
         border: '1px solid #ccc'
     },
+    noneIconMenu: {
+        display: 'inline-block',
+        padding: '14px 0px',
+        marginBottom: 8,
+    },
     grid: {
         display: "flex",
         justifyContent: 'flex-start',
@@ -33,11 +38,6 @@ const useStyle = makeStyles((theme) => ({
         marginRight: 5,
         width: '2em',
         height: '2em'
-    },
-    noneIconMenu: {
-        display: 'inline-block',
-        padding: '13px 0px',
-        marginBottom: 8,
     },
     iconMenuItem: {
         cursor: 'pointer',

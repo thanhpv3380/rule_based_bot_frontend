@@ -37,6 +37,8 @@ const IntentNodeDetail = (props: IntentNodeDetail) => {
     fetchGroupAndItems('');
   }, [open]);
 
+  useEffect(() => {}, [currentIntentId]);
+
   const handleUpdate = (data, oldGroupAction) => {
     console.log('update intent in flow');
   };
@@ -71,7 +73,7 @@ const IntentNodeDetail = (props: IntentNodeDetail) => {
           {currentIntentId ? (
             <IntentDetail
               groupItems={groupAndItems}
-              flowIntentId={intentId}
+              flowIntentId={currentIntentId}
               handleUpdate={handleUpdate}
             />
           ) : (

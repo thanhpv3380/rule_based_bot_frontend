@@ -148,6 +148,10 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   };
 
   const handleCreateItem = (data) => {
+    setIntentEditId(data.id);
+    setIntent(data);
+    node.itemId = (data && data.id) || null;
+    node.nodeInfo = data;
     setIntents([{ ...data }, ...intents]);
   };
   return (
