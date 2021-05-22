@@ -20,21 +20,12 @@ export default () => {
   const [isFirstTime, setIsFirstTime] = useState(true);
   const { accessToken, verifying } = useSelector((state) => state.auth);
 
-  // useEffect(() => {}, [useLocation()]);
-  // function useQuery() {
-  //   return new URLSearchParams(useLocation().search);
-  // }
-  // const query = useQuery();
   useEffect(() => {
     if (!accessToken) {
-      let accessTokenFromUrl = null;
       const path = window.location.href;
-      console.log(path);
       if (path && path.includes('/dashboard#access_token=')) {
         // eslint-disable-next-line prefer-destructuring
-        accessTokenFromUrl = path.split('#')[1].split('access_token=')[1];
-      }
-      if (accessTokenFromUrl) {
+        const accessTokenFromUrl = path.split('#')[1].split('access_token=')[1];
         setCookie('accessToken', accessTokenFromUrl);
         dispatch(actions.auth.verifyToken(accessTokenFromUrl));
       } else {
