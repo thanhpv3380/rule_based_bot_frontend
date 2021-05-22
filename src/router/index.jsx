@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Switch,
+  Redirect,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCookie } from '../utils/cookie';
+import { getCookie, setCookie } from '../utils/cookie';
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
 import routes from '../constants/route';
@@ -14,11 +20,26 @@ export default () => {
   const [isFirstTime, setIsFirstTime] = useState(true);
   const { accessToken, verifying } = useSelector((state) => state.auth);
 
+  // useEffect(() => {}, [useLocation()]);
+  // function useQuery() {
+  //   return new URLSearchParams(useLocation().search);
+  // }
+  console.log('test');
+  // const query = useQuery();
   useEffect(() => {
     if (!accessToken) {
-      const accessTokenFromCookie = getCookie('accessToken');
-      if (accessTokenFromCookie) {
-        dispatch(actions.auth.verifyToken(accessTokenFromCookie));
+      const accessTokenFromUrl = window.location.href
+        .split('#')[1]
+        .split('access_token=')[1];
+      // const accessTokenFromUrl = null;
+      if (accessTokenFromUrl) {
+        setCookie('accessToken', accessTokenFromUrl);
+        dispatch(actions.auth.verifyToken(accessTokenFromUrl));
+      } else {
+        const accessTokenFromCookie = getCookie('accessToken');
+        if (accessTokenFromCookie) {
+          dispatch(actions.auth.verifyToken(accessTokenFromCookie));
+        }
       }
     }
     setIsFirstTime(false);

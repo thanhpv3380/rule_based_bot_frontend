@@ -10,19 +10,18 @@ export default function PrivateRoute({
   isHeader,
   ...rest
 }) {
+  // const portal_domain = '';
   const accessToken = useSelector((state) => state.auth.accessToken);
+  console.log(accessToken, 'accessToken');
+  if (!accessToken) {
+    window.location.href = `https://rbc-portal.iristech.club/login?redirectUri=http://localhost:8080${routes.DASHBOARD}`;
+  }
   if (isHeader) {
     return (
       <Layout isLayout={isLayout}>
         <Route
           {...rest}
-          render={(props) =>
-            accessToken ? (
-              <Component {...props} />
-            ) : (
-              <Redirect to={routes.LOGIN} />
-            )
-          }
+          render={(props) => accessToken && <Component {...props} />}
         />
       </Layout>
     );
@@ -36,3 +35,4 @@ export default function PrivateRoute({
     />
   );
 }
+// `https://rbc-portal.iristech.club/login?redirectUri=http://localhost:8080${routes.DASHBOARD}`
