@@ -24,14 +24,16 @@ export default () => {
   // function useQuery() {
   //   return new URLSearchParams(useLocation().search);
   // }
-  console.log('test');
   // const query = useQuery();
   useEffect(() => {
     if (!accessToken) {
-      const accessTokenFromUrl = window.location.href
-        .split('#')[1]
-        .split('access_token=')[1];
-      // const accessTokenFromUrl = null;
+      let accessTokenFromUrl = null;
+      const path = window.location.href;
+      console.log(path);
+      if (path && path.includes('/dashboard#access_token=')) {
+        // eslint-disable-next-line prefer-destructuring
+        accessTokenFromUrl = path.split('#')[1].split('access_token=')[1];
+      }
       if (accessTokenFromUrl) {
         setCookie('accessToken', accessTokenFromUrl);
         dispatch(actions.auth.verifyToken(accessTokenFromUrl));

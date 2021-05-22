@@ -14,7 +14,7 @@ export default function PrivateRoute({
   const accessToken = useSelector((state) => state.auth.accessToken);
   console.log(accessToken, 'accessToken');
   if (!accessToken) {
-    window.location.href = `https://rbc-portal.iristech.club/login?redirectUri=http://localhost:8080${routes.DASHBOARD}`;
+    window.location.href = `https://rbc-portal.iristech.club/login?redirect_uri=http://localhost:8080${routes.DASHBOARD}`;
   }
   if (isHeader) {
     return (
