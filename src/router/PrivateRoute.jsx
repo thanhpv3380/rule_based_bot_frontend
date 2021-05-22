@@ -11,10 +11,10 @@ export default function PrivateRoute({
   ...rest
 }) {
   // const portal_domain = '';
+  const { REACT_APP_PORTAL_DOMAIN } = process.env;
   const accessToken = useSelector((state) => state.auth.accessToken);
-  console.log(accessToken, 'accessToken');
   if (!accessToken) {
-    window.location.href = `https://rbc-portal.iristech.club/login?redirect_uri=http://localhost:8080${routes.DASHBOARD}`;
+    window.location.href = `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=http://localhost:8080${routes.DASHBOARD}`;
   }
   if (isHeader) {
     return (

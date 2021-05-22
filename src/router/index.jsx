@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  BrowserRouter,
-  Switch,
-  Redirect,
-  useLocation,
-  useParams,
-} from 'react-router-dom';
+import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookie, setCookie } from '../utils/cookie';
