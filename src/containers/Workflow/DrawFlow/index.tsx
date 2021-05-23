@@ -117,6 +117,8 @@ const DrawFlow = () => {
     application.getActiveDiagram().setOffsetX(ox || 0);
     application.getActiveDiagram().setOffsetY(oy || 0);
     application.getActiveDiagram().setZoomLevel(zoom || 100);
+    console.log(nodes);
+
     await drawNodes(nodes, map);
     await drawLinks(nodes, map);
     application.getDiagramEngine().repaintCanvas();

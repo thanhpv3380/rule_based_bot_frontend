@@ -58,7 +58,9 @@ export interface ConditionNodeWidgetState {
 }
 
 const conditionsDefault = {
+  intentId: null,
   parameter: {
+    intentId: '',
     name: '',
     id: '',
   },
@@ -99,7 +101,18 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
     console.log({ condition: data });
     if (data && data.status) {
       setCondition(data.result);
-      setSubConditions(data.result.conditions);
+
+      setSubConditions(
+        data.result.conditions.map((el) => {
+          return {
+            ...el,
+            parameter: {
+              ...el.parameter,
+              intentId: el.intent,
+            },
+          };
+        }),
+      );
     }
   };
 
@@ -128,13 +141,20 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
           if (nodeEle.getType() === 'INTENT') {
             if (nodeEle.itemId) {
               console.log(nodeEle, 'ele');
-              tempParameters.push(...nodeEle.nodeInfo.parameters);
+
+              tempParameters.push(
+                ...nodeEle.nodeInfo.parameters.map((el) => {
+                  return { ...el, intentId: nodeEle.nodeInfo.id };
+                }),
+              );
             }
           }
           getIntentParent(nodeEle);
         }
       });
     };
+    console.log(tempParameters, 'tempParameters');
+
     getIntentParent(node);
     setParameters(tempParameters || []);
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
@@ -150,19 +170,22 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       const newCondition = {
         conditions: subConditions.map((el) => {
           return {
-            parameter: el.parameter,
+            intent: el.parameter.intentId || el.intentId,
+            parameter: el.parameter.id,
             value: el.value,
             operator: el.operator,
           };
         }),
         operator: condition.operator,
       };
-      console.log(node.itemId, newCondition);
+      console.log(subConditions, newCondition);
 
-      // const data = await apis.condition.updateCondition(
-      //   node.itemId,
-      //   newCondition,
-      // );
+      const data = await apis.condition.updateCondition(
+        node.itemId,
+        newCondition,
+      );
+      if (data && !data.status) {
+      }
     }
   };
 
@@ -259,6 +282,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       newSubConditions[pos].parameter = value && {
         id: value.id,
         name: value.parameterName,
+        intentId: value.intentId,
       };
 
       setSubConditions(newSubConditions);
@@ -337,7 +361,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                               if
                             </TableCell>
                             <TableCell className={classes.tableCell}>
-                              {el.parameter.name || (
+                              {(el && el.parameter && el.parameter.name) || (
                                 <Typography
                                   style={{ color: 'rgba(138, 138, 138, 0.87)' }}
                                 >

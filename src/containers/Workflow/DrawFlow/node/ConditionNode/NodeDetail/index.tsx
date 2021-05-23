@@ -121,7 +121,8 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                         value={
                           (parameters &&
                             parameters.find(
-                              (item) => item.id === el.parameter.id,
+                              (item) =>
+                                el.parameter && item.id === el.parameter.id,
                             )) ||
                           null
                         }
