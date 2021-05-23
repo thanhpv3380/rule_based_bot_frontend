@@ -3,6 +3,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Layout from '../components/Layout';
+import { setCookie } from '../utils/cookie';
 
 export default function PrivateRoute({
   Component,
@@ -14,6 +15,14 @@ export default function PrivateRoute({
   const { REACT_APP_PORTAL_DOMAIN } = process.env;
   const accessToken = useSelector((state) => state.auth.accessToken);
   const redirect_uri = window.location.href;
+  const listElementUrl = redirect_uri.split('/');
+  const pos = listElementUrl.findIndex((el) => el === 'bot');
+  if (pos >= 0) {
+    if (listElementUrl[pos + 1]) {
+      setCookie('bot-id', listElementUrl[pos + 1]);
+    }
+  }
+  console.log('ttt');
   if (isHeader) {
     return (
       <Layout isLayout={isLayout}>
