@@ -16,10 +16,11 @@ export default () => {
 
   useEffect(() => {
     if (!accessToken) {
-      const path = window.location.hash.split('&')[0];
+      const path = window.location.hash
+        .split('&')
+        .find((el) => el.includes('access_token='));
       const pathName = window.location.pathname;
       if (path) {
-        // eslint-disable-next-line prefer-destructuring
         const accessTokenFromUrl = path.split('access_token=')[1];
         setCookie('accessToken', accessTokenFromUrl);
         dispatch(actions.auth.verifyToken(accessTokenFromUrl));
