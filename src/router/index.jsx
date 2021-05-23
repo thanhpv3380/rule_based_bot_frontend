@@ -68,7 +68,7 @@ export default () => {
             path="/"
             // eslint-disable-next-line no-return-assign
             render={() =>
-              (window.location = `https://rbc-portal.iristech.club${routes.DASHBOARD}`)
+              (window.location.href = `https://rbc-portal.iristech.club${routes.DASHBOARD}`)
             }
           />
         </Switch>
