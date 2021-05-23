@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -14,7 +15,8 @@ export default function PrivateRoute({
   const { REACT_APP_PORTAL_DOMAIN } = process.env;
   const accessToken = useSelector((state) => state.auth.accessToken);
   if (!accessToken) {
-    window.location.href = `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=http://localhost:8080${routes.DASHBOARD}`;
+    const redirect_uri = window.location.href;
+    window.location.href = `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=${redirect_uri}`;
   }
   if (isHeader) {
     return (

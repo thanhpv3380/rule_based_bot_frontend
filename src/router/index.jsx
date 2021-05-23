@@ -16,12 +16,14 @@ export default () => {
 
   useEffect(() => {
     if (!accessToken) {
-      const path = window.location.href;
-      if (path && path.includes('/dashboard#access_token=')) {
+      const path = window.location.hash.split('&')[0];
+      const pathName = window.location.pathname;
+      if (path) {
         // eslint-disable-next-line prefer-destructuring
-        const accessTokenFromUrl = path.split('#')[1].split('access_token=')[1];
+        const accessTokenFromUrl = path.split('access_token=')[1];
         setCookie('accessToken', accessTokenFromUrl);
         dispatch(actions.auth.verifyToken(accessTokenFromUrl));
+        window.location.href = pathName;
       } else {
         const accessTokenFromCookie = getCookie('accessToken');
         if (accessTokenFromCookie) {
