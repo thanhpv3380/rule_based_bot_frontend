@@ -11,19 +11,29 @@ export default function PrivateRoute({
   isHeader,
   ...rest
 }) {
-  // const portal_domain = '';
   const { REACT_APP_PORTAL_DOMAIN } = process.env;
   const accessToken = useSelector((state) => state.auth.accessToken);
-  if (!accessToken) {
-    const redirect_uri = window.location.href;
-    window.location.href = `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=${redirect_uri}`;
-  }
+  const redirect_uri = window.location.href;
+  console.log('qqqqq');
+  // if (!accessToken) {
+  //   const redirect_uri = window.location.href;
+  //   console.log('uri');
+  //   window.location.href = `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=${redirect_uri}`;
+  // }
   if (isHeader) {
     return (
       <Layout isLayout={isLayout}>
         <Route
           {...rest}
-          render={(props) => accessToken && <Component {...props} />}
+          render={(props) =>
+            accessToken ? (
+              <Component {...props} />
+            ) : (
+              window.location.assign(
+                `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=${redirect_uri}`,
+              )
+            )
+          }
         />
       </Layout>
     );
@@ -32,9 +42,14 @@ export default function PrivateRoute({
     <Route
       {...rest}
       render={(props) =>
-        accessToken ? <Component {...props} /> : <Redirect to={routes.LOGIN} />
+        accessToken ? (
+          <Component {...props} />
+        ) : (
+          window.location.assign(
+            `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=${redirect_uri}`,
+          )
+        )
       }
     />
   );
 }
-// `https://rbc-portal.iristech.club/login?redirectUri=http://localhost:8080${routes.DASHBOARD}`

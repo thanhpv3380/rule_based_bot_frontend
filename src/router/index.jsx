@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCookie, setCookie } from '../utils/cookie';
@@ -13,7 +13,6 @@ export default () => {
   const dispatch = useDispatch();
   const [isFirstTime, setIsFirstTime] = useState(true);
   const { accessToken, verifying } = useSelector((state) => state.auth);
-
   useEffect(() => {
     if (!accessToken) {
       const path = window.location.hash
@@ -65,7 +64,13 @@ export default () => {
               isHeader={el.isHeader}
             />
           ))}
-          <Redirect to={routes.DASHBOARD} />
+          <Route
+            path="/"
+            // eslint-disable-next-line no-return-assign
+            render={() =>
+              (window.location = `https://rbc-portal.iristech.club${routes.DASHBOARD}`)
+            }
+          />
         </Switch>
       </Switch>
     </BrowserRouter>
