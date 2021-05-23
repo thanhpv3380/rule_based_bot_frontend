@@ -190,4 +190,21 @@ export class BaseNodeModel extends NodeModel {
 
         return true;
     }
+
+    updatePositionOutNodeConnect(engine: AdvancedDiagramEngine, lenX: number, lenY: number) {
+        const dfs = (node) => {
+            const linksOutNode = node.getArrayLinkByPortType('out');
+            linksOutNode.forEach(el => {
+                const targetNode = el?.getTargetPort()?.getParent();
+                if (targetNode) {
+                    const posX = targetNode.getX();
+                    const posY = targetNode.getY();
+                    targetNode.setPosition(posX + lenX, posY + lenY);
+                    dfs(targetNode);
+                }
+            })
+        }
+        dfs(this);
+        engine.repaintCanvas();
+    }
 }

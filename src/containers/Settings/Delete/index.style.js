@@ -9,6 +9,7 @@ export default makeStyles((theme) => ({
       backgroundColor: theme.palette.dangerRed,
     },
   },
+
   dangerIcon: {
     marginRight: 3,
   },

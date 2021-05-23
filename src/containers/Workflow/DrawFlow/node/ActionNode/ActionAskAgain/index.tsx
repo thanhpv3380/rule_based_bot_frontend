@@ -25,14 +25,16 @@ export interface ActionAskAgainProps {
   actions: ActionsResponse[];
   actionAskAgain: ActionAskAgainResponse;
   handleChange: Function;
+  handleOpenAAADetail: Function;
 }
 
 const ActionAskAgain = (props: ActionAskAgainProps) => {
-  const { actions, handleChange, actionAskAgain } = props;
+  const { actions, handleChange, actionAskAgain, handleOpenAAADetail } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-
+  const [isFirst, setIsFirst] = useState(true);
   const handleToggle = () => {
+    setIsFirst(false);
     setOpen((prev) => !prev);
   };
 
@@ -43,6 +45,10 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
     }
     return null;
   };
+
+  useEffect(() => {
+    if (!isFirst) handleOpenAAADetail(open);
+  }, [open]);
 
   return (
     <Box mt={2} className={classes.root}>

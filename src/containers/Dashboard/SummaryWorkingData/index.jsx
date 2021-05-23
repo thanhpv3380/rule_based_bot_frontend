@@ -63,73 +63,76 @@ const SummaryWorkingData = () => {
   const [analysts, setAnalysts] = useState();
   const [typeDateSelected, setTypeDateSelected] = useState('TODAY');
 
-  const highChartsRender = () => {
-    Highcharts.chart({
-      chart: {
-        type: 'column',
-        renderTo: 'graph-summary-working-data',
-      },
-      title: {
-        text: 'Statistic Data',
-      },
-      xAxis: {
-        title: {
-          text: 'Day',
+  const bindDataHightChart = () => {
+    const graphId = document.getElementById('graph-summary-working-data');
+    if (graphId) {
+      Highcharts.chart({
+        chart: {
+          type: 'column',
+          renderTo: 'graph-summary-working-data',
         },
-        categories: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
-        ],
-      },
-      yAxis: {
         title: {
-          text: 'Total data',
+          text: 'Statistic Data',
         },
-      },
-      legend: {
-        layout: 'horizontal',
-        align: 'center',
-        verticalAlign: 'top',
-        borderWidth: 0,
-        itemDistance: 30,
-        margin: 5,
-      },
-      plotOptions: {
-        column: {
-          stacking: 'normal',
-          dataLabels: {
-            enabled: true,
+        xAxis: {
+          title: {
+            text: 'Day',
+          },
+          categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+          ],
+        },
+        yAxis: {
+          title: {
+            text: 'Total data',
           },
         },
-      },
-      series: [
-        {
-          name: 'Intent',
-          data: [900, 850, 990, 1200, 780, 930, 1700],
-          color: '#f6a61f',
+        legend: {
+          layout: 'horizontal',
+          align: 'center',
+          verticalAlign: 'top',
+          borderWidth: 0,
+          itemDistance: 30,
+          margin: 5,
         },
-        {
-          name: 'Action',
-          data: [300, 400, 200, 250, 540, 120, 800],
-          color: '#f16a73',
+        plotOptions: {
+          column: {
+            stacking: 'normal',
+            dataLabels: {
+              enabled: true,
+            },
+          },
         },
-        {
-          name: 'Workflow',
-          data: [200, 100, 300, 450, 140, 200, 520],
-          color: '#4991e2',
-        },
-      ],
-    });
+        series: [
+          {
+            name: 'Intent',
+            data: [900, 850, 990, 1200, 780, 930, 1700],
+            color: '#f6a61f',
+          },
+          {
+            name: 'Action',
+            data: [300, 400, 200, 250, 540, 120, 800],
+            color: '#f16a73',
+          },
+          {
+            name: 'Workflow',
+            data: [200, 100, 300, 450, 140, 200, 520],
+            color: '#4991e2',
+          },
+        ],
+      });
+    }
   };
 
   const bindDataAnalysts = (data) => {
@@ -162,13 +165,13 @@ const SummaryWorkingData = () => {
 
   const fetchStatisticWorkingData = async () => {
     const data = await apis.dashboard.getStatisticWorkingData();
-    if (data.status) {
+    if (data && data.status) {
       bindDataAnalysts(data.result);
+      bindDataHightChart();
     }
   };
 
   useEffect(() => {
-    // highChartsRender();
     fetchStatisticWorkingData();
   }, []);
 

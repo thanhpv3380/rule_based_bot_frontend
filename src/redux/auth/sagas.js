@@ -20,8 +20,12 @@ function* loginSaga({ email, password }) {
       return;
     }
     const { accessToken, user } = data.result;
-    setCookie('accessToken', accessToken, A_WEEK);
-    yield put(actions.auth.loginSuccess(accessToken, user));
+    if (user) {
+      setCookie('accessToken', accessToken, A_WEEK);
+      yield put(actions.auth.loginSuccess(accessToken, user));
+    } else {
+      yield put(actions.auth.loginFailure('Lỗi access token'));
+    }
   } catch (error) {
     yield put(actions.auth.loginFailure('Lỗi không xác định'));
   }
@@ -32,7 +36,11 @@ function* verifyTokenSaga({ accessToken }) {
     const data = yield apis.auth.verify(accessToken);
     if (!data.status) throw new Error();
     const { user } = data.result;
-    yield put(actions.auth.verifyTokenSuccess(accessToken, user));
+    if (user) {
+      yield put(actions.auth.verifyTokenSuccess(accessToken, user));
+    } else {
+      yield put(actions.auth.verifyTokenFailure());
+    }
   } catch (error) {
     yield put(actions.auth.verifyTokenFailure());
   }

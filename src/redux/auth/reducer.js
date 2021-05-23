@@ -6,6 +6,7 @@ export const initialState = {
   verifying: false,
   loginCode: null,
   user: null,
+  role: null,
 };
 
 export default function authReducer(state = initialState, action) {
@@ -40,7 +41,7 @@ export default function authReducer(state = initialState, action) {
       return { ...state, verifying: false };
 
     case actionTypes.LOGOUT:
-      return { ...state, accessToken: null };
+      return { ...state, accessToken: null, user: null, role: null };
 
     default:
       return state;

@@ -9,6 +9,7 @@ export default function PrivateRoute({
   Component,
   isLayout,
   isHeader,
+  path,
   ...rest
 }) {
   const { REACT_APP_PORTAL_DOMAIN } = process.env;
