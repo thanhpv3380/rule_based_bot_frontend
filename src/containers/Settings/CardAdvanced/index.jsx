@@ -3,14 +3,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Grid, Typography, Button } from '@material-ui/core';
-import 'date-fns';
 import useStyles from './index.style';
 
 const CardAdvanced = (props) => {
   // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   const classes = useStyles();
-  const { title, children, isNoneSaveBtn } = props;
+  const { title, children, isNoneSaveBtn, handleSave } = props;
   return (
     <Box className={classes.card}>
       <Grid
@@ -24,7 +23,9 @@ const CardAdvanced = (props) => {
           {title}
         </Typography>
         {!isNoneSaveBtn && (
-          <Button className={classes.buttonIconHeader}>save</Button>
+          <Button className={classes.buttonIconHeader} onClick={handleSave}>
+            save
+          </Button>
         )}
       </Grid>
       <Grid className={classes.cardBody}>{children}</Grid>

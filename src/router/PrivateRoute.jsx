@@ -9,6 +9,7 @@ export default function PrivateRoute({
   Component,
   isLayout,
   isHeader,
+  path,
   ...rest
 }) {
   // const portal_domain = '';

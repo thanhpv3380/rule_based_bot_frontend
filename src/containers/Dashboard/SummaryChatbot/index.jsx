@@ -99,33 +99,6 @@ const SummaryChatbot = () => {
     endDate: new Date(),
   });
   const [analysts, setAnalysts] = useState();
-  // const [series, setSeries] = useState([
-  //   {
-  //     name: 'Gases',
-  //     data: [
-  //       {
-  //         name: 'Argon',
-  //         y: 0.9,
-  //         color: '#3498db',
-  //       },
-  //       {
-  //         name: 'Nitrogen',
-  //         y: 78.1,
-  //         color: '#9b59b6',
-  //       },
-  //       {
-  //         name: 'Oxygen',
-  //         y: 20.9,
-  //         color: '#2ecc71',
-  //       },
-  //       {
-  //         name: 'Trace Gases',
-  //         y: 0.1,
-  //         color: '#f1c40f',
-  //       },
-  //     ],
-  //   },
-  // ]);
   const [typeDateSelected, setTypeDateSelected] = useState('TODAY');
   const [openStartDate, setOpenStartDate] = useState(false);
   const [openEndDate, setOpenEndDate] = useState(false);
@@ -219,16 +192,20 @@ const SummaryChatbot = () => {
         },
       ],
     };
-    Highcharts.chart(hightChart);
+    const graphId = document.getElementById('graph-summary-chatbot');
+    if (graphId) {
+      Highcharts.chart(hightChart);
+    }
   };
 
   const fetchDashboard = async () => {
     const data = await apis.dashboard.getDashboard(dateSelected);
 
-    if (data.status) {
+    if (data && data.status) {
+      console.log('123');
+      bindDataHightChart(data.result.dashboards);
       bindDataAnalysts(data.result.statistics);
       // setSummary(data.result.statistics);
-      bindDataHightChart(data.result.dashboards);
     }
   };
 
@@ -250,7 +227,6 @@ const SummaryChatbot = () => {
         needConfirmUsersay: 0,
       },
     });
-    Highcharts.chart(dataHightChar);
     fetchDashboard();
   }, []);
 
