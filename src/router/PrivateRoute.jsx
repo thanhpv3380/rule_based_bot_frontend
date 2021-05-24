@@ -22,10 +22,6 @@ export default function PrivateRoute({
       setCookie('bot-id', listElementUrl[pos + 1]);
     }
   }
-<<<<<<< HEAD
-  console.log('ttt');
-=======
->>>>>>> task/flow
   if (isHeader) {
     return (
       <Layout isLayout={isLayout}>
