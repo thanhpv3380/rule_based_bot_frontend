@@ -1,8 +1,9 @@
+/* eslint-disable camelcase */
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Layout from '../components/Layout';
-import routes from '../constants/route';
+import { setCookie } from '../utils/cookie';
 
 export default function PrivateRoute({
   Component,
@@ -11,7 +12,16 @@ export default function PrivateRoute({
   path,
   ...rest
 }) {
+  const { REACT_APP_PORTAL_DOMAIN } = process.env;
   const accessToken = useSelector((state) => state.auth.accessToken);
+  const redirect_uri = window.location.href;
+  const listElementUrl = redirect_uri.split('/');
+  const pos = listElementUrl.findIndex((el) => el === 'bot');
+  if (pos >= 0) {
+    if (listElementUrl[pos + 1]) {
+      setCookie('bot-id', listElementUrl[pos + 1]);
+    }
+  }
   if (isHeader) {
     return (
       <Layout isLayout={isLayout}>
@@ -21,7 +31,9 @@ export default function PrivateRoute({
             accessToken ? (
               <Component {...props} />
             ) : (
-              <Redirect to={routes.LOGIN} />
+              window.location.assign(
+                `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=${redirect_uri}`,
+              )
             )
           }
         />
@@ -32,7 +44,13 @@ export default function PrivateRoute({
     <Route
       {...rest}
       render={(props) =>
-        accessToken ? <Component {...props} /> : <Redirect to={routes.LOGIN} />
+        accessToken ? (
+          <Component {...props} />
+        ) : (
+          window.location.assign(
+            `${REACT_APP_PORTAL_DOMAIN}/login?redirect_uri=${redirect_uri}`,
+          )
+        )
       }
     />
   );

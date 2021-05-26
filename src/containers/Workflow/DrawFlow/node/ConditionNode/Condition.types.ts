@@ -11,7 +11,9 @@ export interface Condition {
 }
 
 export interface Conditions {
+    intentId: String,
     parameter: {
+        intentId: string,
         name: string,
         id: string,
     },
