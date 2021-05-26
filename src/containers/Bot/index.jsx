@@ -88,9 +88,8 @@ const Bot = () => {
     }
   };
 
-  const handleView = (id, role) => {
+  const handleView = (id) => {
     setCookie('bot-id', id);
-    dispatch(actions.bot.updateRole(role));
     dispatch(actions.bot.changeBot(id));
     history.push(`/bot/${id}/dashboard`);
   };

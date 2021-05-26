@@ -36,6 +36,7 @@ function* verifyTokenSaga({ accessToken }) {
     const data = yield apis.auth.verify(accessToken);
     if (!data.status) throw new Error();
     const { user } = data.result;
+    console.log(user);
     if (user) {
       yield put(actions.auth.verifyTokenSuccess(accessToken, user));
     } else {

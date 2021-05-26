@@ -155,6 +155,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   };
 
   const handleOpenAAADetail = (status) => {
+    console.log('fdsfsd');
     let size = 250;
     if (!status) size = -250;
     node.updatePositionOutNodeConnect(engine, 0, size);

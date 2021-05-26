@@ -33,7 +33,6 @@ const GroupItem = ({
   handleToggleClickGroup,
   handleClickItem,
 }) => {
-  //  console.log(groupItem);
   const classes = useStyles();
   const [hoveringItemId, setHoveringItemId] = useState();
   const [isChange, setIsChange] = useState(false);

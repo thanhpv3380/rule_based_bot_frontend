@@ -143,8 +143,6 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
     const averageRangeXRight = (pointX1 + pointX2 - 167) / 2;
     const averageRangeXLeft = (pointX1 + pointX2 + 167) / 2;
 
-    console.log(pointX1, pointX2);
-
     let path = '';
     if (pointX1 === pointX2 || pointY2 === pointY1) {
       path = LinkWidget.generateLinePath(points[0], points[1]);
