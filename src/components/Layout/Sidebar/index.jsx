@@ -61,7 +61,6 @@ const Sidebar = ({
     });
   }, []);
 
-  console.log({ menuActive, expandMenu });
   const handleCollapseMenu = (index) => {
     if (expandMenu === index) setExpandMenu('');
     else {

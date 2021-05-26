@@ -31,7 +31,6 @@ export function checkAllowConnect(
   const nodesConnSource = {};
   const listLinkSourceNode = nodeSource.getArrayLinkByPortType('out');
 
-  console.log(listLinkSourceNode);
   listLinkSourceNode.forEach((el: any) => {
     const node = el?.getTargetPort()?.getParent();
 
