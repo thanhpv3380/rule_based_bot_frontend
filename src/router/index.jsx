@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCookie, setCookie } from '../utils/cookie';
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
-import routes from '../constants/route';
 import appRoutes from './appRoutes';
 import actions from '../redux/actions';
 
 export default () => {
   const dispatch = useDispatch();
+  const { REACT_APP_PORTAL_DOMAIN } = process.env;
   const [isFirstTime, setIsFirstTime] = useState(true);
   const { accessToken, verifying } = useSelector((state) => state.auth);
   useEffect(() => {
@@ -68,7 +68,7 @@ export default () => {
             path="/"
             // eslint-disable-next-line no-return-assign
             render={() =>
-              (window.location.href = `https://rbc-portal.iristech.club${routes.DASHBOARD}`)
+              (window.location.href = `${REACT_APP_PORTAL_DOMAIN}/dashboard`)
             }
           />
         </Switch>

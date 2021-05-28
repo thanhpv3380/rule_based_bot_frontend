@@ -1,6 +1,8 @@
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
 import {
   Typography,
@@ -13,25 +15,31 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  IconButton,
 } from '@material-ui/core';
-import { DeleteOutline as DeleteOutlineIcon } from '@material-ui/icons';
+import { Delete as DeleteIcon } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
 import useStyles from './index.style';
 import apis from '../../../apis';
 import roleConstant from '../../../constants/role';
+import actions from '../../../redux/actions';
 
-const ShareBot = ({ role }) => {
+const ShareBot = ({ role, botId }) => {
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [permissions, setPermissions] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [accountSelect, setAccountSelect] = useState();
+
   const fetchPermissions = async () => {
-    const data = await apis.permission.getPermissionsByBot();
+    const data = await apis.bot.getBotById(botId);
     if (data && data.status) {
-      setPermissions(data.result.permissions);
+      setPermissions(data.result.bot.permissions);
     }
   };
+
   const fetchAccount = async (keySearch) => {
     const data = await apis.user.getUsers(keySearch);
     if (data && data.status) {
@@ -41,31 +49,60 @@ const ShareBot = ({ role }) => {
 
   const handleChange = async (e) => {
     const { value } = e.target;
-    console.log(value);
     await fetchAccount(value);
   };
 
+  const validateAddPermission = () => {
+    if (!accountSelect) {
+      enqueueSnackbar('Nothing is choose', { variant: 'error' });
+      return false;
+    }
+    const userFind = permissions.find(
+      (el) => el.user.email === accountSelect.email,
+    );
+
+    if (userFind) {
+      enqueueSnackbar('Email does exist', { variant: 'error' });
+      return false;
+    }
+    return true;
+  };
   const handleAdd = async (e) => {
     e.preventDefault();
-    const data = await apis.permission.createPermission({
-      userId: accountSelect.id,
+
+    if (!validateAddPermission()) {
+      setAccountSelect(null);
+      return;
+    }
+    const permissionData = {
+      user: accountSelect.id,
+      role: roleConstant.ROLE_EDITOR,
+    };
+    const data = await apis.bot.addPermission(botId, {
+      ...permissionData,
     });
     if (data && data.status) {
-      const newPermission = {
-        ...data.result.permission,
-        user: { ...accountSelect },
-      };
-      setPermissions([...permissions, newPermission]);
+      setPermissions([
+        ...permissions,
+        {
+          user: { ...accountSelect },
+          role: roleConstant.ROLE_EDITOR,
+        },
+      ]);
       setAccountSelect(null);
+      dispatch(actions.bot.updateBot({ ...data.result.bot }));
     }
   };
-  const handleDelete = (id) => async () => {
-    const data = await apis.permission.deletePermission(id);
+  const handleDelete = (userId) => async () => {
+    const data = await apis.bot.deletePermission(botId, userId);
     if (data && data.status) {
-      const index = permissions.findIndex((el) => el.id === id);
+      const index = permissions.findIndex(
+        (el) => el.user && el.user.id === userId,
+      );
       const newPermissions = [...permissions];
       newPermissions.splice(index, 1);
       setPermissions([...newPermissions]);
+      dispatch(actions.bot.updateBot({ ...data.result.bot }));
     }
   };
 
@@ -143,7 +180,12 @@ const ShareBot = ({ role }) => {
                 {el.role === roleConstant.ROLE_EDITOR &&
                   role === roleConstant.ROLE_OWNER && (
                     <TableCell style={{ borderBottom: 'none' }} align="left">
-                      <DeleteOutlineIcon onClick={handleDelete(el.id)} />
+                      <IconButton
+                        aria-label="delete"
+                        onClick={handleDelete(el.user.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   )}
               </TableRow>
