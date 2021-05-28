@@ -19,10 +19,8 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const role = useSelector((state) => state.bot.role);
-  const [bot, setBot] = useState(() => {
-    const botData = useSelector((state) => state.bot.bot);
-    return { ...botData };
-  });
+  const botData = useSelector((state) => state.bot.bot);
+  const [bot, setBot] = useState({ ...botData });
 
   const handleChangeBotInfo = (name, value) => {
     setBot({
