@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Home,
   Poll,
@@ -13,8 +13,6 @@ import {
   Description,
   CallSplit,
 } from '@material-ui/icons';
-import { getCookie } from '../../utils/cookie';
-import actions from '../../redux/actions';
 import useStyles from './index.style';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -22,15 +20,14 @@ import Content from './Content';
 
 const Layout = ({ children, isLayout }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const botId = useSelector((state) => state.bot.bot);
+  const bot = useSelector((state) => state.bot.bot);
   const menu = [
     {
       heading: 'General',
       icon: <Home />,
       subMenus: [
         {
-          route: `/bot/${botId}/dashboard`,
+          route: `/bot/${bot.id}/dashboard`,
           icon: <Poll />,
           heading: 'Dashboard',
         },
@@ -41,22 +38,22 @@ const Layout = ({ children, isLayout }) => {
       icon: <Dns />,
       subMenus: [
         {
-          route: `/bot/${botId}/entities`,
+          route: `/bot/${bot.id}/entities`,
           icon: <Category />,
           heading: 'Entities',
         },
         {
-          route: `/bot/${botId}/intents`,
+          route: `/bot/${bot.id}/intents`,
           icon: <Assignment />,
           heading: 'Intents',
         },
         {
-          route: `/bot/${botId}/actions`,
+          route: `/bot/${bot.id}/actions`,
           icon: <Code />,
           heading: 'Actions',
         },
         {
-          route: `/bot/${botId}/dictionary`,
+          route: `/bot/${bot.id}/dictionary`,
           icon: <MenuBook />,
           heading: 'Dictionary',
         },
@@ -67,7 +64,7 @@ const Layout = ({ children, isLayout }) => {
       icon: <Description />,
       subMenus: [
         {
-          route: `/bot/${botId}/workflows`,
+          route: `/bot/${bot.id}/workflows`,
           icon: <CallSplit />,
           heading: 'Workflow',
         },
@@ -76,7 +73,7 @@ const Layout = ({ children, isLayout }) => {
     {
       heading: 'Settings',
       icon: <SettingsInputComponent />,
-      route: `/bot/${botId}/settings`,
+      route: `/bot/${bot.id}/settings`,
     },
   ];
 
@@ -93,13 +90,6 @@ const Layout = ({ children, isLayout }) => {
   const handleSidebarToggle = () => {
     setOpenSideBar((open) => !open);
   };
-
-  useEffect(() => {
-    if (!botId) {
-      const id = getCookie('bot-id');
-      dispatch(actions.bot.changeBot(id));
-    }
-  }, []);
 
   return (
     <div className={classes.root}>

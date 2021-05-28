@@ -19,7 +19,7 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
   const classes = useStyles();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
-  const botId = useSelector((state) => state.bot.bot);
+  const botId = useSelector((state) => state.bot.bot.id);
   const [openModal, setOpenModal] = useState(false);
   const [isFetchData, setIsFetchData] = useState(false);
   const [oldGroupId, setOldGroupId] = useState();

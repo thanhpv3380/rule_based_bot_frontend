@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { useConfirm } from 'material-ui-confirm';
 import { useSnackbar } from 'notistack';
@@ -7,12 +8,14 @@ import { Typography, Button } from '@material-ui/core';
 import { Delete as DeleteIcon } from '@material-ui/icons';
 import useStyles from './index.style';
 import apis from '../../../apis';
+import actions from '../../../redux/actions';
 
 const DeleteBot = ({ bot }) => {
   // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   const history = useHistory();
   const confirm = useConfirm();
+  const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const [isDeleting, setDeleting] = useState(false);
   const classes = useStyles();
@@ -27,7 +30,8 @@ const DeleteBot = ({ bot }) => {
         const data = await apis.bot.deleteBot(bot && bot.id);
         if (data && data.status) {
           enqueueSnackbar('Delete bot success', { variant: 'success' });
-          history.push('/dashboard');
+          dispatch(actions.bot.removeBot());
+          history.push('/');
         } else {
           enqueueSnackbar('Delete bot failed', { variant: 'error' });
           setDeleting(false);

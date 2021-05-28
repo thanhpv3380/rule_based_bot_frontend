@@ -1,7 +1,7 @@
 import { put, all, takeLatest, takeEvery } from 'redux-saga/effects';
 import apis from '../../apis';
 import actions from '../actions';
-import { setCookie } from '../../utils/cookie';
+import { getCookie, setCookie, removeCookie } from '../../utils/cookie';
 import { responseCodes } from '../../enums';
 
 function* loginSaga({ email, password }) {
@@ -31,12 +31,24 @@ function* loginSaga({ email, password }) {
   }
 }
 
+function* logoutSaga() {
+  try {
+    const accessToken = getCookie('accessToken');
+    const data = yield apis.auth.logout(accessToken);
+    if (data && data.status) {
+      removeCookie();
+      yield put(actions.auth.logoutSuccess());
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function* verifyTokenSaga({ accessToken }) {
   try {
     const data = yield apis.auth.verify(accessToken);
     if (!data.status) throw new Error();
     const { user } = data.result;
-    console.log(user);
     if (user) {
       yield put(actions.auth.verifyTokenSuccess(accessToken, user));
     } else {
@@ -50,6 +62,7 @@ function* verifyTokenSaga({ accessToken }) {
 export default function* rootSaga() {
   yield all([
     takeLatest(actions.auth.actionTypes.LOGIN, loginSaga),
+    takeLatest(actions.auth.actionTypes.LOGOUT, logoutSaga),
     takeEvery(actions.auth.actionTypes.VERIFY_TOKEN, verifyTokenSaga),
   ]);
 }

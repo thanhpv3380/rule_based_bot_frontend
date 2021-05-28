@@ -1,11 +1,10 @@
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Grid, Box } from '@material-ui/core';
-import { getCookie } from '../../utils/cookie';
 import CardAdvanced from './CardAdvanced';
 import GeneralSetting from './GeneralSetting';
 import Share from './Share';
@@ -17,24 +16,13 @@ import actions from '../../redux/actions';
 const Dashboard = () => {
   // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const botId = useSelector((state) => state.bot.bot) || getCookie('bot-id');
+  const { enqueueSnackbar } = useSnackbar();
   const role = useSelector((state) => state.bot.role);
-  const [bot, setBot] = useState({});
-  const fetchBotById = async () => {
-    const data = await apis.bot.getBotById(botId);
-    if (data && data.status) {
-      setBot(data.result.bot);
-    }
-  };
-
-  useEffect(() => {
-    fetchBotById();
-    if (!role) {
-      dispatch(actions.bot.getRole(botId));
-    }
-  }, [botId]);
+  const [bot, setBot] = useState(() => {
+    const botData = useSelector((state) => state.bot.bot);
+    return { ...botData };
+  });
 
   const handleChangeBotInfo = (name, value) => {
     setBot({
@@ -53,13 +41,18 @@ const Dashboard = () => {
       description: bot.description,
       imageUrl: bot.imageUrl,
     };
-    const data = await apis.bot.updateBot(botId, { ...botData });
+    const data = await apis.bot.updateBot(bot.id, { ...botData });
     if (data && data.status) {
+      const newBot = data.result.bot;
+      dispatch(actions.bot.updateBot({ ...newBot }));
       enqueueSnackbar('Update bot success', { variant: 'success' });
     } else {
       enqueueSnackbar('Update bot failed', { variant: 'error' });
     }
   };
+  if (!bot) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Grid container spacing={2}>
@@ -73,7 +66,7 @@ const Dashboard = () => {
           <Grid item xs={12} sm={12} md={12}>
             <Box>
               <CardAdvanced title="Share" isNoneSaveBtn="true">
-                <Share role={role} />
+                <Share role={role} botId={bot.id} />
               </CardAdvanced>
             </Box>
           </Grid>

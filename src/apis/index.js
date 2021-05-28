@@ -16,7 +16,6 @@ import * as groupWorkflow from './groupWorkflow';
 import * as slot from './slot';
 import * as node from './node';
 import * as dashboard from './dashboard';
-import * as permission from './permission';
 
 export default {
   user,
@@ -37,5 +36,4 @@ export default {
   slot,
   node,
   dashboard,
-  permission,
 };

@@ -4,6 +4,9 @@ export async function getBots() {
   const response = await api({
     method: 'GET',
     url: `/bots`,
+    params: {
+      sort: 'createdAt_desc',
+    },
   });
   return response;
 }
@@ -20,6 +23,23 @@ export async function getRoleInBot(id) {
   const response = await api({
     method: 'GET',
     url: `/bots/${id}/role`,
+  });
+  return response;
+}
+
+export async function addPermission(id, data) {
+  const response = await api({
+    method: 'PUT',
+    url: `/bots/${id}/add-permission`,
+    data,
+  });
+  return response;
+}
+
+export async function deletePermission(id, userId) {
+  const response = await api({
+    method: 'PUT',
+    url: `/bots/${id}/delete-permission/${userId}`,
   });
   return response;
 }

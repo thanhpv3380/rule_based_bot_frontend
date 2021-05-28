@@ -4,23 +4,25 @@ import { actionTypes } from './actions';
 export const initialState = {
   bot: null,
   role: null,
+  isProcessing: false,
 };
 
 export default function botReducer(state = initialState, action) {
   switch (action.type) {
-    case actionTypes.CHANGE_BOT:
-      const { bot } = action;
-      return { ...state, bot };
     case actionTypes.GET_BOT:
-      return state;
+      return { ...state, bot: null, role: null, isProcessing: true };
+
+    case actionTypes.UPDATE_BOT:
+      const { bot } = action;
+      return { ...state, bot, isProcessing: false };
+
     case actionTypes.REMOVE_BOT:
-      return { state, bot: null };
+      return { ...state, bot: null, role: null, isProcessing: false };
+
     case actionTypes.UPDATE_ROLE:
-      // eslint-disable-next-line no-case-declarations
       const { role } = action;
       return { ...state, role };
-    case actionTypes.GET_ROLE:
-      return state;
+
     default:
       return state;
   }
