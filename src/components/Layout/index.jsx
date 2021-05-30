@@ -12,6 +12,7 @@ import {
   MenuBook,
   Description,
   CallSplit,
+  Restore,
 } from '@material-ui/icons';
 import useStyles from './index.style';
 import Header from './Header';
@@ -67,6 +68,11 @@ const Layout = ({ children, isLayout }) => {
           route: `/bot/${bot.id}/workflows`,
           icon: <CallSplit />,
           heading: 'Workflow',
+        },
+        {
+          route: `/bot/${bot.id}/history`,
+          icon: <Restore />,
+          heading: 'History',
         },
       ],
     },

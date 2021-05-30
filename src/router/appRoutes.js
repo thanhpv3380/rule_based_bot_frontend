@@ -8,7 +8,9 @@ import Intent from '../pages/Intent';
 import Entity from '../pages/Entity';
 import Workflow from '../pages/Workflow';
 import DrawFlow from '../pages/DrawFlow';
-import Settings from '../pages/settting';
+import Settings from '../pages/Settings';
+import History from '../pages/History';
+import HistoryChat from '../pages/HistoryChat';
 
 export default [
   {
@@ -95,6 +97,24 @@ export default [
   {
     path: routes.SETTINGS,
     component: Settings,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+    isHeader: true,
+  },
+  {
+    path: routes.HISTORY,
+    component: History,
+    exact: true,
+    restricted: false,
+    isPrivate: true,
+    isLayout: true,
+    isHeader: true,
+  },
+  {
+    path: routes.HISTORY_CHAT,
+    component: HistoryChat,
     exact: true,
     restricted: false,
     isPrivate: true,

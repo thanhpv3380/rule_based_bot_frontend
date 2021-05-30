@@ -19,6 +19,7 @@ export default function PrivateRoute({
   const { bot, isProcessing } = useSelector((state) => state.bot);
   const url = window.location.href;
 
+  console.log(accessToken, bot);
   useEffect(() => {
     if (!bot) {
       const listEleUrl = url.split('/');
