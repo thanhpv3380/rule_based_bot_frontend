@@ -14,6 +14,7 @@ const initialCustomTheme = createMuiTheme({
     greyWhile: '#f5f5f5',
     dangerRed: 'rgb(241, 106, 115)',
     white: 'rgb(255, 255, 255)',
+    blue: '#4991e2',
   },
   border: {
     l1: 'solid 1px #ccc',
