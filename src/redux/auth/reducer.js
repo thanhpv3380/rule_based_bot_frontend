@@ -40,7 +40,7 @@ export default function authReducer(state = initialState, action) {
     case actionTypes.VERIFY_TOKEN_FAILURE:
       return { ...state, verifying: false };
 
-    case actionTypes.LOGOUT:
+    case actionTypes.LOGOUT_SUCCESS:
       return { ...state, accessToken: null, user: null, role: null };
 
     default:

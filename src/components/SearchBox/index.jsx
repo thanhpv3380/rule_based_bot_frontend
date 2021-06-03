@@ -5,7 +5,6 @@ const SearchBox = ({ handleSearch, size = 'small' }) => {
   return (
     <TextField
       fullWidth
-      id="outlined-basic"
       placeholder="Search"
       variant="outlined"
       size={size}

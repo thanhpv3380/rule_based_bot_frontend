@@ -21,7 +21,7 @@ const Intent = () => {
   const match = useRouteMatch();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
-  const botId = useSelector((state) => state.bot.bot);
+  const botId = useSelector((state) => state.bot.bot.id);
   // eslint-disable-next-line no-unused-vars
   const [searchKey, setSearchKey] = useState();
   const [groupIdSelected, setGroupIdSelected] = useState(null);

@@ -1,4 +1,7 @@
+import axios from 'axios';
 import api from './api';
+
+const { REACT_APP_PORTAL_DOMAIN } = process.env;
 
 const login = async (email, password) => {
   const response = await api({
@@ -22,4 +25,17 @@ const verify = async (accessToken) => {
   }
 };
 
-export { login, verify };
+const logout = async (accessToken) => {
+  try {
+    const response = await axios({
+      method: 'POST',
+      url: `${REACT_APP_PORTAL_DOMAIN}/api/v1/auths/logout`,
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+export { login, verify, logout };

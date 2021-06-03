@@ -1,5 +1,4 @@
 export default {
-  HOME: '/',
   LOGIN: '/login',
   DASHBOARD: '/dashboard',
   DICTIONARY_BOT: '/bot/:id/dictionary',

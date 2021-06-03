@@ -22,6 +22,7 @@ import actions from '../../../redux/actions';
 import logo from '../../../assets/images/logo.png';
 import userImage from '../../../assets/images/user.jpg';
 import { removeCookie } from '../../../utils/cookie';
+import apis from '../../../apis';
 
 const languages = [
   { value: 'en', label: 'English' },
@@ -37,7 +38,6 @@ const MainAppBar = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isOpenAccount, setIsOpenAccount] = useState(null);
-
   const classes = useStyles({ bgColor });
   const { t } = useTranslation();
   const history = useHistory();
@@ -56,8 +56,7 @@ const MainAppBar = ({
     if (accessToken) setIsOpenAccount(event.currentTarget);
   };
   const handleCloseAccount = () => setIsOpenAccount(null);
-  const handleLogout = () => {
-    removeCookie();
+  const handleLogout = async () => {
     dispatch(actions.auth.logout());
     setIsOpenAccount(null);
   };

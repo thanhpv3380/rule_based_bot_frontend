@@ -1,21 +1,23 @@
 export const actionTypes = {
-  CHANGE_BOT: 'CHANGE_BOT',
   GET_BOT: 'GET_BOT',
+  UPDATE_BOT: 'UPDATE_BOT',
   REMOVE_BOT: 'REMOVE_BOT',
-  UPDATE_ROLE: 'UPDATE_ROLE',
   GET_ROLE: 'GET_ROLE',
+  UPDATE_ROLE: 'UPDATE_ROLE',
+  REMOVE_ROLE: 'REMOVE_ROLE',
 };
 
-export function changeBot(bot) {
+export function getBot(botId) {
   return {
-    type: actionTypes.CHANGE_BOT,
-    bot,
+    type: actionTypes.GET_BOT,
+    botId,
   };
 }
 
-export function getBot() {
+export function updateBot(bot) {
   return {
-    type: actionTypes.GET_BOT,
+    type: actionTypes.UPDATE_BOT,
+    bot,
   };
 }
 
@@ -29,12 +31,5 @@ export function updateRole(role) {
   return {
     type: actionTypes.UPDATE_ROLE,
     role,
-  };
-}
-
-export function getRole(botId) {
-  return {
-    type: actionTypes.GET_ROLE,
-    botId,
   };
 }
