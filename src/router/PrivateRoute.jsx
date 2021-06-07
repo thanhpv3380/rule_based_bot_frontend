@@ -19,7 +19,6 @@ export default function PrivateRoute({
   const { bot, isProcessing } = useSelector((state) => state.bot);
   const url = window.location.href;
 
-  console.log(accessToken, bot);
   useEffect(() => {
     if (!bot) {
       const listEleUrl = url.split('/');
@@ -38,11 +37,15 @@ export default function PrivateRoute({
   }
 
   if (bot) {
-    return (
-      <Layout isLayout={isLayout}>
-        <Route {...rest} render={(props) => <Component {...props} />} />
-      </Layout>
-    );
+    if (isLayout) {
+      return (
+        <Layout isLayout={isLayout} isHeader={isHeader}>
+          <Route {...rest} render={(props) => <Component {...props} />} />
+        </Layout>
+      );
+    }
+
+    return <Route {...rest} render={(props) => <Component {...props} />} />;
   }
 
   if (isProcessing || isFirstTime) {

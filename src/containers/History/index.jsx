@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import {
   List,
   ListItem,
@@ -26,17 +27,14 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import { Image as ImageIcon, ExpandLess, ExpandMore } from '@material-ui/icons';
 import useStyles from './index.style';
+import apis from '../../apis';
 
 const History = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = React.useState(false);
-  const [sessions, setSessions] = useState([
-    {
-      id: 10,
-      createdAt: '1/6/2021',
-    },
-  ]);
+  const [conversations, setConversations] = useState([]);
   const { id } = useParams();
   const [dateSelected, setDateSelected] = useState({
     startDate: subDays(new Date(), 7),
@@ -61,9 +59,25 @@ const History = () => {
     setOpen(!open);
   };
 
-  const handleOpenChat = (sessionId) => {
-    history.push(`/bot/${id}/history/${sessionId}`);
+  const fetchConversations = async () => {
+    const data = await apis.conversation.getAllConversationByBotId();
+    if (data && data.status) {
+      setConversations(data.result.conversations);
+    } else {
+      enqueueSnackbar((data && data.message) || 'Fetch data failed', {
+        variant: 'error',
+      });
+    }
   };
+
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
+  const handleOpenChat = (conversationsId) => {
+    history.push(`/bot/${id}/history/${conversationsId}`);
+  };
+
   return (
     <>
       <Box className={classes.card}>
@@ -171,7 +185,7 @@ const History = () => {
         </Collapse>
         <Grid className={classes.cardBody}>
           <List>
-            {sessions.map((el) => (
+            {conversations.map((el) => (
               <ListItem
                 className={classes.row}
                 onClick={() => handleOpenChat(el.id)}
@@ -181,7 +195,7 @@ const History = () => {
                     <ImageIcon />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={el.id} secondary={el.createdAt} />
+                <ListItemText primary={el.sessionId} secondary={el.createdAt} />
               </ListItem>
             ))}
           </List>

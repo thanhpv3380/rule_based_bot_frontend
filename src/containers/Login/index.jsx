@@ -26,7 +26,6 @@ const Login = () => {
   const { loginCode, isLoggingIn } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    document.title = 'Login';
     if (isLoggingIn) return;
     switch (loginCode) {
       case responseCodes.USER_NOT_FOUND:

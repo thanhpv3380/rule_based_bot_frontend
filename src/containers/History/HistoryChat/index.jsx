@@ -1,31 +1,47 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import { ChatController, MuiChat } from 'chat-ui-react';
-import { Box, Grid, Typography, Paper } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import useStyles from './index.style';
+import apis from '../../../apis';
 
 const HistoryChat = () => {
-  const [chatCtl] = useState(new ChatController());
-  const { sessionId } = useParams();
   const classes = useStyles();
-  useMemo(async () => {
-    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    await Promise.all(
-      arr.map(async () => {
-        const data = await chatCtl.addMessage({
-          type: 'text',
-          content: `Hello, What's your name.`,
-          self: true,
-        });
-        return data;
-      }),
-    );
+  const { conversationId } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
 
-    await chatCtl.addMessage({
-      type: 'text',
-      content: `Hello, I am ttt`,
-      self: false,
-    });
+  const [chatCtl] = useState(new ChatController());
+  const [conversation, setConversation] = useState();
+
+  const fetchConversationById = async () => {
+    const data = await apis.conversation.getConversationById(conversationId);
+    if (data && data.status) {
+      setConversation(data.result.conversation);
+    } else {
+      enqueueSnackbar((data && data.message) || 'Fetch data failed', {
+        variant: 'error',
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchConversationById();
+  }, []);
+
+  useMemo(async () => {
+    await Promise.all(
+      conversation &&
+        Array.isArray(conversation.messages) &&
+        conversation.messages.map(async (el) => {
+          const data = await chatCtl.addMessage({
+            type: 'text',
+            content: !el.message.attachment ? el.message.text : '[MEDIA]',
+            self: el.from === 'BOT',
+          });
+          return data;
+        }),
+    );
   }, [chatCtl]);
 
   return (
@@ -36,7 +52,7 @@ const HistoryChat = () => {
           margin: '20px 0',
         }}
       >
-        SessionId: {sessionId}
+        SessionId: {conversation.sessionId}
       </Typography>
 
       <MuiChat chatController={chatCtl} />

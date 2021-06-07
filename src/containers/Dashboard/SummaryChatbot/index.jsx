@@ -202,7 +202,6 @@ const SummaryChatbot = () => {
     const data = await apis.dashboard.getDashboard(dateSelected);
 
     if (data && data.status) {
-      console.log('123');
       bindDataHightChart(data.result.dashboards);
       bindDataAnalysts(data.result.statistics);
       // setSummary(data.result.statistics);
@@ -252,7 +251,7 @@ const SummaryChatbot = () => {
     <>
       <Box className={classes.heading} mt={2} mb={2}>
         <Typography variant="h6" gutterBottom>
-          SUMMARY OF CHATBOT EFFICIENCY
+          {t('summary_of_chatbot_efficiency')}
         </Typography>
         <Box className={classes.headerBody}>
           {btnList.map((el) => (
