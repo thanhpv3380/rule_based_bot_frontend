@@ -24,5 +24,7 @@ export default {
     DETAIL_WORKFLOW: '/bot/:id/workflows/detail/:workflowId',
     DRAW_FLOW: '/bot/:id/draw-workflows/:workflowId',
   },
+  HISTORY: '/bot/:id/history',
+  HISTORY_CHAT: '/bot/:id/history/:conversationsId',
   SETTINGS: '/bot/:id/settings',
 };
