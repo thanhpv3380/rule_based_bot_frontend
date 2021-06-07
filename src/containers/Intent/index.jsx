@@ -58,6 +58,7 @@ const Intent = () => {
   };
 
   const handleCreateItem = (data) => {
+    console.log(data, 'data');
     const newGroupAndItems = [...groupAndItems];
     const pos = newGroupAndItems.findIndex((el) => el.id === data.groupIntent);
     newGroupAndItems[pos].children.unshift({
@@ -122,7 +123,7 @@ const Intent = () => {
   };
 
   const handleChangeNameGroup = async (groupId, value) => {
-    const data = await apis.groupIntent.updateGroupAction(groupId, {
+    const data = await apis.groupIntent.updateGroupIntent(groupId, {
       name: value,
     });
     if (data.status) {

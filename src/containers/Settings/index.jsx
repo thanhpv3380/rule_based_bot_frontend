@@ -9,6 +9,7 @@ import CardAdvanced from './CardAdvanced';
 import GeneralSetting from './GeneralSetting';
 import Share from './Share';
 import DeleteBot from './Delete';
+import ExportAndImport from './ExportAndImport';
 import apis from '../../apis';
 import roleConstant from '../../constants/role';
 import actions from '../../redux/actions';
@@ -57,6 +58,9 @@ const Dashboard = () => {
       <Grid item xs={12} sm={12} md={6}>
         <CardAdvanced title="General Setting" handleSave={handleSaveBot}>
           <GeneralSetting bot={bot} handleChangeBotInfo={handleChangeBotInfo} />
+        </CardAdvanced>
+        <CardAdvanced title="Export and Import" isNoneSaveBtn="false">
+          <ExportAndImport />
         </CardAdvanced>
       </Grid>
       <Grid item xs={12} sm={12} md={6}>

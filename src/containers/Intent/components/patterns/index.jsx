@@ -40,7 +40,7 @@ function Patterns(props) {
   return (
     <Grid container>
       <Grid item xs={4}>
-        <Typography variant="h6">Tranning phrases</Typography>
+        <Typography variant="h6">Patterns</Typography>
       </Grid>
       <Grid item xs={8} container justify="flex-end">
         <TextField

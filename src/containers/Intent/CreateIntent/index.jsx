@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 // import { useSelector } from 'react-redux';
 import TranningPhrases from '../components/patterns';
@@ -15,7 +14,6 @@ import groupConstant from '../../../constants/group';
 
 function CreateIntent(props) {
   const classes = useStyles();
-  const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
   // const botId = useSelector((state) => state.bot.bot);
   const { groupItems, groupIntentId, handleCreate } = props;
@@ -113,15 +111,15 @@ function CreateIntent(props) {
       patterns: intent.patterns,
       isMappingAction: intent.isMappingAction,
       parameters: intent.parameters,
-      groupIntentId: intent.groupIntent || null,
+      groupIntent: intent.groupIntent || null,
     };
     const data = await apis.intent.createIntent(newIntent);
     if (data && data.status) {
-      handleCreate(data.result.action);
+      handleCreate(data.result);
       enqueueSnackbar('Create intent success', {
         variant: 'success',
       });
-      history.push(`/intents/${data.result.id}`);
+      // history.push(`/intents/${data.result.id}`);
     } else {
       enqueueSnackbar('Create intent failed', {
         variant: 'error',
