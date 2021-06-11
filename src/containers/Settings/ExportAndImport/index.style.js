@@ -18,4 +18,7 @@ export default makeStyles((theme) => ({
       backgroundColor: theme.palette.blue,
     },
   },
+  input: {
+    display: 'none',
+  },
 }));
