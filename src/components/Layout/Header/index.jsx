@@ -17,12 +17,11 @@ import { ExpandMore, Launch, Menu as MenuIcon } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import useStyles from './index.style';
-import i18n from '../../../i18n';
 import actions from '../../../redux/actions';
+import i18n from '../../../languages';
 import logo from '../../../assets/images/logo.png';
 import userImage from '../../../assets/images/user.jpg';
-import { removeCookie } from '../../../utils/cookie';
-import apis from '../../../apis';
+import { setCookie, getCookie } from '../../../utils/cookie';
 
 const languages = [
   { value: 'en', label: 'English' },
@@ -47,8 +46,9 @@ const MainAppBar = ({
   const handleOpenLanguage = (event) => setAnchorEl(event.currentTarget);
   const handleCloseLanguage = () => setAnchorEl(null);
   const handleChangeLanguage = (event, index) => {
-    // i18n.changeLanguage(languages[index].value);
-    console.log(event, index);
+    const language = languages[index].value;
+    setCookie('next-i18next', language);
+    i18n.changeLanguage(language);
     setAnchorEl(null);
   };
 
@@ -118,7 +118,7 @@ const MainAppBar = ({
           endIcon={<ExpandMore />}
           onClick={handleOpenLanguage}
         >
-          {i18n.language}
+          {getCookie('next-i18next') || 'en'}
         </Button>
         <Menu
           anchorEl={anchorEl}

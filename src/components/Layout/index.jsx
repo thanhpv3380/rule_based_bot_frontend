@@ -12,13 +12,14 @@ import {
   MenuBook,
   Description,
   CallSplit,
+  Restore,
 } from '@material-ui/icons';
 import useStyles from './index.style';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Content from './Content';
 
-const Layout = ({ children, isLayout }) => {
+const Layout = ({ children, isLayout, isHeader }) => {
   const classes = useStyles();
   const bot = useSelector((state) => state.bot.bot);
   const menu = [
@@ -68,6 +69,11 @@ const Layout = ({ children, isLayout }) => {
           icon: <CallSplit />,
           heading: 'Workflow',
         },
+        {
+          route: `/bot/${bot.id}/history`,
+          icon: <Restore />,
+          heading: 'History',
+        },
       ],
     },
     {
@@ -93,13 +99,16 @@ const Layout = ({ children, isLayout }) => {
 
   return (
     <div className={classes.root}>
-      <Header
-        accessToken={accessToken}
-        user={user}
-        bgColor="#fff"
-        displaySideBar={displaySideBar}
-        handleDrawerToggle={handleDrawerToggle}
-      />
+      {isHeader && (
+        <Header
+          accessToken={accessToken}
+          user={user}
+          bgColor="#fff"
+          displaySideBar={displaySideBar}
+          handleDrawerToggle={handleDrawerToggle}
+        />
+      )}
+
       {isLayout && (
         <Sidebar
           menu={menu}

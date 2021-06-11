@@ -50,6 +50,7 @@ function* verifyTokenSaga({ accessToken }) {
     if (!data.status) throw new Error();
     const { user } = data.result;
     if (user) {
+      console.log({ user });
       yield put(actions.auth.verifyTokenSuccess(accessToken, user));
     } else {
       yield put(actions.auth.verifyTokenFailure());

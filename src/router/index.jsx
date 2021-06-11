@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
+import i18n from '../languages';
 import { getCookie, setCookie } from '../utils/cookie';
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
@@ -31,6 +32,8 @@ export default () => {
         }
       }
     }
+    const language = getCookie('next-i18next');
+    if (language) i18n.changeLanguage(language);
     setIsFirstTime(false);
   }, []);
 
