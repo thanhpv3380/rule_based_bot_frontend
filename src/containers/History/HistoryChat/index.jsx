@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
-import { ChatController, MuiChat } from 'chat-ui-react';
-import { Typography } from '@material-ui/core';
+import { Typography, Paper, Box, AppBar, Toolbar } from '@material-ui/core';
 import useStyles from './index.style';
 import apis from '../../../apis';
+import Loading from '../../../components/Loading';
+import EmptyListItem from '../../../components/EmptyListItem';
 
 const HistoryChat = () => {
   const classes = useStyles();
-  const { conversationId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
-
-  const [chatCtl] = useState(new ChatController());
+  const { conversationId } = useParams();
   const [conversation, setConversation] = useState();
-
+  const [isLoading, setIsLoading] = useState(true);
   const fetchConversationById = async () => {
     const data = await apis.conversation.getConversationById(conversationId);
     if (data && data.status) {
@@ -22,40 +22,65 @@ const HistoryChat = () => {
       enqueueSnackbar((data && data.message) || 'Fetch data failed', {
         variant: 'error',
       });
+      setConversation();
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    fetchConversationById();
-  }, []);
+    if (conversationId) {
+      setIsLoading(true);
+      fetchConversationById();
+    }
+  }, [conversationId]);
 
-  useMemo(async () => {
-    await Promise.all(
-      conversation &&
-        Array.isArray(conversation.messages) &&
-        conversation.messages.map(async (el) => {
-          const data = await chatCtl.addMessage({
-            type: 'text',
-            content: !el.message.attachment ? el.message.text : '[MEDIA]',
-            self: el.from === 'BOT',
-          });
-          return data;
-        }),
-    );
-  }, [chatCtl]);
+  if (isLoading) {
+    return <Loading />;
+  }
 
+  if (!conversation) {
+    return <EmptyListItem />;
+  }
   return (
     <>
-      <Typography
-        variant="h5"
-        style={{
-          margin: '20px 0',
-        }}
-      >
-        SessionId: {conversation.sessionId}
-      </Typography>
-
-      <MuiChat chatController={chatCtl} />
+      <AppBar position="static">
+        <Toolbar>
+          <Typography className={classes.appBarTitle} variant="h6" noWrap>
+            SessionId: {conversation && conversation.sessionId}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Paper className={classes.listMessage}>
+        {Array.isArray(conversation.messages) &&
+        conversation.messages.length <= 0 ? (
+          <EmptyListItem />
+        ) : (
+          conversation.messages.map((el) => {
+            if (el.from === 'BOT') {
+              return (
+                <Box
+                  className={clsx(classes.messageBox, classes.messageBoxRight)}
+                >
+                  <Typography
+                    className={clsx(classes.message, classes.messageRight)}
+                  >
+                    {!el.message.attachment ? el.message.text : '[MEDIA]'}
+                  </Typography>
+                </Box>
+              );
+            }
+            return (
+              <Box className={clsx(classes.messageBox, classes.messageBoxLeft)}>
+                <Typography
+                  className={clsx(classes.message, classes.messageLeft)}
+                >
+                  {!el.message.attachment ? el.message.text : '[MEDIA]'}
+                </Typography>
+              </Box>
+            );
+          })
+        )}
+      </Paper>
     </>
   );
 };

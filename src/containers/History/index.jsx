@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { Route, useHistory, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import clsx from 'clsx';
 import {
   List,
   ListItem,
@@ -20,6 +21,7 @@ import {
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { subDays } from 'date-fns';
+
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
@@ -28,12 +30,19 @@ import DateFnsUtils from '@date-io/date-fns';
 import { Image as ImageIcon, ExpandLess, ExpandMore } from '@material-ui/icons';
 import useStyles from './index.style';
 import apis from '../../apis';
+import HistoryChat from './HistoryChat';
+import routes from '../../constants/route';
+import EmptyPage from '../../components/EmptyPage';
+import EmptyListItem from '../../components/EmptyListItem';
+import Loading from '../../components/Loading';
 
 const History = () => {
   const classes = useStyles();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentConversationId, setCurrentConversationId] = useState();
   const [conversations, setConversations] = useState([]);
   const { id } = useParams();
   const [dateSelected, setDateSelected] = useState({
@@ -45,7 +54,7 @@ const History = () => {
   const [pagination, setPagination] = useState({
     page: 0,
     rowsPerPage: 5,
-    count: 100,
+    count: 10,
   });
 
   const handleChangePage = async (event, newPage) => {
@@ -63,20 +72,42 @@ const History = () => {
     const data = await apis.conversation.getAllConversationByBotId();
     if (data && data.status) {
       setConversations(data.result.conversations);
+      setPagination({
+        ...pagination,
+        count: data.result.conversations.length,
+      });
     } else {
       enqueueSnackbar((data && data.message) || 'Fetch data failed', {
         variant: 'error',
       });
+      setConversations([]);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchConversations();
   }, []);
 
+  useEffect(() => {
+    const listUrl = window.location.href.split('/');
+    const itemId = listUrl[listUrl.length - 1];
+    if (listUrl[listUrl.length - 2] === 'history' && itemId) {
+      if (itemId !== currentConversationId) {
+        setCurrentConversationId(itemId);
+      }
+    } else {
+      setCurrentConversationId();
+    }
+  }, [window.location.href]);
+
   const handleOpenChat = (conversationsId) => {
     history.push(`/bot/${id}/history/${conversationsId}`);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -183,31 +214,56 @@ const History = () => {
             </Grid>
           </Paper>
         </Collapse>
-        <Grid className={classes.cardBody}>
-          <List>
-            {conversations.map((el) => (
-              <ListItem
-                className={classes.row}
-                onClick={() => handleOpenChat(el.id)}
-              >
-                <ListItemAvatar>
-                  <Avatar>
-                    <ImageIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={el.sessionId} secondary={el.createdAt} />
-              </ListItem>
-            ))}
-          </List>
-          <TablePagination
-            component="div"
-            rowsPerPageOptions={[10]}
-            count={pagination.count}
-            page={pagination.page}
-            onChangePage={handleChangePage}
-            rowsPerPage={pagination.rowsPerPage}
-          />
-        </Grid>
+        {conversations && conversations.length <= 0 ? (
+          <EmptyListItem />
+        ) : (
+          <Grid className={classes.cardBody}>
+            <Grid container spacing={3}>
+              <Grid item xs={4}>
+                <List>
+                  {conversations.map((el) => (
+                    <ListItem
+                      key={el.id}
+                      className={clsx(
+                        classes.row,
+                        currentConversationId === el.id && classes.activeRow,
+                      )}
+                      onClick={() => handleOpenChat(el.id)}
+                    >
+                      <ListItemAvatar>
+                        <Avatar>
+                          <ImageIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={el.sessionId}
+                        secondary={el.createdAt}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+                <TablePagination
+                  component="div"
+                  rowsPerPageOptions={[10]}
+                  count={pagination.count}
+                  page={pagination.page}
+                  onChangePage={handleChangePage}
+                  rowsPerPage={pagination.rowsPerPage}
+                />
+              </Grid>
+              <Grid item xs={8}>
+                <Route
+                  exact
+                  path={routes.HISTORY_BOT.HISTORY}
+                  component={EmptyPage}
+                />
+                <Route path={routes.HISTORY_BOT.HISTORY_CHAT}>
+                  <HistoryChat />
+                </Route>
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
       </Box>
     </>
   );
