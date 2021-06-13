@@ -10,7 +10,6 @@ import Workflow from '../pages/Workflow';
 import DrawFlow from '../pages/DrawFlow';
 import Settings from '../pages/Settings';
 import History from '../pages/History';
-import HistoryChat from '../pages/HistoryChat';
 
 export default [
   {
@@ -104,18 +103,9 @@ export default [
     isHeader: true,
   },
   {
-    path: routes.HISTORY,
+    path: routes.HISTORY_BOT.HISTORY,
     component: History,
-    exact: true,
-    restricted: false,
-    isPrivate: true,
-    isLayout: true,
-    isHeader: true,
-  },
-  {
-    path: routes.HISTORY_CHAT,
-    component: HistoryChat,
-    exact: true,
+    exact: false,
     restricted: false,
     isPrivate: true,
     isLayout: true,

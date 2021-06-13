@@ -82,6 +82,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 6,
     marginBottom: 10,
   },
+  activeRow: {
+    background: theme.palette.active,
+  },
   header: {
     width: '100%',
     display: 'flex',

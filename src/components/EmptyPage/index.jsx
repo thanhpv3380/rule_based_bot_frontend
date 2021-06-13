@@ -28,7 +28,7 @@ const EmptyPage = () => {
   return (
     <div className={classes.root} style={{ position: 'static' }}>
       You have not choose any {title}
-      <Fab
+      {/* <Fab
         color="primary"
         style={{
           borderRadius: '50%',
@@ -60,7 +60,7 @@ const EmptyPage = () => {
       >
         {' '}
         <App />{' '}
-      </Popover>
+      </Popover> */}
     </div>
   );
 };
