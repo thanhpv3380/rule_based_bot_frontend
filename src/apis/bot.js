@@ -69,3 +69,25 @@ export async function deleteBot(id) {
   });
   return response;
 }
+
+export async function exportFile(id) {
+  const response = await api({
+    method: 'GET',
+    url: `/bots/${id}/export-file`,
+  });
+  return response;
+}
+
+export async function importFile(id, file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await api({
+    method: 'PUT',
+    url: `/bots/${id}/import-file`,
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response;
+}
