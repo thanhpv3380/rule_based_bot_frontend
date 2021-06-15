@@ -32,7 +32,7 @@ const GroupItem = ({
       event: handlePrevDeleteItem,
     },
   ];
-
+  console.log(pagination);
   return (
     <div>
       {groupItem.children.length > 0 &&

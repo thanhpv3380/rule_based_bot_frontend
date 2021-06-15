@@ -142,7 +142,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
 
   useEffect(() => {
     fetchActions();
-  }, [action]);
+  }, []);
 
   const handleChangeActionAskAgain = (name, value) => {
     const newActionAskAgain = { ...actionAskAgain, [name]: value };

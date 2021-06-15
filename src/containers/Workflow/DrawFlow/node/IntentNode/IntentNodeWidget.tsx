@@ -37,6 +37,7 @@ import apis from '../../../../../apis';
 import { Intent, IntentsResponse, DataResponse } from './intentNodeWidget.type';
 import { BaseNodeModel } from '../BaseNodeModel';
 import { useConfirm } from 'material-ui-confirm';
+import { ConditionNodeModel } from '../ConditionNode';
 
 export interface IntentNodeWidgetProps {
   node: IntentNodeModel;
@@ -62,6 +63,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const [intentEditId, setIntentEditId] = useState<any>();
   const [intents, setIntents] = useState<IntentsResponse[]>([]);
   const [isFocus, setIsFocus] = useState<boolean>(false);
+  const [openAutocomplete, setOpenAutocomplete] = useState<boolean>(false);
 
   const fetchIntents = async () => {
     const data: DataResponse = await apis.intent.getIntents();
@@ -129,13 +131,52 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
     engine.getModel().addNode(newNode);
     engine.repaintCanvas();
   };
-
+  let listNode = [];
+  let check = false;
   const handleOpenAutocomplete = () => {
+    // =================== T E S T ===============================
+    const getConditionParent = (tempNode) => {
+      const links = tempNode.getArrayLinkByPortType('out');
+      Object.keys(links).forEach((el: string) => {
+        if (check) {
+          return;
+        }
+        const nodeEle: any = links[el].getTargetPort().getParent();
+
+        if (listNode.indexOf(nodeEle.id) <= 0) {
+          listNode.push(nodeEle.id);
+          if (nodeEle instanceof ConditionNodeModel) {
+            if (nodeEle.itemId) {
+              console.log(nodeEle.nodeInfo);
+
+              nodeEle.nodeInfo.conditions.forEach((el) => {
+                if (el.intent === node.itemId) {
+                  check = true;
+                  enqueueSnackbar(
+                    'Không thể thay đổi intent khi các tham số đang được dùng ở các điều kiện bên dưới',
+                    { variant: 'error' },
+                  );
+                  return;
+                }
+              });
+            }
+          }
+          getConditionParent(nodeEle);
+        }
+      });
+    };
+    getConditionParent(node);
+    if (check) {
+      return;
+    }
+    setOpenAutocomplete(true);
+    //==========================================
     engine.getActionEventBus().deregisterAction(actionMouseWheel);
     engine.repaintCanvas();
   };
 
   const handleCloseAutocomplete = () => {
+    setOpenAutocomplete(false);
     engine.getActionEventBus().registerAction(actionMouseWheel);
     engine.repaintCanvas();
   };
@@ -242,6 +283,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
                   node.nodeInfo = value;
                   setIntent(value);
                 }}
+                open={openAutocomplete}
                 onOpen={handleOpenAutocomplete}
                 onClose={handleCloseAutocomplete}
                 getOptionSelected={(option, value) => option.id === value.id}

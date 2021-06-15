@@ -58,6 +58,7 @@ export interface ConditionNodeWidgetState {
 }
 
 const conditionsDefault = {
+  id: null,
   intentId: null,
   parameter: {
     intentId: '',
@@ -285,6 +286,15 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
         intentId: value.intentId,
       };
 
+      node.nodeInfo.conditions = newSubConditions.map((el) => {
+        return {
+          id: el.id,
+          intent: el.parameter.intentId,
+          operator: el.operator,
+          parameter: el.parameter.id,
+          value: el.value,
+        };
+      });
       setSubConditions(newSubConditions);
     }
   };

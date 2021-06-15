@@ -215,7 +215,6 @@ const LayoutListGroup = ({
     await handleCreateGroup(name);
     setIsCreateGroup((prev) => !prev);
   };
-
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} md={4} lg={4} xl={4}>

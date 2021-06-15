@@ -145,6 +145,9 @@ export class BaseNodeModel extends NodeModel {
         const data = await apis.node.createNode({ ...newNode });
         if (data && data.status) {
             this.id = data.result.node.id;
+            if (data.result.node.type === "CONDITION") {
+                this.itemId = data.result.node.condition;
+            }
         } else {
             return false;
         }

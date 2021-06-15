@@ -119,7 +119,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   // Component TrainingPhrases
   const handleKeyDown = async (value) => {
     const data = await apis.intent.addUsersay(currentIntentId, value);
-    if (data.status) {
+    if (data && data.status) {
       const newPatterns = [...patterns];
       newPatterns.push(value);
       setPatterns(newPatterns);

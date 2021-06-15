@@ -31,7 +31,7 @@ function Patterns(props) {
     handleChangePattern,
   } = props;
   const [userExpression, setUserExpression] = useState();
-  const test = async (e) => {
+  const addPattern = async (e) => {
     if (e.keyCode === 13) {
       await handleKeyDown(e.target.value);
       setUserExpression('');
@@ -67,7 +67,7 @@ function Patterns(props) {
           // name="usersay"
           value={userExpression}
           onChange={(e) => setUserExpression(e.target.value)}
-          onKeyDown={test}
+          onKeyDown={addPattern}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
