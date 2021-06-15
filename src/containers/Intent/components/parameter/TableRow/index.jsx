@@ -88,12 +88,14 @@ function TableRowCustom(props) {
     }
   };
 
-  const handleChangeName = async (e) => {
+  const handleChangeName = (e) => {
     const { value } = e.target;
     const regex = new RegExp('^[a-zA-Z_]+$');
-    const check = await regex.test(value);
-    console.log(check);
-    if (!check && value.length > 1) {
+    if (
+      value.length > parameter.parameterName.length &&
+      !regex.test(value) &&
+      value.length > 1
+    ) {
       enqueueSnackbar('Parameter name includes only letters and _', {
         variant: 'error',
       });

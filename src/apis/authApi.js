@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 import camelCase from 'camelcase-keys';
+import { useSelector } from 'react-redux';
 import { getCookie } from '../utils/cookie';
 
 const axiosClient = axios.create({
@@ -12,7 +13,7 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(async (config) => {
   const accessToken = getCookie('accessToken');
-  const botId = getCookie('bot-id');
+  const botId = useSelector((state) => state.bot.bot);
   config.headers.Authorization = `Bearer ${accessToken}`;
   config.headers['bot-id'] = botId;
   return config;
