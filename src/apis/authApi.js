@@ -3,8 +3,6 @@ import axios from 'axios';
 import camelCase from 'camelcase-keys';
 import { getCookie } from '../utils/cookie';
 
-let botId = null;
-
 const axiosClient = axios.create({
   baseURL: `${process.env.REACT_APP_API_DOMAIN}/api/v1`,
   responseType: 'json',
@@ -12,14 +10,9 @@ const axiosClient = axios.create({
   transformResponse: [(data) => camelCase(data, { deep: true })],
 });
 
-export function setBot(id) {
-  botId = id;
-}
-
 axiosClient.interceptors.request.use(async (config) => {
   const accessToken = getCookie('accessToken');
   config.headers.Authorization = `Bearer ${accessToken}`;
-  config.headers['bot-id'] = botId;
   return config;
 });
 

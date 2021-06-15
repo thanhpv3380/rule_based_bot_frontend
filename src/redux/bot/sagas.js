@@ -2,6 +2,7 @@ import { put, all, takeEvery } from 'redux-saga/effects';
 import apis from '../../apis';
 import actions from '../actions';
 import { setBot } from '../../apis/authApi';
+import axiosClient from '../../apis/authApi';
 
 function* getBotSaga({ botId }) {
   try {
@@ -15,7 +16,7 @@ function* getBotSaga({ botId }) {
       data = yield apis.bot.getRoleInBot(botId);
       if (!data || !data.status) throw new Error();
       const { role } = data.result;
-      setBot(botId);
+      axiosClient.defaults.headers['bot-id'] = botId;
       yield put(actions.bot.updateRole(role));
       yield put(actions.bot.updateBot(bot));
     }
