@@ -60,6 +60,6 @@ export function logout() {
 
 export function logoutSuccess() {
   return {
-    type: actionTypes.LOGOUT,
+    type: actionTypes.LOGOUT_SUCCESS,
   };
 }

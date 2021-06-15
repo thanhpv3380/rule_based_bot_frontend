@@ -35,8 +35,8 @@ function* logoutSaga() {
   try {
     const accessToken = getCookie('accessToken');
     const data = yield apis.auth.logout(accessToken);
-    if (data && data.status) {
-      removeCookie();
+    if (data.status) {
+      setCookie('accessToken', null);
       yield put(actions.auth.logoutSuccess());
     }
   } catch (error) {

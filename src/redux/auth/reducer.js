@@ -41,7 +41,7 @@ export default function authReducer(state = initialState, action) {
       return { ...state, verifying: false };
 
     case actionTypes.LOGOUT_SUCCESS:
-      return { ...state, accessToken: null, user: null, role: null };
+      return { ...initialState };
 
     default:
       return state;

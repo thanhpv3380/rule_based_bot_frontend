@@ -26,16 +26,12 @@ const verify = async (accessToken) => {
 };
 
 const logout = async (accessToken) => {
-  try {
-    const response = await axios({
-      method: 'POST',
-      url: `${REACT_APP_PORTAL_DOMAIN}/api/v1/auths/logout`,
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    return response;
-  } catch (error) {
-    return error.response;
-  }
+  const response = await axios({
+    method: 'POST',
+    url: `${REACT_APP_PORTAL_DOMAIN}/api/v1/auths/logout`,
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  return response;
 };
 
 export { login, verify, logout };

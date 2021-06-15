@@ -56,9 +56,8 @@ const MainAppBar = ({
     if (accessToken) setIsOpenAccount(event.currentTarget);
   };
   const handleCloseAccount = () => setIsOpenAccount(null);
-  const handleLogout = async () => {
+  const handleLogout = () => {
     dispatch(actions.auth.logout());
-    setIsOpenAccount(null);
   };
 
   const handleBackToDashboard = () => {
@@ -154,7 +153,13 @@ const MainAppBar = ({
           >
             {t('setting')}
           </MenuItem>
-          <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleLogout();
+            }}
+          >
+            {t('logout')}
+          </MenuItem>
         </Menu>
       </div>
     </AppBar>
