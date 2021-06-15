@@ -1,7 +1,6 @@
 import { put, all, takeEvery } from 'redux-saga/effects';
 import apis from '../../apis';
 import actions from '../actions';
-import { setBot } from '../../apis/authApi';
 import axiosClient from '../../apis/authApi';
 
 function* getBotSaga({ botId }) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 // import { useHistory } from 'react-router';
 // import { useConfirm } from 'material-ui-confirm';
 import { useSnackbar } from 'notistack';
@@ -8,7 +8,7 @@ import { Typography, Button, Grid } from '@material-ui/core';
 import useStyles from './index.style';
 import apis from '../../../apis';
 
-const ExportAndImport = ({ bot }) => {
+const ExportAndImport = () => {
   // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   // const history = useHistory();
@@ -20,7 +20,6 @@ const ExportAndImport = ({ bot }) => {
   const exportFile = async () => {
     window.location.href = `${process.env.REACT_APP_API_DOMAIN}/api/v1/bots/${botId}/export-file`;
   };
-
 
   const handleImportFile = async (e) => {
     const data = await apis.bot.importFile(botId, e.target.files[0]);
@@ -38,12 +37,12 @@ const ExportAndImport = ({ bot }) => {
       action: exportFile,
       type: 'button',
     },
-    {
-      name: 'restore from zip',
-      description:
-        'Replace the current bot version with a new one. All the intents and entities in the older version will be deleted.',
-      action: '',
-    },
+    // {
+    //   name: 'restore from zip',
+    //   description:
+    //     'Replace the current bot version with a new one. All the intents and entities in the older version will be deleted.',
+    //   action: '',
+    // },
     {
       id: 'uploadFile',
       name: 'import as zip',
