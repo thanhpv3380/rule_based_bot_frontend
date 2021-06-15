@@ -119,7 +119,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   // Component TrainingPhrases
   const handleKeyDown = async (value) => {
     const data = await apis.intent.addUsersay(currentIntentId, value);
-    if (data.status) {
+    if (data && data.status) {
       const newPatterns = [...patterns];
       newPatterns.push(value);
       setPatterns(newPatterns);
@@ -128,7 +128,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
 
   const handleDeleteUsersay = async (usersay) => {
     const data = await apis.intent.removeUsersay(currentIntentId, usersay);
-    if (data.status) {
+    if (data && data.status) {
       const newIntent = { ...intent };
       const newPatterns = newIntent.patterns.filter((el) => el !== usersay);
       newIntent.patterns = newPatterns;
