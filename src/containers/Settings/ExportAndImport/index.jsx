@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 // import { useHistory } from 'react-router';
 // import { useConfirm } from 'material-ui-confirm';
 import { useSnackbar } from 'notistack';
@@ -8,7 +8,7 @@ import { Typography, Button, Grid } from '@material-ui/core';
 import useStyles from './index.style';
 import apis from '../../../apis';
 
-const ExportAndImport = ({ bot }) => {
+const ExportAndImport = () => {
   // eslint-disable-next-line no-unused-vars
   const { t } = useTranslation();
   // const history = useHistory();
