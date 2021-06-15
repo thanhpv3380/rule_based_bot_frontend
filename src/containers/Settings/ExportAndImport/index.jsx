@@ -21,7 +21,6 @@ const ExportAndImport = ({ bot }) => {
     window.location.href = `${process.env.REACT_APP_API_DOMAIN}/api/v1/bots/${botId}/export-file`;
   };
 
-
   const handleImportFile = async (e) => {
     const data = await apis.bot.importFile(botId, e.target.files[0]);
     if (data.status) {
@@ -38,12 +37,12 @@ const ExportAndImport = ({ bot }) => {
       action: exportFile,
       type: 'button',
     },
-    {
-      name: 'restore from zip',
-      description:
-        'Replace the current bot version with a new one. All the intents and entities in the older version will be deleted.',
-      action: '',
-    },
+    // {
+    //   name: 'restore from zip',
+    //   description:
+    //     'Replace the current bot version with a new one. All the intents and entities in the older version will be deleted.',
+    //   action: '',
+    // },
     {
       id: 'uploadFile',
       name: 'import as zip',
