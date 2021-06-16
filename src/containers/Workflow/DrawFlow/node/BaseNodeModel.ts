@@ -172,9 +172,9 @@ export class BaseNodeModel extends NodeModel {
 
     checkConnect(targetNode: BaseNodeModel): Boolean {
         //check target node has parent
-        if (targetNode.getArrayLinkIdByPortType('in').length > 0) {
-            return false;
-        }
+        // if (targetNode.getArrayLinkIdByPortType('in').length > 0) {
+        //     return false;
+        // }
 
         // check 2 node was connected
         const mutualNodeId = checkMutualNodeId(this, targetNode);

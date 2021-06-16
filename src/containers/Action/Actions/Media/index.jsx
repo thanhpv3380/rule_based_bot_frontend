@@ -34,16 +34,18 @@ const ActionText = ({
   const { enqueueSnackbar } = useSnackbar();
 
   const handleUpload = async (e) => {
-    const formData = new FormData();
-    const file = e.target.files[0];
-    formData.append('file', file);
-    const data = await apis.upload.uploadFile({ formData });
-    if (data && data.status) {
-      handleChangeMediaInfoItem(actionId, 'url', data.result.link);
-    } else {
-      enqueueSnackbar('Upload failed', {
-        variant: 'error',
-      });
+    if (e.target.files && e.target.files.length > 0) {
+      const formData = new FormData();
+      const file = e.target.files[0];
+      formData.append('file', file);
+      const data = await apis.upload.uploadFile({ formData });
+      if (data && data.status) {
+        handleChangeMediaInfoItem(actionId, 'url', data.result.link);
+      } else {
+        enqueueSnackbar('Upload failed', {
+          variant: 'error',
+        });
+      }
     }
   };
 
