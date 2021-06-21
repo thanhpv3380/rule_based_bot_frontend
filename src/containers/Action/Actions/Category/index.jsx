@@ -117,13 +117,16 @@ const ActionCategory = ({
       <List dense={dense}>
         <ListItem>
           <Grid container spacing={3}>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               {textDefault.ACTIONS.NAME_OF_OPTION}
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               {textDefault.ACTIONS.VALUE}
             </Grid>
-            <Grid item xs={4} />
+            <Grid item xs={3}>
+              {textDefault.ACTIONS.DESCRIPTION}
+            </Grid>
+            <Grid item xs={3} />
           </Grid>
         </ListItem>
       </List>
@@ -135,7 +138,7 @@ const ActionCategory = ({
               {editIndex === index ? (
                 <>
                   <Grid container spacing={3}>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                       <TextField
                         id="standard-required"
                         value={option.name}
@@ -148,7 +151,7 @@ const ActionCategory = ({
                         className={classes.input}
                       />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                       <TextField
                         id="standard-required"
                         value={option.value}
@@ -161,7 +164,20 @@ const ActionCategory = ({
                         className={classes.input}
                       />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
+                      <TextField
+                        id="standard-required"
+                        value={option.description}
+                        onChange={(e) =>
+                          setOption({
+                            ...option,
+                            description: e.target.value,
+                          })
+                        }
+                        className={classes.input}
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
                       <Box display="flex">
                         <Box m={0.5}>
                           <Button
@@ -189,13 +205,16 @@ const ActionCategory = ({
                 <>
                   <ListItemText>
                     <Grid container spacing={3}>
-                      <Grid item xs={4}>
+                      <Grid item xs={3}>
                         {el.name}
                       </Grid>
-                      <Grid item xs={4}>
+                      <Grid item xs={3}>
                         {el.value}
                       </Grid>
-                      <Grid item xs={4} />
+                      <Grid item xs={3}>
+                        {el.description}
+                      </Grid>
+                      <Grid item xs={3} />
                     </Grid>
                   </ListItemText>
                   <ListItemSecondaryAction>
@@ -213,7 +232,7 @@ const ActionCategory = ({
           <ListItem>
             <ListItemText>
               <Grid container spacing={3}>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                   <TextField
                     id="standard-required"
                     value={option && option.name}
@@ -226,7 +245,7 @@ const ActionCategory = ({
                     className={classes.input}
                   />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                   <TextField
                     id="standard-required"
                     value={option && option.value}
@@ -239,7 +258,20 @@ const ActionCategory = ({
                     className={classes.input}
                   />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
+                  <TextField
+                    id="standard-required"
+                    value={option && option.description}
+                    onChange={(e) =>
+                      setOption({
+                        ...option,
+                        description: e.target.value,
+                      })
+                    }
+                    className={classes.input}
+                  />
+                </Grid>
+                <Grid item xs={3}>
                   <Box display="flex">
                     <Box m={0.5}>
                       <Button

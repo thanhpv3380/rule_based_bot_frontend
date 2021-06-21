@@ -9,6 +9,7 @@ export default {
     VALUE: 'Value',
     NAME_OF_SLOT: 'Name of Slot',
     VALUE_OF_PROPERTIES: 'Value of Properties',
+    DESCRIPTION: 'Description',
   },
   SEARCH: 'Search',
   SEARCH_TRAINING_PHRASES: 'Search training phrases',

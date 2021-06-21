@@ -20,8 +20,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import { subDays } from 'date-fns';
-
+import { subDays, format } from 'date-fns';
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
@@ -237,7 +236,10 @@ const History = () => {
                       </ListItemAvatar>
                       <ListItemText
                         primary={el.sessionId}
-                        secondary={el.createdAt}
+                        secondary={format(
+                          new Date(el.createdAt),
+                          'dd.MM.yyyy HH:mm:ss',
+                        )}
                       />
                     </ListItem>
                   ))}
