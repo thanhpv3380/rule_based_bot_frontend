@@ -20,12 +20,14 @@ import useStyles from './index.style';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
 import menus from '../../../data/EntityType.json';
+import Loading from '../../../components/Loading';
 
 const DetailEntity = ({ groupItems, handleUpdate }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [entityId, setEntityId] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [oldGroupId, setOldGroupId] = useState();
   const [entityData, setEntityData] = useState({
     type: 1,
@@ -51,9 +53,11 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
         variant: 'error',
       });
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
+    setIsLoading(true);
     const listUrl = window.location.href.split('/');
     const itemId = listUrl[listUrl.length - 1];
     setEntityId(itemId);
@@ -61,24 +65,26 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
   }, [window.location.href]);
 
   const handleChangeInfoHeader = (e) => {
-    if (e.target.name === 'groupId') {
+    const { name, value } = e.target;
+    if (name === 'groupId') {
       setEntityData({
         ...entityData,
-        groupEntity: e.target.value,
+        groupEntity: value,
       });
     }
-    if (e.target.name === 'name') {
+    if (name === 'name') {
       setEntityData({
         ...entityData,
-        name: e.target.value,
+        name: value,
       });
     }
   };
 
   const handleChangeEntityType = (e) => {
+    const { value } = e.target;
     setEntityData({
       ...entityData,
-      type: e.target.value,
+      type: parseInt(value),
     });
   };
 
@@ -163,6 +169,10 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
       ],
     });
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

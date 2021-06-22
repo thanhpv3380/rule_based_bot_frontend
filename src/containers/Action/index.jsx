@@ -11,6 +11,7 @@ import ActionDetail from './DetailAction';
 import apis from '../../apis';
 import textDefault from '../../constants/textDefault';
 import groupConstant from '../../constants/group';
+import Loading from '../../components/Loading';
 
 let timeOutId = null;
 
@@ -24,11 +25,29 @@ function Action() {
   const [searchKey, setSearchKey] = useState();
   const [groupIdSelected, setGroupIdSelected] = useState(null);
   const [groupAndItems, setGroupAndItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchGroupAndItems = async (keyword) => {
     const data = await apis.groupAction.getGroupAndItems(keyword);
-    if (data.status) {
-      setGroupAndItems(data.result.groupActions);
+    if (data && data.status) {
+      const newGroupAndItems = [...data.result.groupActions];
+      const listUrl = window.location.href.split('/');
+      if (listUrl.length >= 6) {
+        const itemId = listUrl[listUrl.length - 1];
+
+        const pos = newGroupAndItems.findIndex((el) =>
+          el.children.find((item) => item.id === itemId),
+        );
+        if (pos >= 0) {
+          newGroupAndItems[pos] = {
+            ...newGroupAndItems[pos],
+            status: true,
+          };
+        }
+      }
+
+      setGroupAndItems(newGroupAndItems);
+      setIsLoading(false);
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
@@ -37,6 +56,7 @@ function Action() {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchGroupAndItems();
   }, []);
 
@@ -123,7 +143,7 @@ function Action() {
     const data = await apis.groupAction.updateGroupAction(groupId, {
       name: value,
     });
-    if (data.status) {
+    if (data && data.status) {
       const newGroupAndItems = [...groupAndItems];
       const pos = newGroupAndItems.findIndex((el) => el.id === groupId);
       newGroupAndItems[pos] = {
@@ -194,6 +214,9 @@ function Action() {
     history.push(`/bot/${botId}/actions/detail/${id}`);
   };
 
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <LayoutListGroup
       groupItems={groupAndItems}
@@ -208,20 +231,24 @@ function Action() {
       handleToggleGroup={handleToggleGroup}
       handleClickItem={handleClickItem}
     >
-      <Route exact path={routes.ACTION_BOT.DETAIL_ACTION}>
-        <ActionDetail
-          groupItems={groupAndItems}
-          handleUpdate={handleUpdateItem}
-        />
-      </Route>
-      <Route exact path={routes.ACTION_BOT.ACTION} component={EmptyPage} />
-      <Route exact path={routes.ACTION_BOT.CREATE_ACTION}>
-        <CreateAction
-          groupItems={groupAndItems}
-          groupId={groupIdSelected}
-          handleCreate={handleCreateItem}
-        />
-      </Route>
+      {groupAndItems && (
+        <div>
+          <Route exact path={routes.ACTION_BOT.DETAIL_ACTION}>
+            <ActionDetail
+              groupItems={groupAndItems}
+              handleUpdate={handleUpdateItem}
+            />
+          </Route>
+          <Route exact path={routes.ACTION_BOT.ACTION} component={EmptyPage} />
+          <Route exact path={routes.ACTION_BOT.CREATE_ACTION}>
+            <CreateAction
+              groupItems={groupAndItems}
+              groupId={groupIdSelected}
+              handleCreate={handleCreateItem}
+            />
+          </Route>
+        </div>
+      )}
     </LayoutListGroup>
   );
 }

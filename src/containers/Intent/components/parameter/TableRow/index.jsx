@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   Typography,
@@ -14,13 +14,10 @@ import {
 import { useSnackbar } from 'notistack';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import DeleteIcon from '@material-ui/icons/Delete';
-// import BorderColorOutlinedIcon from '@material-ui/icons/BorderColorOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
-// import CreateIcon from '@material-ui/icons/Create';
 import EditIcon from '@material-ui/icons/Edit';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
-// import SettingsIcon from '@material-ui/icons/Settings';
 import useStyles from './index.style';
 import textDefault from '../../../../../constants/textDefault';
 
@@ -47,39 +44,31 @@ function TableRowCustom(props) {
   };
 
   const { enqueueSnackbar } = useSnackbar();
-  const [parameter, setParameter] = useState(
-    parameterData
-      ? { ...parameterData, openModal: false, isEdit: false }
-      : parameterDefault,
-  );
+  const [parameter, setParameter] = useState();
+  const [actionBreak, setActionBreak] = useState();
+  const [actionAskAgain, setActionAskAgain] = useState();
+  const [numberOfLoop, setNumberOfLoop] = useState();
 
-  const [actionBreak, setActionBreak] = useState(
-    parameterData
-      ? parameterData.response
-        ? parameterData.response.actionBreak
-          ? parameterData.response.actionBreak
-          : ''
-        : ''
-      : '',
-  );
-  const [actionAskAgain, setActionAskAgain] = useState(
-    parameterData
-      ? parameterData.response
-        ? parameterData.response.actionAskAgain
-          ? parameterData.response.actionAskAgain
-          : ''
-        : ''
-      : '',
-  );
-  const [numberOfLoop, setNumberOfLoop] = useState(
-    parameterData
-      ? parameterData.response
-        ? parameterData.response.numberOfLoop
-          ? parameterData.response.numberOfLoop
-          : 1
-        : 1
-      : 1,
-  );
+  useEffect(() => {
+    let tempActionAskAgain = '';
+    let tempNumberOfLoop = 1;
+    let tempActionBreak = '';
+    let tempParameter = parameterDefault;
+    if (parameterData) {
+      if (parameterData.response) {
+        tempActionAskAgain =
+          parameterData.response.actionAskAgain || tempActionAskAgain;
+        tempNumberOfLoop =
+          parameterData.response.numberOfLoop || tempNumberOfLoop;
+        tempActionBreak = parameterData.response.actionBreak || tempActionBreak;
+      }
+      tempParameter = { ...parameterData, openModal: false, isEdit: false };
+    }
+    setActionAskAgain(tempActionAskAgain);
+    setNumberOfLoop(tempNumberOfLoop);
+    setActionBreak(tempActionBreak);
+    setParameter(tempParameter);
+  }, [parameterData]);
 
   const handleClickAccept = async () => {
     const status = await handleAccept(parameter, position);

@@ -4,6 +4,7 @@ import ActionMedia from './Media';
 import ActionCategory from './Category';
 import ActionJsonApi from './JsonApi';
 import ActionLoop from './Loop';
+import ActionGallery from './Gallery';
 
 export {
   ActionText,
@@ -12,4 +13,5 @@ export {
   ActionCategory,
   ActionJsonApi,
   ActionLoop,
+  ActionGallery,
 };

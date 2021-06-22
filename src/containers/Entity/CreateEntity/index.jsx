@@ -65,25 +65,26 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   }, [groupId]);
 
   const handleChangeInfoHeader = (e) => {
-    if (e.target.name === 'groupId') {
+    const { name, value } = e.target;
+    if (name === 'groupId') {
       setEntityData({
         ...entityData,
-        groupEntity: e.target.value,
+        groupEntity: value,
       });
     }
-    if (e.target.name === 'name') {
+    if (name === 'name') {
       setEntityData({
         ...entityData,
-        name: e.target.value,
+        name: value,
       });
     }
   };
 
   const handleChangeEntityType = (e) => {
-    const value = parseInt(e.target.value);
+    const { value } = e.target;
     setEntityData({
       ...entityData,
-      entityType: value,
+      entityType: parseInt(value),
     });
   };
 

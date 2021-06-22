@@ -13,13 +13,15 @@ import useStyles from './index.style';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
 import ParametersModal from './ParametersModal';
+import Loading from '../../../components/Loading';
 
-const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
+const DetailWorkflow = ({ groupItems, handleUpdate }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
   const botId = useSelector((state) => state.bot.bot.id);
+  const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [isFetchData, setIsFetchData] = useState(false);
   const [oldGroupId, setOldGroupId] = useState();
@@ -45,9 +47,11 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
         variant: 'error',
       });
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
+    setIsLoading(true);
     const listUrl = window.location.href.split('/');
     const itemId = listUrl[listUrl.length - 1];
     setCurrentWorkflowId(itemId);
@@ -104,6 +108,9 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
     history.push(`/bot/${botId}/draw-workflows/${workflowData.id}`);
   };
 
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <>
       <ItemInfoHeader
@@ -151,4 +158,4 @@ const CreateWorkFlow = ({ groupItems, handleUpdate }) => {
   );
 };
 
-export default CreateWorkFlow;
+export default DetailWorkflow;

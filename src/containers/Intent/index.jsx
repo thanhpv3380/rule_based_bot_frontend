@@ -12,6 +12,7 @@ import EmptyPage from '../../components/EmptyPage';
 import DetailIntent from './DetailIntent';
 import CreateIntent from './CreateIntent';
 import groupConstant from '../../constants/group';
+import Loading from '../../components/Loading';
 
 let timeOutId = null;
 
@@ -26,11 +27,28 @@ const Intent = () => {
   const [searchKey, setSearchKey] = useState();
   const [groupIdSelected, setGroupIdSelected] = useState(null);
   const [groupAndItems, setGroupAndItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchGroupAndItems = async (keyword) => {
     const data = await apis.groupIntent.getGroupAndItems({ keyword });
     if (data.status) {
-      setGroupAndItems(data.result.groupIntents);
+      const newGroupAndItems = [...data.result.groupIntents];
+      const listUrl = window.location.href.split('/');
+      if (listUrl.length >= 6) {
+        const itemId = listUrl[listUrl.length - 1];
+
+        const pos = newGroupAndItems.findIndex((el) =>
+          el.children.find((item) => item.id === itemId),
+        );
+        if (pos >= 0) {
+          newGroupAndItems[pos] = {
+            ...newGroupAndItems[pos],
+            status: true,
+          };
+        }
+      }
+      setGroupAndItems(newGroupAndItems);
+      setIsLoading(false);
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
@@ -39,6 +57,7 @@ const Intent = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchGroupAndItems();
   }, []);
 
@@ -198,6 +217,9 @@ const Intent = () => {
     history.push(`/bot/${botId}/intents/detail/${id}`);
   };
 
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <LayoutListGroup
       groupItems={groupAndItems}

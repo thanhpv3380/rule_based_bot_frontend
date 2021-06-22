@@ -11,6 +11,7 @@ import EntityDetail from './DetailEntity';
 import apis from '../../apis';
 import textDefault from '../../constants/textDefault';
 import groupConstant from '../../constants/group';
+import Loading from '../../components/Loading';
 
 let timeOutId = null;
 
@@ -24,11 +25,28 @@ const Entity = () => {
   const [searchKey, setSearchKey] = useState();
   const [groupIdSelected, setGroupIdSelected] = useState(null);
   const [groupAndItems, setGroupAndItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchGroupAndItems = async (keyword) => {
     const data = await apis.groupEntity.getGroupAndItems(keyword);
     if (data && data.status) {
-      setGroupAndItems(data.result.groupEntities);
+      const newGroupAndItems = [...data.result.groupEntities];
+      const listUrl = window.location.href.split('/');
+      if (listUrl.length >= 6) {
+        const itemId = listUrl[listUrl.length - 1];
+
+        const pos = newGroupAndItems.findIndex((el) =>
+          el.children.find((item) => item.id === itemId),
+        );
+        if (pos >= 0) {
+          newGroupAndItems[pos] = {
+            ...newGroupAndItems[pos],
+            status: true,
+          };
+        }
+      }
+      setGroupAndItems(newGroupAndItems);
+      setIsLoading(false);
     } else {
       enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
         variant: 'error',
@@ -37,6 +55,7 @@ const Entity = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchGroupAndItems();
   }, []);
 
@@ -189,6 +208,10 @@ const Entity = () => {
   const handleClickItem = (id) => {
     history.push(`/bot/${botId}/entities/detail/${id}`);
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <LayoutListGroup

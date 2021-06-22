@@ -14,11 +14,13 @@ import {
   ActionCategory,
   ActionJsonApi,
   ActionLoop,
+  ActionGallery,
 } from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
+import Loading from '../../../components/Loading';
 
 const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
   const { t } = useTranslation();
@@ -29,6 +31,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
   const [oldGroupId, setOldGroupId] = useState();
   const [actionData, setActionData] = useState({});
   const [actions, setActions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChangeInfoHeader = (e) => {
     if (e.target.name === 'groupId') {
@@ -61,6 +64,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
         variant: 'error',
       });
     }
+    setIsLoading(false);
   };
 
   const fetchSlots = async () => {
@@ -79,6 +83,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
     if (flowActionId) {
       setCurrentActionId(flowActionId);
       fetchAction(flowActionId);
@@ -174,6 +179,15 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
           response: null,
           parameters: [],
         },
+      },
+    ]);
+  };
+  const handleAddGallery = () => {
+    setActions([
+      ...actions,
+      {
+        typeAction: actionsConstant.GALLERY,
+        gallery: [],
       },
     ]);
   };
@@ -387,6 +401,15 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
     setActions(newActions);
   };
 
+  const handleUpdateGallery = (id, listImage) => {
+    const newActions = [...actions];
+    newActions[id] = {
+      ...newActions[id],
+      gallery: listImage,
+    };
+    setActions(newActions);
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
 
@@ -492,6 +515,16 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
         />
       );
     }
+    if (action.typeAction === actionsConstant.GALLERY) {
+      return (
+        <ActionGallery
+          actionId={id}
+          item={action.gallery}
+          handleDeleteGallery={handleDeleteItem}
+          handleUpdateGallery={handleUpdateGallery}
+        />
+      );
+    }
     return '';
   };
 
@@ -526,8 +559,16 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
       icon: '',
       event: handleAddJsonApi,
     },
+    {
+      heading: 'Gallery',
+      icon: '',
+      event: handleAddGallery,
+    },
   ];
 
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <>
       <ItemInfoHeader

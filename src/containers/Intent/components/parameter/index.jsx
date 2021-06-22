@@ -20,7 +20,7 @@ import apis from '../../../../apis';
 function Parameter(props) {
   const classes = useStyles();
   const {
-    intent,
+    parameters,
     actions,
     handleDelete,
     handleChangeCheckBox,
@@ -83,19 +83,21 @@ function Parameter(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {intent.parameters &&
-              intent.parameters.map((parameter, position) => (
-                <TableRowComponent
-                  key={position}
-                  position={position}
-                  actions={actions}
-                  entities={entities}
-                  parameterData={parameter}
-                  handleDelete={handleDelete}
-                  handleChangeCheckBox={handleChangeCheckBox}
-                  handleAccept={handleAcceptEdit}
-                />
-              ))}
+            {parameters &&
+              parameters.map((parameter, position) => {
+                return (
+                  <TableRowComponent
+                    key={position}
+                    position={position}
+                    actions={actions}
+                    entities={entities}
+                    parameterData={parameter}
+                    handleDelete={handleDelete}
+                    handleChangeCheckBox={handleChangeCheckBox}
+                    handleAccept={handleAcceptEdit}
+                  />
+                );
+              })}
             {isCreate && (
               <TableRowComponent
                 actions={actions}

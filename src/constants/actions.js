@@ -7,5 +7,6 @@ export default {
   CATEGORY: 'OPTION',
   API: 'API',
   LOOP: 'LOOP',
+  GALLERY: 'GALLERY',
   JSON_API: 'JSON_API',
 };

@@ -11,6 +11,8 @@ import ActionMapping from '../components/actionMapping';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
+import textDefault from '../../../constants/textDefault';
+import Loading from '../../../components/Loading';
 
 function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   const classes = useStyles();
@@ -20,10 +22,11 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   const [actions, setActions] = useState([]);
   const [oldGroupId, setOldGroupId] = useState();
   const [currentIntentId, setCurrentIntentId] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchIntent = async (intentId) => {
     const data = await apis.intent.getIntent(intentId);
-    if (data.status) {
+    if (data && data.status) {
       setIntent({ ...data.result, parameters: data.result.parameters || [] });
       setPatterns(data.result.patterns);
       setOldGroupId(
@@ -31,7 +34,12 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
           ? data.result.groupIntent.id
           : data.result.groupIntent,
       );
+    } else {
+      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+        variant: 'error',
+      });
     }
+    setIsLoading(false);
   };
 
   const fetchActions = async () => {
@@ -42,6 +50,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (flowIntentId) {
       setCurrentIntentId(flowIntentId);
       fetchIntent(flowIntentId);
@@ -56,6 +65,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   useEffect(() => {
     fetchActions();
   }, []);
+
   // function component itemInfoHeader
   const handleSave = async () => {
     const parameters =
@@ -90,7 +100,6 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       enqueueSnackbar('Update intent success', {
         variant: 'success',
       });
-      console.log(result);
       handleUpdate(result, oldGroupId);
       setOldGroupId(result.groupIntent);
     } else {
@@ -290,6 +299,10 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       mappingAction: action,
     });
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <Card>
       <ItemInfoHeader
@@ -312,7 +325,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
         <Divider />
         <br />
         <Parameters
-          intent={intent}
+          parameters={intent.parameters}
           actions={actions}
           handleDelete={handleDeleteParameter}
           handleChangeCheckBox={handleChangeCheckBoxParameter}

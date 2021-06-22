@@ -36,7 +36,6 @@ const LayoutListGroup = ({
   const [isCreateGroup, setIsCreateGroup] = useState(false);
   const [open, setOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState();
-  const [groupSelected, setGroupSelected] = useState();
   const [groupsSingle, setGroupsSingle] = useState({
     data: [],
     start: 0,
@@ -192,9 +191,6 @@ const LayoutListGroup = ({
     const listUrl = window.location.href.split('/');
     const itemId = listUrl[listUrl.length - 1];
     setItemSelected(itemId);
-    // setGroupSelected(
-    //   groupItems.find((el) => el.children.find((item) => item.id === itemId)),
-    // );
   }, [window.location.href]);
 
   const handleToggleCreateGroup = () => {

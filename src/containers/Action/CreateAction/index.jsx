@@ -13,6 +13,7 @@ import {
   ActionMedia,
   ActionCategory,
   ActionJsonApi,
+  ActionGallery,
 } from '../Actions';
 import useStyles from './index.style';
 import actionsConstant from '../../../constants/actions';
@@ -127,6 +128,16 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
           description: '',
           url: '',
         },
+      },
+    ]);
+  };
+
+  const handleAddGallery = () => {
+    setActions([
+      ...actions,
+      {
+        typeAction: actionsConstant.GALLERY,
+        gallery: [],
       },
     ]);
   };
@@ -359,6 +370,15 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     setActions(newActions);
   };
 
+  const handleUpdateGallery = (id, listImage) => {
+    const newActions = [...actions];
+    newActions[id] = {
+      ...newActions[id],
+      gallery: listImage,
+    };
+    setActions(newActions);
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     const data = await apis.action.createAction({
@@ -449,6 +469,16 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
         />
       );
     }
+    if (action.typeAction === actionsConstant.GALLERY) {
+      return (
+        <ActionGallery
+          actionId={id}
+          item={action.gallery}
+          handleDeleteGallery={handleDeleteItem}
+          handleUpdateGallery={handleUpdateGallery}
+        />
+      );
+    }
     return '';
   };
 
@@ -482,6 +512,11 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
       heading: 'JSON API',
       icon: '',
       event: handleAddJsonApi,
+    },
+    {
+      heading: 'Gallery',
+      icon: '',
+      event: handleAddGallery,
     },
   ];
 
