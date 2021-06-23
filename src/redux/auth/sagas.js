@@ -35,7 +35,7 @@ function* logoutSaga() {
   try {
     const accessToken = getCookie('accessToken');
     const data = yield apis.auth.logout(accessToken);
-    if (data.status) {
+    if (data && data.status) {
       setCookie('accessToken', null);
       yield put(actions.auth.logoutSuccess());
     }
@@ -50,7 +50,6 @@ function* verifyTokenSaga({ accessToken }) {
     if (!data.status) throw new Error();
     const { user } = data.result;
     if (user) {
-      console.log({ user });
       yield put(actions.auth.verifyTokenSuccess(accessToken, user));
     } else {
       yield put(actions.auth.verifyTokenFailure());
