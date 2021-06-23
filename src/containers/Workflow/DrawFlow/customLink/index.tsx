@@ -283,9 +283,10 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
         {
           'data-linkid': this.props.link.getID(),
           'data-point': 1,
-          onMouseDown: (event: MouseEvent) => {
+          onMouseEnter: (event: MouseEvent) => {
             // this.addPointToLink(event, 1 + 1); // todo xử lý khi click vào link
           },
+          onMouseLeave: (event: MouseEvent) => {},
         },
         1,
       ),
@@ -299,6 +300,7 @@ export class AdvancedLinkWidget extends DefaultLinkWidget {
 
     return (
       <g data-default-link-test={this.props.link.getOptions().testName}>
+        test
         {paths}
       </g>
     );
