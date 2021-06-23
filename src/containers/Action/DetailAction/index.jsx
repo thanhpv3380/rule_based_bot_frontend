@@ -21,6 +21,7 @@ import actionsConstant from '../../../constants/actions';
 import apis from '../../../apis';
 import textDefault from '../../../constants/textDefault';
 import Loading from '../../../components/Loading';
+import { values } from 'lodash';
 
 const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
   const { t } = useTranslation();
@@ -145,7 +146,10 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
       ...actions,
       {
         typeAction: actionsConstant.CATEGORY,
-        options: [],
+        options: {
+          description: '',
+          optionChild: [],
+        },
       },
     ]);
   };
@@ -220,7 +224,13 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
 
   const handleAddCategoryItem = (id, data) => {
     const newActions = [...actions];
-    newActions[id].options.push({ ...data });
+    newActions[id].options.optionChild.push({ ...data });
+    setActions(newActions);
+  };
+
+  const handleChangeDescriptionCategory = (value, id) => {
+    const newActions = [...actions];
+    newActions[id].options.description = value;
     setActions(newActions);
   };
 
@@ -235,9 +245,12 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
 
   const handleDeleteCategoryItem = (id, index) => {
     const newActions = [...actions];
-    newActions[id].options = [
-      ...newActions[id].options.slice(0, index),
-      ...newActions[id].options.slice(index + 1, newActions[id].options.length),
+    newActions[id].options.optionChild = [
+      ...newActions[id].options.optionChild.slice(0, index),
+      ...newActions[id].options.optionChild.slice(
+        index + 1,
+        newActions[id].options.optionChild.length,
+      ),
     ];
     setActions(newActions);
   };
@@ -250,7 +263,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
 
   const handleEditCategoryItem = (id, index, data) => {
     const newActions = [...actions];
-    newActions[id].options[index] = { ...data };
+    newActions[id].options.optionChild[index] = { ...data };
     setActions(newActions);
   };
 
@@ -412,7 +425,6 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-
     const data = await apis.action.updateAction(currentActionId, {
       name: actionData.name,
       actions,
@@ -455,6 +467,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
           handleDeleteCategoryItem={handleDeleteCategoryItem}
           handleEditCategoryItem={handleEditCategoryItem}
           handleAddCategoryItem={handleAddCategoryItem}
+          handleChangeDescriptionCategory={handleChangeDescriptionCategory}
         />
       );
     }
