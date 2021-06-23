@@ -29,6 +29,7 @@ const ActionCategory = ({
   handleAddCategoryItem,
   handleDeleteCategoryItem,
   handleEditCategoryItem,
+  handleChangeDescriptionCategory,
 }) => {
   const dense = false;
   const classes = useStyles();
@@ -114,6 +115,21 @@ const ActionCategory = ({
           </IconButton>
         </Box>
       </Box>
+      <Grid item>
+        <TextField
+          label="Enter description of category"
+          id="standard-required"
+          value={option && option.description}
+          variant="outlined"
+          size="small"
+          fullWidth
+          name="description"
+          onChange={(e) =>
+            handleChangeDescriptionCategory(e.target.value, actionId)
+          }
+          className={classes.input}
+        />
+      </Grid>
       <List dense={dense}>
         <ListItem>
           <Grid container spacing={3}>
@@ -123,18 +139,14 @@ const ActionCategory = ({
             <Grid item xs={3}>
               {textDefault.ACTIONS.VALUE}
             </Grid>
-            <Grid item xs={3}>
-              {textDefault.ACTIONS.DESCRIPTION}
-            </Grid>
             <Grid item xs={3} />
           </Grid>
         </ListItem>
       </List>
       <List dense={dense}>
         {item &&
-          item.options &&
-          Array.isArray(item.options) &&
-          item.options.map((el, index) => (
+          item.options.optionsChild &&
+          item.options.optionsChild.map((el, index) => (
             <ListItem key={index}>
               {editIndex === index ? (
                 <>
@@ -212,9 +224,6 @@ const ActionCategory = ({
                       <Grid item xs={3}>
                         {el.value}
                       </Grid>
-                      <Grid item xs={3}>
-                        {el.description}
-                      </Grid>
                       <Grid item xs={3} />
                     </Grid>
                   </ListItemText>
@@ -254,19 +263,6 @@ const ActionCategory = ({
                       setOption({
                         ...option,
                         value: e.target.value,
-                      })
-                    }
-                    className={classes.input}
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <TextField
-                    id="standard-required"
-                    value={option && option.description}
-                    onChange={(e) =>
-                      setOption({
-                        ...option,
-                        description: e.target.value,
                       })
                     }
                     className={classes.input}

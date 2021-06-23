@@ -164,7 +164,10 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
       ...actions,
       {
         typeAction: actionsConstant.CATEGORY,
-        options: [],
+        options: {
+          description: '',
+          optionsChild: [],
+        },
       },
     ]);
   };
@@ -200,7 +203,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
 
   const handleAddCategoryItem = (id, data) => {
     const newActions = [...actions];
-    newActions[id].options.push({ ...data });
+    newActions[id].options.optionsChild.push({ ...data });
     setActions(newActions);
   };
 
@@ -217,9 +220,12 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
 
   const handleDeleteCategoryItem = (id, index) => {
     const newActions = [...actions];
-    newActions[id].options = [
-      ...newActions[id].options.slice(0, index),
-      ...newActions[id].options.slice(index + 1, newActions[id].options.length),
+    newActions[id].options.optionsChild = [
+      ...newActions[id].options.optionsChild.slice(0, index),
+      ...newActions[id].options.optionsChild.slice(
+        index + 1,
+        newActions[id].options.optionsChild.length,
+      ),
     ];
     setActions(newActions);
   };
@@ -234,7 +240,13 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
 
   const handleEditCategoryItem = (id, index, data) => {
     const newActions = [...actions];
-    newActions[id].options[index] = { ...data };
+    newActions[id].options.optionsChild[index] = { ...data };
+    setActions(newActions);
+  };
+
+  const handleChangeDescriptionCategory = (value, id) => {
+    const newActions = [...actions];
+    newActions[id].options.description = value;
     setActions(newActions);
   };
 
@@ -425,6 +437,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
           handleDeleteCategoryItem={handleDeleteCategoryItem}
           handleEditCategoryItem={handleEditCategoryItem}
           handleAddCategoryItem={handleAddCategoryItem}
+          handleChangeDescriptionCategory={handleChangeDescriptionCategory}
         />
       );
     }
