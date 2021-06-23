@@ -64,7 +64,7 @@ const ActionCategory = ({
 
   const handlePrevEdit = (e, id) => {
     setEditIndex(id);
-    setOption(item.options[id]);
+    setOption(item.options.optionsChild[id]);
   };
 
   const handleEdit = () => {
@@ -119,7 +119,7 @@ const ActionCategory = ({
         <TextField
           label="Enter description of category"
           id="standard-required"
-          value={option && option.description}
+          value={item.options && item.options.description}
           variant="outlined"
           size="small"
           fullWidth
