@@ -145,8 +145,8 @@ const ActionCategory = ({
       </List>
       <List dense={dense}>
         {item &&
-          item.options.optionChild &&
-          item.options.optionChild.map((el, index) => (
+          item.options.optionsChild &&
+          item.options.optionsChild.map((el, index) => (
             <ListItem key={index}>
               {editIndex === index ? (
                 <>
