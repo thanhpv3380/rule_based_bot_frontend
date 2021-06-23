@@ -137,7 +137,10 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
       ...actions,
       {
         typeAction: actionsConstant.GALLERY,
-        gallery: [],
+        gallery: {
+          description: '',
+          images: [],
+        },
       },
     ]);
   };
@@ -370,11 +373,13 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     setActions(newActions);
   };
 
-  const handleUpdateGallery = (id, listImage) => {
+  const handleUpdateGallery = (id, gallery) => {
     const newActions = [...actions];
     newActions[id] = {
       ...newActions[id],
-      gallery: listImage,
+      gallery: {
+        ...gallery,
+      },
     };
     setActions(newActions);
   };

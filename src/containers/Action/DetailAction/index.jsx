@@ -187,7 +187,10 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
       ...actions,
       {
         typeAction: actionsConstant.GALLERY,
-        gallery: [],
+        gallery: {
+          description: '',
+          images: [],
+        },
       },
     ]);
   };
@@ -401,11 +404,13 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
     setActions(newActions);
   };
 
-  const handleUpdateGallery = (id, listImage) => {
+  const handleUpdateGallery = (id, gallery) => {
     const newActions = [...actions];
     newActions[id] = {
       ...newActions[id],
-      gallery: listImage,
+      gallery: {
+        ...gallery,
+      },
     };
     setActions(newActions);
   };

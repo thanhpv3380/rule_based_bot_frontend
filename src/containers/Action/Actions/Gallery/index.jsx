@@ -11,6 +11,7 @@ import {
   Box,
   Typography,
   Button,
+  TextField,
 } from '@material-ui/core';
 import {
   CloudUpload as CloudUploadIcon,
@@ -31,33 +32,45 @@ const Gallery = ({
   const { t } = useTranslation();
 
   const handleDeleteItem = (id) => async () => {
-    const newImages = [...item];
+    const newImages = [...item.images];
     const pos = newImages.findIndex((el) => el.id === id);
     newImages.splice(pos, 1);
-    handleUpdateGallery(actionId, [...newImages]);
+    handleUpdateGallery(actionId, { ...item, images: [...newImages] });
+  };
+
+  const handleChangeDescription = (value) => {
+    handleUpdateGallery(actionId, {
+      ...item,
+      description: value,
+    });
   };
 
   const handleUpload = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      const formData = new FormData();
-      const file = e.target.files[0];
-      formData.append('file', file);
-      const data = await apis.upload.uploadFile({ formData });
-      if (data && data.status) {
-        let newImages = [...item];
-        newImages = [
-          ...newImages,
-          {
-            typeMedia: 'IMAGE',
-            url: data.result.link,
-          },
-        ];
-        handleUpdateGallery(actionId, [...newImages]);
-      } else {
-        enqueueSnackbar('Upload failed', {
-          variant: 'error',
-        });
-      }
+      const { files } = e.target;
+      Object.keys(files).filter((key) => key !== 'length' && files[key]);
+      const links = await Promise.all(
+        Object.entries(files)
+          .filter((el) => typeof el !== 'number')
+          .map(async (el) => {
+            const formData = new FormData();
+            formData.append('file', el[1]);
+            const data = await apis.upload.uploadFile({ formData });
+            if (data && data.status) {
+              return { typeMedia: 'IMAGE', url: data.result.link };
+            }
+            enqueueSnackbar(`Image ${el[1].image} upload failed`, {
+              variant: 'error',
+            });
+
+            return null;
+          })
+          .filter((el) => el),
+      );
+
+      let newImages = [...item.images];
+      newImages = [...newImages, ...links];
+      handleUpdateGallery(actionId, { ...item, images: [...newImages] });
     }
   };
   return (
@@ -85,15 +98,28 @@ const Gallery = ({
           </IconButton>
         </Box>
       </Box>
+      <Box mb={1.5} mt={1.5}>
+        <TextField
+          label={t('enter_description_of_gallery')}
+          variant="outlined"
+          size="small"
+          fullWidth
+          name="description"
+          value={item && item.description}
+          onChange={(e) => {
+            handleChangeDescription(e.target.value);
+          }}
+        />
+      </Box>
       <Box
-        mt={1.5}
         mb={1.5}
         display="flex"
         alignItems="center"
         justifyContent="space-between"
       >
         <Typography gutterBottom>
-          {t('total_number_of_images')}: {(item && item.length) || 0}
+          {t('total_number_of_images')}:{' '}
+          {(item && item.images && item.images.length) || 0}
         </Typography>
         <Box>
           <input
@@ -117,28 +143,32 @@ const Gallery = ({
         </Box>
       </Box>
       <div className={classes.root}>
-        <GridList className={classes.gridList} cols={item.length <= 1 ? 1 : 2}>
-          {item.map((el, key) => (
-            <GridListTile key={key} classes={{ root: classes.row }}>
-              <img src={el.url} alt={el.description || `image-${key}`} />
-              <GridListTileBar
-                title={el.description || ''}
-                classes={{
-                  root: classes.titleBar,
-                  title: classes.title,
-                }}
-                actionIcon={
-                  // eslint-disable-next-line react/jsx-wrap-multilines
-                  <IconButton>
-                    <DeleteIcon
-                      className={classes.title}
-                      onClick={handleDeleteItem(el.id)}
-                    />
-                  </IconButton>
-                }
-              />
-            </GridListTile>
-          ))}
+        <GridList
+          className={classes.gridList}
+          cols={item.images && item.images.length <= 1 ? 1 : 2}
+        >
+          {item.images &&
+            item.images.map((el, key) => (
+              <GridListTile key={key} classes={{ root: classes.row }}>
+                <img src={el.url} alt={el.description || `image-${key}`} />
+                <GridListTileBar
+                  title={el.description || ''}
+                  classes={{
+                    root: classes.titleBar,
+                    title: classes.title,
+                  }}
+                  actionIcon={
+                    // eslint-disable-next-line react/jsx-wrap-multilines
+                    <IconButton>
+                      <DeleteIcon
+                        className={classes.title}
+                        onClick={handleDeleteItem(el.id)}
+                      />
+                    </IconButton>
+                  }
+                />
+              </GridListTile>
+            ))}
         </GridList>
       </div>
     </>

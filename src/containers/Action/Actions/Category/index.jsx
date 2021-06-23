@@ -133,6 +133,7 @@ const ActionCategory = ({
       <List dense={dense}>
         {item &&
           item.options &&
+          Array.isArray(item.options) &&
           item.options.map((el, index) => (
             <ListItem key={index}>
               {editIndex === index ? (
