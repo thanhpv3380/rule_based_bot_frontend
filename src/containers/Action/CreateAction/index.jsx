@@ -163,7 +163,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
         typeAction: actionsConstant.CATEGORY,
         options: {
           description: '',
-          optionChild: [],
+          optionsChild: [],
         },
       },
     ]);
@@ -200,7 +200,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
 
   const handleAddCategoryItem = (id, data) => {
     const newActions = [...actions];
-    newActions[id].options.optionChild.push({ ...data });
+    newActions[id].options.optionsChild.push({ ...data });
     setActions(newActions);
   };
 
@@ -217,11 +217,11 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
 
   const handleDeleteCategoryItem = (id, index) => {
     const newActions = [...actions];
-    newActions[id].options.optionChild = [
-      ...newActions[id].options.optionChild.slice(0, index),
-      ...newActions[id].options.optionChild.slice(
+    newActions[id].options.optionsChild = [
+      ...newActions[id].options.optionsChild.slice(0, index),
+      ...newActions[id].options.optionsChild.slice(
         index + 1,
-        newActions[id].options.optionChild.length,
+        newActions[id].options.optionsChild.length,
       ),
     ];
     setActions(newActions);
@@ -237,7 +237,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
 
   const handleEditCategoryItem = (id, index, data) => {
     const newActions = [...actions];
-    newActions[id].options.optionChild[index] = { ...data };
+    newActions[id].options.optionsChild[index] = { ...data };
     setActions(newActions);
   };
 
