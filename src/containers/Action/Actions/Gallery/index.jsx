@@ -44,7 +44,6 @@ const Gallery = ({
       description: value,
     });
   };
-
   const handleUpload = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const { files } = e.target;
