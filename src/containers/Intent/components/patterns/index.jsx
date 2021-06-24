@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   TextField,
@@ -12,6 +12,7 @@ import {
   TableContainer,
   TableRow,
   InputBase,
+  TablePagination,
 } from '@material-ui/core';
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -31,6 +32,55 @@ function Patterns(props) {
     handleChangePattern,
   } = props;
   const [userExpression, setUserExpression] = useState();
+
+  const [listPattern, setListPattern] = useState({
+    data: patterns,
+    start: 0,
+    end: 5,
+  });
+
+  const [pagination, setPagination] = useState({
+    page: 0,
+    rowsPerPage: 5,
+    count: 100,
+  });
+
+  useEffect(() => {
+    setListPattern({
+      ...listPattern,
+      data: patterns,
+    });
+  }, [patterns]);
+
+  useEffect(() => {
+    const start = pagination.page * pagination.rowsPerPage;
+    const end = start + pagination.rowsPerPage;
+    setListPattern({
+      ...listPattern,
+      start,
+      end,
+    });
+  }, [pagination.page]);
+
+  const handleChangePage = async (event, newPage) => {
+    const start = pagination.page * pagination.rowsPerPage;
+    const end = start + pagination.rowsPerPage;
+    setPagination({
+      ...pagination,
+      page: newPage,
+      start,
+      end,
+    });
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPagination({
+      ...pagination,
+      rowsPerPage: parseInt(event.target.value, 10),
+      page: 0,
+    });
+  };
+
   const addPattern = async (e) => {
     if (e.keyCode === 13) {
       await handleKeyDown(e.target.value);
@@ -86,30 +136,42 @@ function Patterns(props) {
       >
         <Table key={1} size="small" classes={{ table: classes.table }}>
           <TableBody>
-            {patterns &&
-              patterns.map((pattern, index) => (
-                <TableRow key={index}>
-                  <TableCell
-                    size="medium"
-                    align="left"
-                    className={classes.tableCell}
-                  >
-                    <FormatQuoteIcon className={classes.formatQuoteIcon} />
-                    <InputBase
-                      className={classes.inputRow}
-                      name={pattern}
-                      value={pattern}
-                      onInput={(e) => handleChangePattern(e, index)}
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <DeleteIcon onClick={() => handleDelete(pattern)} />
-                  </TableCell>
-                </TableRow>
-              ))}
+            {listPattern &&
+              listPattern.data &&
+              listPattern.data
+                .slice(listPattern.start, listPattern.end)
+                .map((pattern, index) => (
+                  <TableRow key={index}>
+                    <TableCell
+                      size="medium"
+                      align="left"
+                      className={classes.tableCell}
+                    >
+                      <FormatQuoteIcon className={classes.formatQuoteIcon} />
+                      <InputBase
+                        className={classes.inputRow}
+                        name={pattern}
+                        value={pattern}
+                        onInput={(e) => handleChangePattern(e, index)}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <DeleteIcon onClick={() => handleDelete(pattern)} />
+                    </TableCell>
+                  </TableRow>
+                ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        component="div"
+        rowsPerPageOptions={[5]}
+        count={patterns && patterns.length}
+        rowsPerPage={pagination.rowsPerPage}
+        page={pagination.page}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </Grid>
   );
 }

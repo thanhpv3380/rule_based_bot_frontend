@@ -76,6 +76,10 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
     }
   };
 
+  useEffect(() => {
+    fetchActions();
+  }, []);
+
   const handleOpenEdit = () => {
     setActionEditId(action?.id);
     setOpenEdit(true);
@@ -139,10 +143,6 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
       setActionAskAgain(node.actionAskAgain);
     }
   }, []);
-
-  useEffect(() => {
-    fetchActions();
-  }, [action]);
 
   const handleChangeActionAskAgain = (name, value) => {
     const newActionAskAgain = { ...actionAskAgain, [name]: value };
