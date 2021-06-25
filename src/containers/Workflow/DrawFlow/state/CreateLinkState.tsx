@@ -118,6 +118,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
       new Action({
         type: InputType.KEY_UP,
         fire: (actionEvent: ActionEvent<any>) => {
+          console.log('ascii');
           // on esc press remove any started link and pop back to default state
           if (actionEvent.event.keyCode === 27) {
             this.link.remove();

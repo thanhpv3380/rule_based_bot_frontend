@@ -111,7 +111,12 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
     <List
       component="nav"
       aria-label="main mailbox folders"
-      style={{ backgroundColor: '#ffff', borderRadius: 10, minWidth: 180 }}
+      style={{
+        backgroundColor: '#ffff',
+        borderRadius: 10,
+        minWidth: 180,
+        border: '1px solid #ccc',
+      }}
     >
       <PortWidget engine={engine} port={node.getPort('in')}>
         <div className="circle-select-port" />

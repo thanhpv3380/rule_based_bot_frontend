@@ -4,7 +4,7 @@ import { CustomDeleteItemsAction } from "./actionEvent/CustomDeleteItemsAction";
 import { DefaultState } from "./state/DefaultState";
 import { AdvancedLinkFactory } from "./customLink";
 
-import { StartNodeFactory, ActionNodeFactory, IntentNodeFactory, ConditionNodeFactory, MenuNodeFactory, ActionAskAgainNodeFactory } from './node';
+import { StartNodeFactory, ActionNodeFactory, IntentNodeFactory, ConditionNodeFactory, MenuNodeFactory, ActionAskAgainNodeFactory, LinkNodeFactory } from './node';
 
 export class Application {
     protected activeModel: SRD.DiagramModel;
@@ -24,6 +24,7 @@ export class Application {
         this.diagramEngine.getNodeFactories().registerFactory(new ActionNodeFactory());
         this.diagramEngine.getNodeFactories().registerFactory(new MenuNodeFactory());
         this.diagramEngine.getNodeFactories().registerFactory(new ActionAskAgainNodeFactory());
+        this.diagramEngine.getNodeFactories().registerFactory(new LinkNodeFactory());
         this.diagramEngine.getLinkFactories().registerFactory(new AdvancedLinkFactory());
 
         // const node = new StartNodeModel();
