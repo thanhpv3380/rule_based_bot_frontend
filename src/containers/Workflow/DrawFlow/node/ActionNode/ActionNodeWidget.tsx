@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams';
@@ -42,6 +43,7 @@ import { ActionIcon } from '../../icon';
 import textDefault from '../../../../../constants/textDefault';
 import ActionAskAgain from './ActionAskAgain';
 import { useConfirm } from 'material-ui-confirm';
+import actionsRedux from '../../../../../redux/actions';
 
 export interface ActionNodeWidgetProps {
   node: ActionNodeModel;
@@ -51,6 +53,7 @@ export interface ActionNodeWidgetProps {
 const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   const { node, engine } = props;
   const { workflowId } = useParams();
+  const dispatch = useDispatch();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const confirm = useConfirm();
@@ -59,26 +62,22 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   const [actionMouseWheel] = useState<Action>(
     engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
   );
-  const [action, setAction] = useState<ActionsResponse>();
+
   const [actionEditId, setActionEditId] = useState<any>();
   const [
     actionAskAgain,
     setActionAskAgain,
   ] = useState<ActionAskAgainResponse>();
-  const [actions, setActions] = useState<ActionsResponse[]>();
-  const [isFocus, setIsFocus] = useState<boolean>(false);
 
-  const fetchActions = async () => {
-    const data: DataResponse = await apis.action.getActions();
-    if (data && data.status) {
-      setActions(data.result.actions);
-      setAction(data.result.actions.find((el) => el.id === node.itemId));
-    }
-  };
+  const [isFocus, setIsFocus] = useState<boolean>(false);
+  const [action, setAction] = useState<ActionsResponse>();
+  const { actions } = useSelector((state) => state.action);
 
   useEffect(() => {
-    fetchActions();
-  }, []);
+    if (actions && Array.isArray(actions)) {
+      setAction(actions.find((el) => el.id === node.itemId));
+    }
+  }, [actions]);
 
   const handleOpenEdit = () => {
     setActionEditId(action?.id);
@@ -151,11 +150,10 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   };
 
   const handleCreateItem = (data) => {
-    setActions([{ ...data }, ...actions]);
+    dispatch(actionsRedux.action.addAction(data));
   };
 
   const handleOpenAAADetail = (status) => {
-    console.log('fdsfsd');
     let size = 250;
     if (!status) size = -250;
     node.updatePositionOutNodeConnect(engine, 0, size);

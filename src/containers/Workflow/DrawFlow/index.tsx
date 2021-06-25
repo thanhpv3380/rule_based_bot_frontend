@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import BodyWidget from './BodyWidget/index';
 import { Application } from './Application';
 import apis from '../../../apis';
+import actions from '../../../redux/actions';
 import {
   StartNodeModel,
   IntentNodeModel,
@@ -13,6 +15,7 @@ import {
 import { AdvancedLinkModel, AdvancedPortModel } from './customLink';
 import { NodeModel } from '@projectstorm/react-diagrams-core';
 import { NodeConnect } from './node/Node.types';
+import Loading from '../../../components/Loading';
 
 export interface Node {
   id: string;
@@ -46,11 +49,11 @@ export interface Node {
 
 const DrawFlow = () => {
   const { workflowId } = useParams();
-  console.log(workflowId, 'workflow');
+  const { isFetching } = useSelector((state) => state.action);
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [application] = React.useState<Application>(new Application());
 
-  const [application, setApplication] = React.useState<Application>(
-    new Application(),
-  );
   const drawNodes = async (nodes: Node[], map: Map<string, NodeModel>) => {
     await nodes.map(async (node: Node) => {
       let nodeDraw: NodeModel;
@@ -117,7 +120,6 @@ const DrawFlow = () => {
     application.getActiveDiagram().setOffsetX(ox || 0);
     application.getActiveDiagram().setOffsetY(oy || 0);
     application.getActiveDiagram().setZoomLevel(zoom || 100);
-    console.log(nodes);
 
     await drawNodes(nodes, map);
     await drawLinks(nodes, map);
@@ -133,7 +135,13 @@ const DrawFlow = () => {
 
   React.useEffect(() => {
     fetchWorkFlow();
+    dispatch(actions.action.getActions());
+    dispatch(actions.intent.getIntents());
   }, [application]);
+
+  // if (isFetching || isLoading) {
+  //   return <Loading />;
+  // }
   return <BodyWidget app={application} />;
 };
 

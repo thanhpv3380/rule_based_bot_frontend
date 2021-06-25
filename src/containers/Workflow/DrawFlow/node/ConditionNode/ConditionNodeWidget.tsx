@@ -98,7 +98,6 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   const fetchCondition = async (id: string) => {
     const data = await apis.condition.getConditionById(id);
-    console.log({ condition: data });
     if (data && data.status) {
       setCondition(data.result);
 

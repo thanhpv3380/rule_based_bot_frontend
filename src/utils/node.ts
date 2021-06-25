@@ -1,6 +1,7 @@
 import nodeConstant from '../constants/node';
 import { IntentNodeModel, BaseNodeModel, ConditionNodeModel, ActionNodeModel } from '../containers/Workflow/DrawFlow/node';
 import { AdvancedDiagramEngine } from '../containers/Workflow/DrawFlow/AdvancedDiagramEngine';
+import { ResponseCheckConnectNode } from './../containers/Workflow/DrawFlow/node/BaseNodeModel';
 
 function checkHasNodeConnected(
   nodeName: string,
@@ -13,11 +14,12 @@ function checkHasNodeConnected(
     nodeConstant.ACTION,
     nodeConstant.CONDITION,
   ];
+
   const status = listNode.find(
     (el) =>
-      ((typeConnect === nodeConstant.CONNECT_ONE_MANY && el !== nodeName) ||
-        typeConnect === nodeConstant.CONNECT_ONE_ONE) &&
-      listCountNode[el] > 0,
+    (((typeConnect === nodeConstant.CONNECT_ONE_MANY && el !== nodeName) ||
+      typeConnect === nodeConstant.CONNECT_ONE_ONE) &&
+      listCountNode[el] > 0)
   );
   if (status) return false;
   return true;
@@ -26,7 +28,7 @@ function checkHasNodeConnected(
 export function checkAllowConnect(
   nodeSource: BaseNodeModel,
   nodeTarget: BaseNodeModel,
-): Boolean {
+): ResponseCheckConnectNode {
   // count node has connected to Source Node
   const nodesConnSource = {};
   const listLinkSourceNode = nodeSource.getArrayLinkByPortType('out');
@@ -48,44 +50,62 @@ export function checkAllowConnect(
     }
   });
 
+  let message: String = 'A node only connect to one type node';
+  let status: Boolean = true;
+
   if (nodeTarget instanceof IntentNodeModel) {
-    let typeConnect = nodeConstant.CONNECT_ONE_MANY;
     if (
       nodeSource instanceof IntentNodeModel ||
       nodeSource instanceof ConditionNodeModel
-    )
-      typeConnect = nodeConstant.CONNECT_NONE;
-    return checkHasNodeConnected(
-      nodeConstant.INTENT,
-      nodesConnSource,
-      typeConnect,
-    );
+    ) {
+      message = ' can\'t connect to Intent Node';
+      message = (nodeSource instanceof IntentNodeModel ? 'Intent Node' : 'Condition Node') + message;
+      status = false;
+
+    } else {
+      let typeConnect = nodeConstant.CONNECT_ONE_MANY;
+      status = checkHasNodeConnected(
+        nodeConstant.INTENT,
+        nodesConnSource,
+        typeConnect,
+      );
+    }
   }
 
   if (nodeTarget instanceof ActionNodeModel) {
-    let typeConnect = nodeConstant.CONNECT_ONE_ONE;
-    return checkHasNodeConnected(
-      nodeConstant.ACTION,
-      nodesConnSource,
-      typeConnect,
-    );
+    if (nodeTarget.getArrayLinkIdByPortType('in').length > 0) {
+      message = 'This action node only connect to one parent node';
+      status = false;
+    } else {
+      let typeConnect = nodeConstant.CONNECT_ONE_ONE;
+      status = checkHasNodeConnected(
+        nodeConstant.ACTION,
+        nodesConnSource,
+        typeConnect,
+      )
+    }
   }
 
   if (nodeTarget instanceof ConditionNodeModel) {
-    let typeConnect = nodeConstant.CONNECT_ONE_MANY;
-    return checkHasNodeConnected(
-      nodeConstant.CONDITION,
-      nodesConnSource,
-      typeConnect,
-    );
+    if (nodeSource instanceof ConditionNodeModel) {
+      message = 'Condition Node can\'t connect to Condition Node';
+      status = false;
+    } else {
+      let typeConnect = nodeConstant.CONNECT_ONE_MANY;
+      status = checkHasNodeConnected(
+        nodeConstant.CONDITION,
+        nodesConnSource,
+        typeConnect,
+      );
+    }
   }
-  return true;
+  return { status, message: !status && message || null };
 }
 
 export function checkMutualNodeId(
   sourceNode: BaseNodeModel,
   targetNode: BaseNodeModel,
-): Boolean {
+): ResponseCheckConnectNode {
   const listLinkOutSourceNode = sourceNode.getArrayLinkIdByPortType('out');
   const listLinkInTargetNode = targetNode.getArrayLinkIdByPortType('in');
 
@@ -93,7 +113,7 @@ export function checkMutualNodeId(
     (el) => listLinkOutSourceNode.indexOf(el) >= 0,
   );
 
-  return mutualNodeId ? true : false;
+  return !mutualNodeId ? { status: true } : { status: false, message: 'This node has connected' };
 }
 
 export function getRealPosition(engine: AdvancedDiagramEngine, positionX: number, positionY: number): { posX: number, posY: number } {

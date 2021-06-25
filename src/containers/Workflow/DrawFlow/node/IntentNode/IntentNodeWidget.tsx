@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useParams } from 'react-router-dom';
@@ -38,6 +39,7 @@ import { Intent, IntentsResponse, DataResponse } from './intentNodeWidget.type';
 import { BaseNodeModel } from '../BaseNodeModel';
 import { useConfirm } from 'material-ui-confirm';
 import { ConditionNodeModel } from '../ConditionNode';
+import actionsRedux from '../../../../../redux/actions';
 
 export interface IntentNodeWidgetProps {
   node: IntentNodeModel;
@@ -51,6 +53,7 @@ export interface IntentNodeWidgetState {
 const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const { node, engine } = props;
   const { workflowId } = useParams();
+  const dispatch = useDispatch();
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
   const confirm = useConfirm();
@@ -59,25 +62,20 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const [actionMouseWheel] = useState<Action>(
     engine.getActionEventBus().getActionsForType(InputType.MOUSE_WHEEL)[0],
   );
-  const [intent, setIntent] = useState<IntentsResponse>();
+
   const [intentEditId, setIntentEditId] = useState<any>();
-  const [intents, setIntents] = useState<IntentsResponse[]>([]);
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [openAutocomplete, setOpenAutocomplete] = useState<boolean>(false);
 
-  const fetchIntents = async () => {
-    const data: DataResponse = await apis.intent.getIntents();
-    if (data && data.status) {
-      setIntents(data.result);
+  const { intents } = useSelector((state) => state.intent);
+  const [intent, setIntent] = useState<IntentsResponse>();
+  useEffect(() => {
+    if (intents && Array.isArray(intents)) {
       if (node.itemId) {
-        setIntent(data.result.find((el) => el.id === node.itemId));
+        setIntent(intents.find((el) => el.id === node.itemId));
       }
     }
-  };
-
-  useEffect(() => {
-    fetchIntents();
-  }, []);
+  }, [intents]);
 
   const handleOpenEdit = () => {
     setIntentEditId(intent?.id);
@@ -189,7 +187,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
     setIntent(data);
     node.itemId = (data && data.id) || null;
     node.nodeInfo = data;
-    setIntents([{ ...data }, ...intents]);
+    dispatch(actionsRedux.intent.addIntent(data));
   };
   return (
     <Box onMouseLeave={() => setIsHover(false)} className={classes.container}>

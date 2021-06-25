@@ -85,9 +85,9 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
       const portInTargetNode = targetNode.getPort('in');
 
       const sourceNode = node.nodeConnect;
-      const canConnect = sourceNode.checkConnect(targetNode);
+      const data = sourceNode.checkConnect(targetNode);
 
-      if (canConnect) {
+      if (data.status) {
         link.getLastPoint().setPosition(positionX, positionY);
         if (link.getSourcePort().canLinkToPort(portInTargetNode)) {
           link.setTargetPort(portInTargetNode);
@@ -101,7 +101,9 @@ const MenuNodeWidget = (props: MenuNodeWidgetProps) => {
         lastNode.remove();
         engine.repaintCanvas();
       } else {
-        enqueueSnackbar("Node doesn't init", { variant: 'error' });
+        enqueueSnackbar(data.message || "Node doesn't init", {
+          variant: 'error',
+        });
       }
     }
   };

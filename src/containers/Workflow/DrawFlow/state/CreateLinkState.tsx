@@ -60,8 +60,9 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
             ) {
               if (this.sourcePort.canLinkToPort(portInCurrentNode)) {
                 //check connect 2 node
-                if (!sourceNode.checkConnect(element)) {
-                  this.showNotification();
+                const data = sourceNode.checkConnect(element);
+                if (!data.status) {
+                  this.showNotification(data.message);
                   return;
                 }
 
@@ -136,8 +137,8 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
     this.sourcePort = undefined;
   }
 
-  showNotification() {
-    this.enqueueSnackbar("Can't connect", {
+  showNotification(message?: String) {
+    this.enqueueSnackbar(message || "Can't connect", {
       variant: 'error',
     });
   }

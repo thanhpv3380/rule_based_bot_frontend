@@ -18,6 +18,10 @@ export interface BaseNodeModelOptions extends BaseModelOptions {
     nodeInfo?: any;
 }
 
+export interface ResponseCheckConnectNode {
+    status: Boolean,
+    message?: String,
+}
 export class BaseNodeModel extends NodeModel {
     color?: string;
     id?: string;
@@ -170,27 +174,24 @@ export class BaseNodeModel extends NodeModel {
         return false;
     }
 
-    checkConnect(targetNode: BaseNodeModel): Boolean {
+    checkConnect(targetNode: BaseNodeModel): ResponseCheckConnectNode {
         //check target node has parent
         // if (targetNode.getArrayLinkIdByPortType('in').length > 0) {
-        //     return false;
+        //     return {status: false, message: 'Target node has parent'};
         // }
 
-        // check 2 node was connected
-        const mutualNodeId = checkMutualNodeId(this, targetNode);
-        if (mutualNodeId) {
-            return false;
+        if (targetNode === this) {
+            return { status: false, message: 'Can\'t connect with myself' };
         }
+        // check 2 node was connected
+        let data = checkMutualNodeId(this, targetNode);
+        if (!data.status) return data;
 
         // check allow connect
-        const isConnect = checkAllowConnect(this, targetNode);
-        if (!isConnect) {
-            return false;
-        }
+        data = checkAllowConnect(this, targetNode);
+        return data;
 
-        return true;
     }
-
     updatePositionOutNodeConnect(engine: AdvancedDiagramEngine, lenX: number, lenY: number) {
         const dfs = (node) => {
             const linksOutNode = node.getArrayLinkByPortType('out');
