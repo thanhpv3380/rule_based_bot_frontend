@@ -127,11 +127,17 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
 
   // Component TrainingPhrases
   const handleKeyDown = async (value) => {
-    const data = await apis.intent.addUsersay(currentIntentId, value);
-    if (data && data.status) {
-      const newPatterns = [...patterns];
-      newPatterns.push(value);
-      setPatterns(newPatterns);
+    const newPatterns = [...patterns];
+    if (newPatterns.includes(value)) {
+      enqueueSnackbar('Patterns existed!', {
+        variant: 'error',
+      });
+    } else {
+      const data = await apis.intent.addUsersay(currentIntentId, value);
+      if (data && data.status) {
+        newPatterns.push(value);
+        setPatterns(newPatterns);
+      }
     }
   };
 
