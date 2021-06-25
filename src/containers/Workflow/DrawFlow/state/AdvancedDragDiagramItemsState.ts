@@ -47,7 +47,6 @@ export class AdvancedDragDiagramItemsState extends MoveItemsState<AdvancedDiagra
                 }
                 console.log(item, model);
 
-
                 const pos = this.initialPositions[item.getID()].point;
 
                 item.setPosition(model.getGridPosition(pos.x + event.virtualDisplacementX), model.getGridPosition(pos.y + event.virtualDisplacementY));

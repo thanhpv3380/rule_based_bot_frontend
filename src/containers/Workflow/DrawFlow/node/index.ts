@@ -5,4 +5,6 @@ export * from './ConditionNode';
 export * from './ConditionNode';
 export * from './MenuNode';
 export * from './ActionAskAgainNode';
+export * from './LinkNode';
 export * from './BaseNodeModel';
+

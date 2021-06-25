@@ -64,7 +64,7 @@ const HistoryChat = () => {
                   <Typography
                     className={clsx(classes.message, classes.messageRight)}
                   >
-                    {!el.message.attachment ? el.message.text : '[MEDIA]'}
+                    {el.message.text ? el.message.text : '[MEDIA]'}
                   </Typography>
                 </Box>
               );
@@ -74,7 +74,7 @@ const HistoryChat = () => {
                 <Typography
                   className={clsx(classes.message, classes.messageLeft)}
                 >
-                  {!el.message.attachment ? el.message.text : '[MEDIA]'}
+                  {el.message.text ? el.message.text : '[MEDIA]'}
                 </Typography>
               </Box>
             );

@@ -220,29 +220,35 @@ const History = () => {
             <Grid container spacing={3}>
               <Grid item xs={4}>
                 <List>
-                  {conversations.map((el) => (
-                    <ListItem
-                      key={el.id}
-                      className={clsx(
-                        classes.row,
-                        currentConversationId === el.id && classes.activeRow,
-                      )}
-                      onClick={() => handleOpenChat(el.id)}
-                    >
-                      <ListItemAvatar>
-                        <Avatar>
-                          <ImageIcon />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={el.sessionId}
-                        secondary={format(
-                          new Date(el.createdAt),
-                          'dd.MM.yyyy HH:mm:ss',
+                  {conversations
+                    .slice(
+                      pagination.page * pagination.rowsPerPage,
+                      pagination.page * pagination.rowsPerPage +
+                        pagination.rowsPerPage,
+                    )
+                    .map((el) => (
+                      <ListItem
+                        key={el.id}
+                        className={clsx(
+                          classes.row,
+                          currentConversationId === el.id && classes.activeRow,
                         )}
-                      />
-                    </ListItem>
-                  ))}
+                        onClick={() => handleOpenChat(el.id)}
+                      >
+                        <ListItemAvatar>
+                          <Avatar>
+                            <ImageIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={el.sessionId}
+                          secondary={format(
+                            new Date(el.createdAt),
+                            'dd.MM.yyyy HH:mm:ss',
+                          )}
+                        />
+                      </ListItem>
+                    ))}
                 </List>
                 <TablePagination
                   component="div"
