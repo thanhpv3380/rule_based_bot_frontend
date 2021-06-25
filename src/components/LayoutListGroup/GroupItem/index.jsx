@@ -127,7 +127,13 @@ const GroupItem = ({
   return (
     <div>
       {isChange ? (
-        <List className={classes.listRoot}>
+        <List
+          className={
+            groupItem.groupType !== 1
+              ? classes.listRoot
+              : classes.listRootSystem
+          }
+        >
           <ListItem
             className={classes.listItemNameGroup}
             classes={{
@@ -161,7 +167,13 @@ const GroupItem = ({
           </ListItem>
         </List>
       ) : (
-        <List className={classes.listRoot}>
+        <List
+          className={
+            groupItem.groupType !== 1
+              ? classes.listRoot
+              : classes.listRootSystem
+          }
+        >
           <ListItem
             className={classes.listItemNameGroup}
             // classes={{

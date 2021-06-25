@@ -151,6 +151,10 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   };
 
   const handleCreateItem = (data) => {
+    setActionEditId(data.id);
+    setAction(data);
+    node.itemId = (data && data.id) || null;
+    node.nodeInfo = data;
     setActions([{ ...data }, ...actions]);
   };
 
