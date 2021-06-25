@@ -150,6 +150,9 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
   };
 
   const handleCreateItem = (data) => {
+    setActionEditId(data.id);
+    node.itemId = (data && data.id) || null;
+    node.nodeInfo = data;
     dispatch(actionsRedux.action.addAction(data));
   };
 

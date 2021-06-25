@@ -55,9 +55,18 @@ function CreateIntent(props) {
     if (data && data.status) {
       handleCreate(data.result);
     } else {
-      enqueueSnackbar((data && data.message) || 'Create intent failed', {
-        variant: 'error',
-      });
+      switch (data.code) {
+        case 1005:
+          enqueueSnackbar('Intent name existed!', {
+            variant: 'error',
+          });
+          break;
+        default:
+          enqueueSnackbar((data && data.message) || 'Create intent failed', {
+            variant: 'error',
+          });
+          break;
+      }
     }
   };
 
@@ -121,9 +130,18 @@ function CreateIntent(props) {
       });
       // history.push(`/intents/${data.result.id}`);
     } else {
-      enqueueSnackbar('Create intent failed', {
-        variant: 'error',
-      });
+      switch (data.code) {
+        case 1005:
+          enqueueSnackbar('Intent name existed!', {
+            variant: 'error',
+          });
+          break;
+        default:
+          enqueueSnackbar((data && data.message) || 'Create intent failed', {
+            variant: 'error',
+          });
+          break;
+      }
     }
   };
 

@@ -194,9 +194,18 @@ function Action() {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.DELETE_FAILED, {
-        variant: 'error',
-      });
+      switch (data.code) {
+        case 1008:
+          enqueueSnackbar('Action used in workflow!', {
+            variant: 'error',
+          });
+          break;
+        default:
+          enqueueSnackbar(textDefault.DELETE_FAILED, {
+            variant: 'error',
+          });
+          break;
+      }
     }
   };
 
