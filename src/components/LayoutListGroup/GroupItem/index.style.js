@@ -46,6 +46,12 @@ export default makeStyles((theme) => ({
     margin: '10px 0px 0px 0px',
     background: theme.palette.greyWhile,
   },
+  listRootSystem: {
+    border: '1px solid rgb(0 0 0 / 23%)',
+    borderRadius: 5,
+    margin: '10px 0px 0px 0px',
+    background: '#1095ff',
+  },
   listItem: {
     border: '1px solid rgba(0, 0, 0, 0.23)',
     borderRadius: 5,

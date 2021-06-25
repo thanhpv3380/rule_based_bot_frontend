@@ -167,7 +167,7 @@ const SummaryWorkingData = () => {
     const data = await apis.dashboard.getStatisticWorkingData();
     if (data && data.status) {
       bindDataAnalysts(data.result);
-      bindDataHightChart();
+      // bindDataHightChart();
     }
   };
 

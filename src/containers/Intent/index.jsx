@@ -135,9 +135,18 @@ const Intent = () => {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.CREATE_FAILED, {
-        variant: 'error',
-      });
+      switch (data.code) {
+        case 1005:
+          enqueueSnackbar('GroupIntent name existed!', {
+            variant: 'error',
+          });
+          break;
+        default:
+          enqueueSnackbar(textDefault.CREATE_FAILED, {
+            variant: 'error',
+          });
+          break;
+      }
     }
   };
 
@@ -158,9 +167,28 @@ const Intent = () => {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.UPDATE_FAILED, {
-        variant: 'error',
-      });
+      switch (data.code) {
+        case 1005:
+          enqueueSnackbar('GroupIntent name existed!', {
+            variant: 'error',
+          });
+          break;
+        case 1004:
+          enqueueSnackbar('GroupIntent name not change!', {
+            variant: 'error',
+          });
+          break;
+        case 404:
+          enqueueSnackbar('GroupIntent name not found!', {
+            variant: 'error',
+          });
+          break;
+        default:
+          enqueueSnackbar(textDefault.UPDATE_FAILED, {
+            variant: 'error',
+          });
+          break;
+      }
     }
   };
 
@@ -197,9 +225,18 @@ const Intent = () => {
       });
       history.push(`/bot/${botId}/intents`);
     } else {
-      enqueueSnackbar(textDefault.DELETE_FAILED, {
-        variant: 'error',
-      });
+      switch (data.code) {
+        case 1008:
+          enqueueSnackbar('Intent used in workflow!', {
+            variant: 'error',
+          });
+          break;
+        default:
+          enqueueSnackbar(textDefault.DELETE_FAILED, {
+            variant: 'error',
+          });
+          break;
+      }
     }
   };
 
