@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import BodyWidget from './BodyWidget/index';
 import { Application } from './Application';
@@ -49,9 +49,7 @@ export interface Node {
 
 const DrawFlow = () => {
   const { workflowId } = useParams();
-  const { isFetching } = useSelector((state) => state.action);
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = React.useState(false);
   const [application] = React.useState<Application>(new Application());
 
   const drawNodes = async (nodes: Node[], map: Map<string, NodeModel>) => {
@@ -139,9 +137,6 @@ const DrawFlow = () => {
     dispatch(actions.intent.getIntents());
   }, [application]);
 
-  // if (isFetching || isLoading) {
-  //   return <Loading />;
-  // }
   return <BodyWidget app={application} />;
 };
 
