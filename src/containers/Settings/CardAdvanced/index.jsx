@@ -24,7 +24,7 @@ const CardAdvanced = (props) => {
         </Typography>
         {!isNoneSaveBtn && (
           <Button className={classes.buttonIconHeader} onClick={handleSave}>
-            save
+            {t('save')}
           </Button>
         )}
       </Grid>

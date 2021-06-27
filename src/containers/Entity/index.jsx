@@ -9,7 +9,6 @@ import routes from '../../constants/route';
 import CreateEntity from './CreateEntity';
 import EntityDetail from './DetailEntity';
 import apis from '../../apis';
-import textDefault from '../../constants/textDefault';
 import groupConstant from '../../constants/group';
 import Loading from '../../components/Loading';
 
@@ -48,7 +47,7 @@ const Entity = () => {
       setGroupAndItems(newGroupAndItems);
       setIsLoading(false);
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -124,11 +123,11 @@ const Entity = () => {
         children: [],
       });
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.CREATE_SUCCESS, {
+      enqueueSnackbar(t('create_group_entity_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.CREATE_FAILED, {
+      enqueueSnackbar(t('create_group_entity_failed'), {
         variant: 'error',
       });
     }
@@ -147,11 +146,11 @@ const Entity = () => {
         name: data.result.groupEntity.name,
       };
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
+      enqueueSnackbar(t('update_group_entity_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.UPDATE_FAILED, {
+      enqueueSnackbar(t('update_group_entity_failed'), {
         variant: 'error',
       });
     }
@@ -162,11 +161,11 @@ const Entity = () => {
     if (data.status) {
       const newGroupAndItems = groupAndItems.filter((el) => el.id !== id);
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+      enqueueSnackbar(t('delete_group_entity_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.DELETE_FAILED, {
+      enqueueSnackbar(t('delete_group_entity_failed'), {
         variant: 'error',
       });
     }
@@ -185,11 +184,11 @@ const Entity = () => {
         children: [...newItems],
       };
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+      enqueueSnackbar(t('delete_entity_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.DELETE_FAILED, {
+      enqueueSnackbar(t('delete_entity_failed'), {
         variant: 'error',
       });
     }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -51,6 +52,7 @@ export interface ActionNodeWidgetProps {
 }
 
 const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
+  const { t } = useTranslation();
   const { node, engine } = props;
   const { workflowId } = useParams();
   const dispatch = useDispatch();
@@ -102,18 +104,18 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
 
   const handleDeleteNode = async () => {
     confirm({
-      description: `Are you sure you want to delete ${node.id}?`,
+      description: t('are_you_sure_you_want_to_delete_node'),
     }).then(async () => {
       const status = await node.delete(engine, workflowId);
       if (status) {
-        enqueueSnackbar('Delete node success', { variant: 'success' });
+        enqueueSnackbar(t('delete_node_success'), { variant: 'success' });
       } else {
-        enqueueSnackbar('Delete node failed', { variant: 'error' });
+        enqueueSnackbar(t('delete_node_failed'), { variant: 'error' });
       }
     });
   };
 
-  const handleDuplicateNode = () => {
+  const handleDuplicateNode = async () => {
     const selectedEntities = engine
       .getModel()
       .getSelectedEntities()[0] as ActionNodeModel;
@@ -123,8 +125,29 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
     );
-    engine.getModel().addNode(newNode);
-    engine.repaintCanvas();
+
+    const newNodeData = {
+      type: newNode.getType(),
+      position: {
+        x: newNode.getX(),
+        y: newNode.getY(),
+      },
+      parent: [],
+      workflow: workflowId,
+      action: node.itemId,
+    };
+
+    const data = await apis.node.createNode({ ...newNodeData });
+    console.log(data);
+    if (data && data.status) {
+      newNode.id = data.result.node.id;
+      newNode.nodeInfo = node.nodeInfo;
+      newNode.itemId = node.itemId;
+      engine.getModel().addNode(newNode);
+      engine.repaintCanvas();
+    } else {
+      enqueueSnackbar('error', { variant: 'error' });
+    }
   };
 
   const handleOpenAutocomplete = () => {
@@ -208,7 +231,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
               backgroundColor="#ebe0f1"
               className={classes.iconHeader}
             />
-            <Typography variant="h6">Action</Typography>
+            <Typography variant="h6">{t('action')}</Typography>
           </Box>
         </Box>
         <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -245,7 +268,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
                       ...params.InputProps,
                       disableUnderline: true,
                     }}
-                    placeholder="Select action"
+                    placeholder={t('select_action')}
                   />
                 )}
               />

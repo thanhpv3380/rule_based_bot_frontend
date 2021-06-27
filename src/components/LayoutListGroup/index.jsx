@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   Box,
@@ -33,6 +34,7 @@ const LayoutListGroup = ({
   children,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const [isCreateGroup, setIsCreateGroup] = useState(false);
   const [open, setOpen] = useState(false);
   const [itemSelected, setItemSelected] = useState();
@@ -226,7 +228,7 @@ const LayoutListGroup = ({
               onClick={handleToggle}
               startIcon={<AddIcon />}
             >
-              Add {title} or group
+              {t(`add_${title}_or_group`)}
             </Button>
             <Popper
               open={open}
@@ -252,10 +254,10 @@ const LayoutListGroup = ({
                         onKeyDown={handleListKeyDown}
                       >
                         <MenuItem onClick={handleOpenCreateSingle}>
-                          Create {title}
+                          {t(`create_${title}`)}
                         </MenuItem>
                         <MenuItem onClick={handleOpenCreateGroup}>
-                          Create Group
+                          {t('create_group')}
                         </MenuItem>
                       </MenuList>
                     </ClickAwayListener>

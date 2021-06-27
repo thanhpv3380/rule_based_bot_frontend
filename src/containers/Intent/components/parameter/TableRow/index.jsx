@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Grid,
   Typography,
@@ -19,7 +20,6 @@ import DoneIcon from '@material-ui/icons/Done';
 import EditIcon from '@material-ui/icons/Edit';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import useStyles from './index.style';
-import textDefault from '../../../../../constants/textDefault';
 
 function TableRowCustom(props) {
   const classes = useStyles();
@@ -42,7 +42,7 @@ function TableRowCustom(props) {
     entity: '',
     response: {},
   };
-
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [parameter, setParameter] = useState();
   const [actionBreak, setActionBreak] = useState();
@@ -68,6 +68,7 @@ function TableRowCustom(props) {
     setNumberOfLoop(tempNumberOfLoop);
     setActionBreak(tempActionBreak);
     setParameter(tempParameter);
+    console.log(parameterData);
   }, [parameterData]);
 
   const handleClickAccept = async () => {
@@ -79,13 +80,20 @@ function TableRowCustom(props) {
 
   const handleChangeName = (e) => {
     const { value } = e.target;
+    const regexUnicode = new RegExp(
+      '^[àÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆìÌỉỈĩĨíÍịỊòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰỳỲỷỶỹỸýÝỵỴ]+$',
+    );
     const regex = new RegExp('^[a-zA-Z_]+$');
-    if (
+    if (regexUnicode.test(value)) {
+      enqueueSnackbar(t('please_turn_off_vietkey_for_enter_parameter_name'), {
+        variant: 'error',
+      });
+    } else if (
       value.length > parameter.parameterName.length &&
       !regex.test(value) &&
       value.length > 1
     ) {
-      enqueueSnackbar('Parameter name includes only letters and _', {
+      enqueueSnackbar(t('parameter_name_includes_only_letters_and_'), {
         variant: 'error',
       });
     } else {
@@ -101,7 +109,7 @@ function TableRowCustom(props) {
       newParameter.openModal = true;
       setParameter(newParameter);
     } else {
-      enqueueSnackbar('Parameter must be required', {
+      enqueueSnackbar(t('parameter_must_be_required'), {
         variant: 'error',
       });
     }
@@ -225,9 +233,9 @@ function TableRowCustom(props) {
           <div className={classes.paper}>
             <form onSubmit={handleSubmit}>
               <Grid>
-                <Typography variant="h6">Edit response</Typography>
+                <Typography variant="h6">{t('setting_response')}</Typography>
                 <FormControl fullWidth className={classes.formControl}>
-                  <Typography>{textDefault.ACTION_ASK_AGAIN}</Typography>
+                  <Typography>{t('action_ask_again')}</Typography>
 
                   <Autocomplete
                     size="medium"
@@ -253,7 +261,7 @@ function TableRowCustom(props) {
                   />
                 </FormControl>
                 <FormControl className={classes.formControl}>
-                  <Typography>{textDefault.NUMBER_OF_LOOP}</Typography>
+                  <Typography>{t('number_of_loop')}</Typography>
                   <TextField
                     onChange={handleNumberOfLoop}
                     name="numberOfLoop"
@@ -270,7 +278,7 @@ function TableRowCustom(props) {
                   variant="outlined"
                   className={classes.formControl}
                 >
-                  <Typography>{textDefault.ACTION_BREAK}</Typography>
+                  <Typography>{t('action_when_too_number_loop')}</Typography>
                   <Autocomplete
                     size="medium"
                     options={actions}
@@ -307,7 +315,7 @@ function TableRowCustom(props) {
                   classes={{ containedPrimary: classes.borderRadius }}
                   type="submit"
                 >
-                  Save
+                  {t('save')}
                 </Button>
               </Grid>
             </form>

@@ -17,6 +17,7 @@ import {
   TextFields as TextFieldsIcon,
 } from '@material-ui/icons';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import MenuToggle from '../../../../components/MenuToggle';
 import useStyles from './index.style';
 
@@ -30,6 +31,7 @@ const ActionText = ({
 }) => {
   const dense = false;
   const classes = useStyles();
+  const { t } = useTranslation();
   const [isAdd, setIsAdd] = useState(false);
   const [editIndex, setEditIndex] = useState();
   const [text, setText] = useState('');
@@ -67,11 +69,11 @@ const ActionText = ({
 
   const itemMenus = [
     {
-      heading: 'Edit',
+      heading: t('edit'),
       event: handlePrevEdit,
     },
     {
-      heading: 'Delete',
+      heading: t('delete'),
       event: handlePrevDelete,
     },
   ];
@@ -85,7 +87,7 @@ const ActionText = ({
             </Box>
             <Box ml={0.5}>
               <Typography variant="button" display="block" gutterBottom>
-                Text
+                {t('text')}
               </Typography>
             </Box>
           </Box>
@@ -121,7 +123,7 @@ const ActionText = ({
                         color="primary"
                         onClick={handleEdit}
                       >
-                        Save
+                        {t('save')}
                       </Button>
                     </Box>
                     <Box m={0.5}>
@@ -130,7 +132,7 @@ const ActionText = ({
                         color="primary"
                         onClick={handleCancelAdd}
                       >
-                        Cancel
+                        {t('cancel')}
                       </Button>
                     </Box>
                   </Box>
@@ -160,7 +162,7 @@ const ActionText = ({
             <Box display="flex">
               <Box m={0.5}>
                 <Button variant="outlined" color="primary" onClick={handleAdd}>
-                  Add
+                  {t('add')}
                 </Button>
               </Box>
               <Box m={0.5}>
@@ -169,7 +171,7 @@ const ActionText = ({
                   color="primary"
                   onClick={handleCancelAdd}
                 >
-                  Cancel
+                  {t('cancel')}
                 </Button>
               </Box>
             </Box>

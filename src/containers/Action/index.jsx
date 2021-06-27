@@ -9,7 +9,6 @@ import routes from '../../constants/route';
 import CreateAction from './CreateAction';
 import ActionDetail from './DetailAction';
 import apis from '../../apis';
-import textDefault from '../../constants/textDefault';
 import groupConstant from '../../constants/group';
 import Loading from '../../components/Loading';
 
@@ -49,7 +48,7 @@ function Action() {
       setGroupAndItems(newGroupAndItems);
       setIsLoading(false);
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -129,11 +128,11 @@ function Action() {
         children: [],
       });
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.CREATE_SUCCESS, {
+      enqueueSnackbar(t('create_group_action_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.CREATE_FAILED, {
+      enqueueSnackbar(t('create_group_action_failed'), {
         variant: 'error',
       });
     }
@@ -152,11 +151,11 @@ function Action() {
         name: data.result.groupAction.name,
       };
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
+      enqueueSnackbar(t('update_group_action_failed'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.UPDATE_FAILED, {
+      enqueueSnackbar(t('update_group_action_failed'), {
         variant: 'error',
       });
     }
@@ -167,11 +166,11 @@ function Action() {
     if (data.status) {
       const newGroupAndItems = groupAndItems.filter((el) => el.id !== id);
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+      enqueueSnackbar(t('delete_group_action_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.DELETE_FAILED, {
+      enqueueSnackbar(t('delete_group_action_failed'), {
         variant: 'error',
       });
     }
@@ -190,18 +189,18 @@ function Action() {
         children: [...newItems],
       };
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+      enqueueSnackbar(t('delete_action_success'), {
         variant: 'success',
       });
     } else {
       switch (data.code) {
         case 1008:
-          enqueueSnackbar('Action used in workflow!', {
+          enqueueSnackbar(t('action_userd_in_workflow'), {
             variant: 'error',
           });
           break;
         default:
-          enqueueSnackbar(textDefault.DELETE_FAILED, {
+          enqueueSnackbar(t('delete_action_failed'), {
             variant: 'error',
           });
           break;

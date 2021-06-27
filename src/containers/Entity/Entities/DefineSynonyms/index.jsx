@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   List,
   ListItem,
@@ -13,10 +14,10 @@ import {
 } from '@material-ui/core';
 import { Delete as DeleteIcon } from '@material-ui/icons';
 import useStyles from './index.style';
-import textDefault from '../../../../constants/textDefault';
 
 const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const dense = false;
   const [output, setOutput] = useState('');
   const [currentInput, setCurrentInput] = useState('');
@@ -87,7 +88,7 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                 <TextField
                   id="standard-required"
                   className={classes.input}
-                  placeholder={textDefault.ENTER_VALUE}
+                  placeholder={t('enter_value')}
                   value={output}
                   onFocus={handleFocus}
                   onChange={(e) => setOutput(e.target.value)}
@@ -105,7 +106,7 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                   <TextField
                     id="standard-required"
                     className={classes.input}
-                    placeholder={textDefault.ENTER_SYNONYMS}
+                    placeholder={t('enter_synonyms')}
                     value={currentInput}
                     onChange={(e) => setCurrentInput(e.target.value)}
                     onKeyPress={handleKeyPress}
@@ -115,7 +116,7 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
               </Grid>
               <Grid item xs={2}>
                 <Button color="primary" fullWidth onClick={handleAddSynonym}>
-                  {textDefault.ADD}
+                  {t('add')}
                 </Button>
               </Grid>
             </Grid>
@@ -162,7 +163,7 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                     <TextField
                       id="standard-required"
                       className={classes.input}
-                      placeholder={textDefault.ENTER_VALUE}
+                      placeholder={t('enter_value')}
                       value={outputEdit}
                       onChange={(e) => setOutputEdit(e.target.value)}
                     />
@@ -180,7 +181,7 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                       <TextField
                         id="standard-required"
                         className={classes.input}
-                        placeholder={textDefault.ENTER_SYNONYMS}
+                        placeholder={t('enter_synonyms')}
                         value={currentInputEdit}
                         onChange={(e) => setCurrentInputEdit(e.target.value)}
                         onKeyPress={handleKeyPressEdit}
@@ -193,7 +194,7 @@ const DefineSynonyms = ({ items, handleChange, handleAdd, handleDelete }) => {
                       fullWidth
                       onClick={() => handleChangeSynonym(index)}
                     >
-                      {textDefault.EDIT}
+                      {t('edit')}
                     </Button>
                   </Grid>
                 </Grid>

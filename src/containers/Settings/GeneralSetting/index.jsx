@@ -65,7 +65,7 @@ const GeneralSetting = ({ bot, handleChangeBotInfo }) => {
         </label>
       </Grid>
       <Grid item xs={4}>
-        <Typography variant="body1">Name</Typography>
+        <Typography variant="body1">{t('name')}</Typography>
       </Grid>
       <Grid item xs={8}>
         <TextField
@@ -76,7 +76,7 @@ const GeneralSetting = ({ bot, handleChangeBotInfo }) => {
         />
       </Grid>
       <Grid item xs={4}>
-        <Typography variant="body1">Description</Typography>
+        <Typography variant="body1">{t('Description')}</Typography>
       </Grid>
       <Grid item xs={8}>
         <TextField

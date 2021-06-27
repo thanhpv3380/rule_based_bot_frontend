@@ -50,7 +50,7 @@ const Intent = () => {
       setGroupAndItems(newGroupAndItems);
       setIsLoading(false);
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -220,19 +220,19 @@ const Intent = () => {
         children: [...newItems],
       };
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+      enqueueSnackbar(t('delete_intent_success'), {
         variant: 'success',
       });
       history.push(`/bot/${botId}/intents`);
     } else {
       switch (data.code) {
         case 1008:
-          enqueueSnackbar('Intent used in workflow!', {
+          enqueueSnackbar(t('intent_userd_in_workflow'), {
             variant: 'error',
           });
           break;
         default:
-          enqueueSnackbar(textDefault.DELETE_FAILED, {
+          enqueueSnackbar(t('delete_intent_failed'), {
             variant: 'error',
           });
           break;

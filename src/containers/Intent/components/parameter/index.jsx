@@ -1,6 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Grid,
   Typography,
@@ -18,6 +19,7 @@ import useStyles from './index.style';
 import apis from '../../../../apis';
 
 function Parameter(props) {
+  const { t } = useTranslation();
   const classes = useStyles();
   const {
     parameters,
@@ -57,7 +59,7 @@ function Parameter(props) {
   return (
     <Grid container>
       <Grid item xs={4}>
-        <Typography variant="h6">Parameters</Typography>
+        <Typography variant="h6">{t('parameters')}</Typography>
       </Grid>
       <Grid item xs={8} container justify="flex-end">
         <Button
@@ -68,17 +70,17 @@ function Parameter(props) {
           }}
           disabled={isCreate}
         >
-          Create
+          {t('create')}
         </Button>
       </Grid>
       <TableContainer component={Paper} elevation={0}>
         <Table className={classes.table} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <TableCell align="center">Required</TableCell>
-              <TableCell align="left">Parameter name</TableCell>
-              <TableCell align="left">Entity</TableCell>
-              <TableCell align="center">Response</TableCell>
+              <TableCell align="center">{t('required')}</TableCell>
+              <TableCell align="left">{t('parameter_name')}</TableCell>
+              <TableCell align="left">{t('entity')}</TableCell>
+              <TableCell align="center">{t('response')}</TableCell>
               <TableCell align="left" />
             </TableRow>
           </TableHead>

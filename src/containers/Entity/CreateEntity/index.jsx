@@ -18,7 +18,6 @@ import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import { EntityDefineSynonyms, EntityComplex, EntityRegex } from '../Entities';
 import useStyles from './index.style';
 import apis from '../../../apis';
-import textDefault from '../../../constants/textDefault';
 import { generateTitleItem } from '../../../utils/generateTitle';
 import groupConstant from '../../../constants/group';
 import menus from '../../../data/EntityType.json';
@@ -100,11 +99,11 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     });
     if (data && data.status) {
       handleCreate(data.result.entity);
-      enqueueSnackbar(textDefault.CREATE_SUCCESS, {
+      enqueueSnackbar(t('create_entity_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.CREATE_FAILED, {
+      enqueueSnackbar(t('create_entity_failed'), {
         variant: 'error',
       });
     }
@@ -182,9 +181,9 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Entity Type</FormLabel>
+              <FormLabel component="legend">{t('entity_type')}</FormLabel>
               <RadioGroup
-                aria-label="entity"
+                aria-label={t('entity')}
                 name="entity1"
                 value={entityData.entityType}
                 onChange={handleChangeEntityType}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 import {
   Modal,
   TextField,
@@ -22,7 +23,6 @@ import {
   Add as AddIcon,
 } from '@material-ui/icons';
 import useStyles from './index.style';
-import textDefault from '../../../../constants/textDefault';
 import slotTypeConstant from '../../../../constants/slotType';
 import MenuToggle from '../../../../components/MenuToggle';
 import apis from '../../../../apis';
@@ -58,6 +58,7 @@ let listParameter = [];
 
 const Parameters = ({ handleCloseModal, open }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const dense = false;
   const { enqueueSnackbar } = useSnackbar();
 
@@ -97,7 +98,7 @@ const Parameters = ({ handleCloseModal, open }) => {
         count: data.result.slots.length,
       });
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'success',
       });
     }
@@ -162,7 +163,7 @@ const Parameters = ({ handleCloseModal, open }) => {
         count: pagination.count - 1,
       });
     } else {
-      enqueueSnackbar(data.message || textDefault.UPDATE_FAILED, {
+      enqueueSnackbar(t('delete_parameter_failed'), {
         variant: 'error',
       });
     }
@@ -188,7 +189,7 @@ const Parameters = ({ handleCloseModal, open }) => {
       setEditParameterId(null);
       setParameterData(null);
     } else {
-      enqueueSnackbar(data.message || textDefault.UPDATE_FAILED, {
+      enqueueSnackbar(t('update_parameter_failed'), {
         variant: 'error',
       });
     }
@@ -217,7 +218,7 @@ const Parameters = ({ handleCloseModal, open }) => {
       setParameterData(null);
       setIsAdd(false);
     } else {
-      enqueueSnackbar(data.message || textDefault.CREATE_FAILED, {
+      enqueueSnackbar(t('create_parameter_failed'), {
         variant: 'error',
       });
     }
@@ -225,11 +226,11 @@ const Parameters = ({ handleCloseModal, open }) => {
 
   const itemMenus = [
     {
-      heading: 'Edit',
+      heading: t('edit'),
       event: handleOpenEdit,
     },
     {
-      heading: 'Delete',
+      heading: t('delete'),
       event: handleDeleteParameter,
       // isHidden: groupItem.children.length > 0,
     },
@@ -245,7 +246,7 @@ const Parameters = ({ handleCloseModal, open }) => {
       <div className={classes.paper}>
         <Box mb={3}>
           <Typography variant="h6" gutterBottom>
-            Parameters
+            {t('parameters')}
           </Typography>
         </Box>
         <Box mb={2}>
@@ -269,13 +270,13 @@ const Parameters = ({ handleCloseModal, open }) => {
           <ListItem>
             <Grid container spacing={3}>
               <Grid item xs={3}>
-                {textDefault.NAME_OF_SLOT}
+                {t('name_of_slot')}
               </Grid>
               <Grid item xs={3}>
-                {textDefault.DATA_TYPE}
+                {t('data_type')}
               </Grid>
               <Grid item xs={3}>
-                {textDefault.VALUE}
+                {t('value')}
               </Grid>
               <Grid item xs={3} />
             </Grid>
@@ -324,7 +325,7 @@ const Parameters = ({ handleCloseModal, open }) => {
                               color="primary"
                               onClick={handleSaveParameter}
                             >
-                              Save
+                              {t('save')}
                             </Button>
                           </Box>
                           <Box m={0.5}>
@@ -333,7 +334,7 @@ const Parameters = ({ handleCloseModal, open }) => {
                               color="primary"
                               onClick={handleCancelAdd}
                             >
-                              Cancel
+                              {t('cancel')}
                             </Button>
                           </Box>
                         </Box>
@@ -403,7 +404,7 @@ const Parameters = ({ handleCloseModal, open }) => {
                           color="primary"
                           onClick={handleAddParameter}
                         >
-                          Add
+                          {t('add')}
                         </Button>
                       </Box>
                       <Box m={0.5}>
@@ -412,7 +413,7 @@ const Parameters = ({ handleCloseModal, open }) => {
                           color="primary"
                           onClick={handleCancelAdd}
                         >
-                          Cancel
+                          {t('cancel')}
                         </Button>
                       </Box>
                     </Box>
@@ -446,7 +447,7 @@ const Parameters = ({ handleCloseModal, open }) => {
 
         <Box textAlign="right">
           <Button size="large" onClick={handleCloseModal}>
-            Cancel
+            {t('cancel')}
           </Button>
         </Box>
       </div>

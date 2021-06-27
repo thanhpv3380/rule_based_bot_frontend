@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
@@ -51,6 +52,7 @@ export interface IntentNodeWidgetState {
 }
 
 const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
+  const { t } = useTranslation();
   const { node, engine } = props;
   const { workflowId } = useParams();
   const dispatch = useDispatch();
@@ -105,18 +107,18 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
 
   const handleDeleteNode = async () => {
     confirm({
-      description: `Are you sure you want to delete ${node.id}?`,
+      description: t('are_you_sure_you_want_to_delete_node'),
     }).then(async () => {
       const status = await node.delete(engine, workflowId);
       if (status) {
-        enqueueSnackbar('Delete node success', { variant: 'success' });
+        enqueueSnackbar(t('delete_node_success'), { variant: 'success' });
       } else {
-        enqueueSnackbar('Delete node failed', { variant: 'error' });
+        enqueueSnackbar(t('delete_node_failed'), { variant: 'error' });
       }
     });
   };
 
-  const handleDuplicateNode = () => {
+  const handleDuplicateNode = async () => {
     const selectedEntities = engine
       .getModel()
       .getSelectedEntities()[0] as IntentNodeModel;
@@ -126,8 +128,29 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
     );
-    engine.getModel().addNode(newNode);
-    engine.repaintCanvas();
+
+    const newNodeData = {
+      type: newNode.getType(),
+      position: {
+        x: newNode.getX(),
+        y: newNode.getY(),
+      },
+      parent: [],
+      workflow: workflowId,
+      intent: node.itemId,
+    };
+
+    const data = await apis.node.createNode({ ...newNodeData });
+    console.log(data);
+    if (data && data.status) {
+      newNode.id = data.result.node.id;
+      newNode.nodeInfo = node.nodeInfo;
+      newNode.itemId = node.itemId;
+      engine.getModel().addNode(newNode);
+      engine.repaintCanvas();
+    } else {
+      enqueueSnackbar('error', { variant: 'error' });
+    }
   };
   let listNode = [];
   let check = false;
@@ -148,7 +171,9 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
                 if (el.intent === node.itemId) {
                   check = true;
                   enqueueSnackbar(
-                    'Không thể thay đổi intent khi các tham số đang được dùng ở các điều kiện bên dưới',
+                    t(
+                      'cant_change_intent_when_parameters_of_intent_userd_in_nodes_condition',
+                    ),
                     { variant: 'error' },
                   );
                   return;
@@ -232,7 +257,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
             backgroundColor="#e8f8ff"
             className={classes.iconHeader}
           />
-          <Typography variant="h6">Intent</Typography>
+          <Typography variant="h6">{t('intent')}</Typography>
         </Box>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <PortWidget
@@ -252,7 +277,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
                 <Typography>{intent.name}</Typography>
               ) : (
                 <Typography style={{ color: 'rgba(138, 138, 138, 0.87)' }}>
-                  Select intent
+                  {t('select_intent')}
                 </Typography>
               )}
             </Box>
@@ -290,7 +315,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
                       ...params.InputProps,
                       disableUnderline: true,
                     }}
-                    placeholder="Select intent"
+                    placeholder={t('select_intent')}
                   />
                 )}
               />
