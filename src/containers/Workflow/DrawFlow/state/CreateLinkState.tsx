@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 import {
   Action,
   ActionEvent,
@@ -18,9 +19,11 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
   sourcePort: AdvancedPortModel;
   link: AdvancedLinkModel;
   enqueueSnackbar: any;
+  t: any;
   constructor() {
     super({ name: 'create-new-link' });
     this.enqueueSnackbar = useSnackbar().enqueueSnackbar;
+    this.t = useTranslation().t;
     const context = this;
     this.registerAction(
       new Action({
@@ -62,7 +65,7 @@ export class CreateLinkState extends State<AdvancedDiagramEngine> {
                 //check connect 2 node
                 const data = sourceNode.checkConnect(element);
                 if (!data.status) {
-                  this.showNotification(data.message);
+                  this.showNotification(this.t(data.message));
                   return;
                 }
 

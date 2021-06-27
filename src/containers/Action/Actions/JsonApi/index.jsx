@@ -23,6 +23,7 @@ import {
   VpnLock as VpnLockIcon,
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { format } from 'json-string-formatter';
 import useStyles from './index.style';
@@ -46,6 +47,7 @@ const ActionJsonApi = ({
 }) => {
   const dense = false;
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const classes = useStyles();
   const [isAdd, setIsAdd] = useState(false);
   const [listProperty, setListProperty] = useState([]);
@@ -161,7 +163,9 @@ const ActionJsonApi = ({
       </Box>
       <Box mb={2}>
         <Typography display="block" gutterBottom>
-          Create integrations with your own server or other 3rd party systems.
+          {t(
+            'create_integrations_with_your_own_server_or_other_3rd_party_systems',
+          )}
         </Typography>
         {/* <Typography display="block" gutterBottom>
         Hint: Use syntax {`{para_name}`} to show value of parameter.

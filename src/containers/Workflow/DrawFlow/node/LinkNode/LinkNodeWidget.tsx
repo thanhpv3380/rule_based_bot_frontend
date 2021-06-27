@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 import {
   List,
   ListItem,
@@ -21,7 +22,7 @@ export interface LinkNodeWidgetState {}
 
 const LinkNodeWidget = (props: LinkNodeWidgetProps) => {
   const { engine, node } = props;
-
+  const { t } = useTranslation();
   const handleDeleteLink = () => {
     if (node.path) {
       node.path.remove();
@@ -33,7 +34,7 @@ const LinkNodeWidget = (props: LinkNodeWidgetProps) => {
   const items = [
     {
       id: 1,
-      heading: 'Delete path',
+      heading: t('delete_path'),
       icon: <DeleteOutlineIcon />,
       link: '',
       event: handleDeleteLink,

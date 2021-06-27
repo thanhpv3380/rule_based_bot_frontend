@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Grid, TextField, Typography, Switch } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import useStyles from './index.style';
@@ -12,7 +13,7 @@ function ActionMapping(props) {
     handleChangeAction,
     handleChangeIsMappingAction,
   } = props;
-
+  const { t } = useTranslation();
   return (
     <Grid container>
       <Grid item xs={4}>
@@ -20,8 +21,9 @@ function ActionMapping(props) {
       </Grid>
       <Grid item xs={12}>
         <Typography variant="subtitle1">
-          The MappingAction can be used to directly map intent to action such
-          that the mapped action will always be executed
+          {t(
+            'the_MappingAction_can_be_used_to_directly_map_intent_to_action_such_that_the_mapped_action_will_always_be_executed',
+          )}
         </Typography>
       </Grid>
       <Grid item xs={12} className={classes.gridItem}>
@@ -40,7 +42,7 @@ function ActionMapping(props) {
               {...params}
               fullWidth
               variant="outlined"
-              placeholder="Enter action name"
+              placeholder={t('enter_action_name')}
               classes={{
                 root: classes.textInput,
               }}
@@ -54,7 +56,7 @@ function ActionMapping(props) {
           onChange={handleChangeIsMappingAction}
         />
         <Typography variant="subtitle1">
-          Enable action mapping this intent
+          {t('enable_action_mapping_this_intent')}
         </Typography>
       </Grid>
     </Grid>

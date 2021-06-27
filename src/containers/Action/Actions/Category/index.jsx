@@ -11,6 +11,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
 import {
   Add as AddIcon,
   Category as CategoryIcon,
@@ -33,6 +34,7 @@ const ActionCategory = ({
 }) => {
   const dense = false;
   const classes = useStyles();
+  const { t } = useTranslation();
   const [isAdd, setIsAdd] = useState(false);
   const [editIndex, setEditIndex] = useState();
   const [option, setOption] = useState({
@@ -82,11 +84,11 @@ const ActionCategory = ({
 
   const itemMenus = [
     {
-      heading: 'Edit',
+      heading: t('edit'),
       event: handlePrevEdit,
     },
     {
-      heading: 'Delete',
+      heading: t('delete'),
       event: handlePrevDelete,
     },
   ];
@@ -117,7 +119,7 @@ const ActionCategory = ({
       </Box>
       <Grid item>
         <TextField
-          label="Enter description of category"
+          label={t('enter_description_of_category')}
           id="standard-required"
           value={item.options && item.options.description}
           variant="outlined"
@@ -134,10 +136,10 @@ const ActionCategory = ({
         <ListItem>
           <Grid container spacing={3}>
             <Grid item xs={3}>
-              {textDefault.ACTIONS.NAME_OF_OPTION}
+              {t('name_of_option')}
             </Grid>
             <Grid item xs={3}>
-              {textDefault.ACTIONS.VALUE}
+              {t('value')}
             </Grid>
             <Grid item xs={3} />
           </Grid>
@@ -198,7 +200,7 @@ const ActionCategory = ({
                             color="primary"
                             onClick={handleEdit}
                           >
-                            Save
+                            {t('save')}
                           </Button>
                         </Box>
                         <Box m={0.5}>
@@ -207,7 +209,7 @@ const ActionCategory = ({
                             color="primary"
                             onClick={handleCancelAdd}
                           >
-                            Cancel
+                            {t('cancel')}
                           </Button>
                         </Box>
                       </Box>
@@ -276,7 +278,7 @@ const ActionCategory = ({
                         color="primary"
                         onClick={handleAdd}
                       >
-                        Add
+                        {t('add')}
                       </Button>
                     </Box>
                     <Box m={0.5}>
@@ -285,7 +287,7 @@ const ActionCategory = ({
                         color="primary"
                         onClick={handleCancelAdd}
                       >
-                        Cancel
+                        {t('cancel')}
                       </Button>
                     </Box>
                   </Box>

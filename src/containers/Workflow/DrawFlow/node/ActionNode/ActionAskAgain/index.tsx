@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -19,7 +20,6 @@ import {
   ActionsResponse,
   ActionAskAgainResponse,
 } from '../ActionNodeWidget.type';
-import textDefault from '../../../../../../constants/textDefault';
 
 export interface ActionAskAgainProps {
   actions: ActionsResponse[];
@@ -29,6 +29,7 @@ export interface ActionAskAgainProps {
 }
 
 const ActionAskAgain = (props: ActionAskAgainProps) => {
+  const { t } = useTranslation();
   const { actions, handleChange, actionAskAgain, handleOpenAAADetail } = props;
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -56,7 +57,7 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
         <Box display="flex" alignItems="center">
           <LoopIcon />
           <Typography variant="body1" className={classes.textIcon}>
-            Setting ask again
+            {t('setting_ask_again')}
           </Typography>
         </Box>
         {open ? <ExpandLess /> : <ExpandMore />}
@@ -66,7 +67,7 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
         <Divider className={classes.divider} />
         <Grid className={classes.actionAABox}>
           <FormControl fullWidth className={classes.formControl}>
-            <Typography>{textDefault.ACTION_ASK_AGAIN}</Typography>
+            <Typography>{t('action_ask_again')}</Typography>
 
             <Autocomplete
               size="small"
@@ -96,7 +97,7 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
             />
           </FormControl>
           <FormControl className={classes.formControl}>
-            <Typography>{textDefault.NUMBER_OF_LOOP}</Typography>
+            <Typography>{t('number_of_loop')}</Typography>
             <TextField
               size="small"
               name="numberOfLoop"
@@ -117,7 +118,7 @@ const ActionAskAgain = (props: ActionAskAgainProps) => {
             variant="outlined"
             className={classes.formControl}
           >
-            <Typography>{textDefault.ACTION_BREAK}</Typography>
+            <Typography>{t('action_break')}</Typography>
             <Autocomplete
               size="small"
               options={actions || []}

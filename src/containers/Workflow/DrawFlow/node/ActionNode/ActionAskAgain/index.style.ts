@@ -7,6 +7,7 @@ export default makeStyles((theme) => ({
     borderRadius: '5px',
     boxSizing: 'border-box',
     padding: theme.spacing(1.5, 1.5),
+    cursor: "pointer"
   },
   formControl: {
     marginTop: theme.spacing(1),

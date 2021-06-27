@@ -7,7 +7,6 @@ import EmptyPage from '../../components/EmptyPage';
 import LayoutListGroup from '../../components/LayoutListGroup';
 import routes from '../../constants/route';
 import apis from '../../apis';
-import textDefault from '../../constants/textDefault';
 import groupConstant from '../../constants/group';
 import CreateWorkFlow from './CreateWorkflow';
 import DetailWorkFlow from './DetailWorkflow';
@@ -30,7 +29,7 @@ const Workflow = () => {
     if (data && data.status) {
       setGroupAndItems(data.result.groupWorkflows);
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -111,11 +110,11 @@ const Workflow = () => {
         children: [],
       });
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.CREATE_SUCCESS, {
+      enqueueSnackbar(t('create_group_workflow_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.CREATE_FAILED, {
+      enqueueSnackbar(t('create_group_workflow_failed'), {
         variant: 'error',
       });
     }
@@ -134,11 +133,11 @@ const Workflow = () => {
         name: data.result.groupWorkflow.name,
       };
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
+      enqueueSnackbar(t('update_group_workflow_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.UPDATE_FAILED, {
+      enqueueSnackbar(t('update_group_workflow_failed'), {
         variant: 'error',
       });
     }
@@ -149,11 +148,11 @@ const Workflow = () => {
     if (data.status) {
       const newGroupAndItems = groupAndItems.filter((el) => el.id !== id);
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+      enqueueSnackbar(t('delete_group_workflow_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.DELETE_FAILED, {
+      enqueueSnackbar(t('delete_group_workflow_failed'), {
         variant: 'error',
       });
     }
@@ -172,11 +171,11 @@ const Workflow = () => {
         children: [...newItems],
       };
       setGroupAndItems(newGroupAndItems);
-      enqueueSnackbar(textDefault.DELETE_SUCCESS, {
+      enqueueSnackbar(t('delete_workflow_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.DELETE_FAILED, {
+      enqueueSnackbar(t('delete_workflow_failed'), {
         variant: 'error',
       });
     }

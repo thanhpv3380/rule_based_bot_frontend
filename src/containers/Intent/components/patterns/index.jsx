@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Grid,
   TextField,
@@ -17,11 +18,10 @@ import {
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
-
-import textDefault from '../../../../constants/textDefault';
 import useStyles from './index.style';
 
 function Patterns(props) {
+  const { t } = useTranslation();
   const classes = useStyles();
   const {
     // userExpression,
@@ -90,12 +90,12 @@ function Patterns(props) {
   return (
     <Grid container>
       <Grid item xs={4}>
-        <Typography variant="h6">Patterns</Typography>
+        <Typography variant="h6">{t('patterns')}</Typography>
       </Grid>
       <Grid item xs={8} container justify="flex-end">
         <TextField
           className={classes.margin}
-          placeholder={textDefault.SEARCH_TRANNING_PHRASES}
+          placeholder={t('search_pattern')}
           id="input-with-icon-textfield"
           onChange={handleChangeSearch}
           InputProps={{
@@ -112,7 +112,7 @@ function Patterns(props) {
         <TextField
           fullWidth
           className={classes.margin}
-          placeholder={textDefault.ADD_USER_EXPRESSION}
+          placeholder={t('add_usersay')}
           size="medium"
           // name="usersay"
           value={userExpression}
@@ -166,7 +166,7 @@ function Patterns(props) {
       <TablePagination
         component="div"
         rowsPerPageOptions={[5]}
-        count={patterns && patterns.length}
+        count={(patterns && patterns.length) || 1}
         rowsPerPage={pagination.rowsPerPage}
         page={pagination.page}
         onChangePage={handleChangePage}

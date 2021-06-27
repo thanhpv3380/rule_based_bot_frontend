@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   Collapse,
@@ -34,6 +35,7 @@ const GroupItem = ({
   handleClickItem,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const [hoveringItemId, setHoveringItemId] = useState();
   const [isChange, setIsChange] = useState(false);
   const [nameGroup, setNameGroup] = useState('');
@@ -103,15 +105,15 @@ const GroupItem = ({
 
   const groupMenus = [
     {
-      heading: 'Add',
+      heading: t('add'),
       event: handleAddItemInGroup,
     },
     {
-      heading: 'Change Name',
+      heading: t('change_name'),
       event: handleChangeName,
     },
     {
-      heading: 'Delete',
+      heading: t('delete'),
       event: handlePrevDeleteGroup,
       isHidden: groupItem.children.length > 0,
     },
@@ -119,7 +121,7 @@ const GroupItem = ({
 
   const itemMenus = [
     {
-      heading: 'Delete',
+      heading: t('delete'),
       event: handlePrevDeleteItem,
     },
   ];
@@ -151,14 +153,14 @@ const GroupItem = ({
               />
             </ListItemText>
             <IconButton
-              aria-label="edit"
+              aria-label={t('edit')}
               size="small"
               onClick={handleUpdateChangeNameGroup}
             >
               <CheckIcon />
             </IconButton>
             <IconButton
-              aria-label="close"
+              aria-label={t('close')}
               size="small"
               onClick={handleToggleGroup}
             >
@@ -222,25 +224,28 @@ const GroupItem = ({
                           <NotesIcon />
                         </ListItemIcon>
                         <ListItemText primary={item.name} />
-                        {hoveringItemId === item.id && (
-                          <MenuToggle
-                            id={item.id}
-                            icon={<MoreVertIcon />}
-                            menus={itemMenus}
-                          />
-                        )}
+                        {hoveringItemId === item.id &&
+                          groupItem.groupType !== 1 && (
+                            <MenuToggle
+                              id={item.id}
+                              icon={<MoreVertIcon />}
+                              menus={itemMenus}
+                            />
+                          )}
                       </ListItem>
                     </Card>
                   ))}
-                <TablePagination
-                  component="div"
-                  rowsPerPageOptions={[5]}
-                  count={pagination.count}
-                  page={pagination.page}
-                  rowsPerPage={pagination.rowsPerPage}
-                  onChangePage={handleChangePage}
-                  onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
+                {groupItem.groupType !== 1 && (
+                  <TablePagination
+                    component="div"
+                    rowsPerPageOptions={[5]}
+                    count={pagination.count}
+                    page={pagination.page}
+                    rowsPerPage={pagination.rowsPerPage}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                  />
+                )}
               </Collapse>
             </>
           )}

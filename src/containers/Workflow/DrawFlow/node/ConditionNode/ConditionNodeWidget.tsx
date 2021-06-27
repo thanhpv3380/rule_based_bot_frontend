@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useParams } from 'react-router-dom';
@@ -71,6 +72,7 @@ const conditionsDefault = {
 };
 
 const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
+  const { t } = useTranslation();
   const { engine, node } = props;
   const { workflowId } = useParams();
   const classes = useStyle();
@@ -214,18 +216,18 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
 
   const handleDeleteNode = async () => {
     confirm({
-      description: `Are you sure you want to delete ${node.id}?`,
+      description: t('are_you_sure_you_want_to_delete_node'),
     }).then(async () => {
       const status = await node.delete(engine, workflowId);
       if (status) {
-        enqueueSnackbar('Delete node success', { variant: 'success' });
+        enqueueSnackbar(t('delete_node_success'), { variant: 'success' });
       } else {
-        enqueueSnackbar('Delete node failed', { variant: 'error' });
+        enqueueSnackbar(t('delete_node_failed'), { variant: 'error' });
       }
     });
   };
 
-  const handleDuplicateNode = () => {
+  const handleDuplicateNode = async () => {
     const selectedEntities = engine
       .getModel()
       .getSelectedEntities()[0] as ConditionNodeModel;
@@ -235,8 +237,45 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
       selectedEntities.getPosition().x + 20,
       selectedEntities.getPosition().y + 20,
     );
-    engine.getModel().addNode(newNode);
-    engine.repaintCanvas();
+
+    const dataCondition = {
+      conditions: subConditions.map((el) => {
+        return {
+          intent: el.parameter.intentId || el.intentId,
+          parameter: el.parameter.id,
+          value: el.value,
+          operator: el.operator,
+        };
+      }),
+      operator: condition.operator,
+    };
+    const newCondition = await apis.condition.createCondition(dataCondition);
+    if (newCondition && newCondition.status) {
+      const newNodeData = {
+        type: newNode.getType(),
+        position: {
+          x: newNode.getX(),
+          y: newNode.getY(),
+        },
+        parent: [],
+        workflow: workflowId,
+        action: newCondition.result.id,
+      };
+
+      const data = await apis.node.createNode({ ...newNodeData });
+      console.log(data);
+      if (data && data.status) {
+        newNode.id = data.result.node.id;
+        newNode.nodeInfo = node.nodeInfo;
+        newNode.itemId = node.itemId;
+        engine.getModel().addNode(newNode);
+        engine.repaintCanvas();
+      } else {
+        enqueueSnackbar('error', { variant: 'error' });
+      }
+    } else {
+      enqueueSnackbar('Create condition failed', { variant: 'error' });
+    }
   };
 
   const handleAddCondition = () => {
@@ -326,7 +365,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
               backgroundColor="#e7fff6"
               className={classes.iconHeader}
             />
-            <Typography variant="h6">Condition</Typography>
+            <Typography variant="h6">{t('condition')}</Typography>
           </Box>
 
           <Box>
@@ -357,14 +396,14 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                               className={classes.tableCell}
                               align="left"
                             >
-                              if
+                              {t('if')}
                             </TableCell>
                             <TableCell className={classes.tableCell}>
                               {(el && el.parameter && el.parameter.name) || (
                                 <Typography
                                   style={{ color: 'rgba(138, 138, 138, 0.87)' }}
                                 >
-                                  parameter
+                                  {t('parameter')}
                                 </Typography>
                               )}
                             </TableCell>
@@ -383,7 +422,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                                 <Typography
                                   style={{ color: 'rgba(138, 138, 138, 0.87)' }}
                                 >
-                                  empty
+                                  {t('empty')}
                                 </Typography>
                               )}
                             </TableCell>
@@ -417,7 +456,7 @@ const ConditionNodeWidget = (props: ConditionNodeWidgetProps) => {
                     }}
                   >
                     <AddIcon />
-                    Add condition
+                    {t('add_condition')}
                   </Button>
                 </Grid>
               </Box>

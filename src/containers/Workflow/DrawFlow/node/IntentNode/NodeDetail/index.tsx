@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Grid, Modal, Paper, Box, Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import IntentDetail from '../../../../../Intent/DetailIntent';
 import IntentCreate from '../../../../../Intent/CreateIntent';
 import apis from '../../../../../../apis';
 import useStyle from './index.style';
-import textDefault from '../../../../../../constants';
 interface IntentNodeDetail {
   open: boolean;
   handleCloseEdit: Function;
@@ -15,6 +15,7 @@ interface IntentNodeDetail {
 }
 
 const IntentNodeDetail = (props: IntentNodeDetail) => {
+  const { t } = useTranslation();
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
   const { open, handleCloseEdit, intentId, handleCreateItem } = props;
@@ -26,7 +27,7 @@ const IntentNodeDetail = (props: IntentNodeDetail) => {
     if (data.status) {
       setGroupAndItems(data.result.groupIntents);
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -66,7 +67,7 @@ const IntentNodeDetail = (props: IntentNodeDetail) => {
       <div className={classes.root}>
         <Box>
           <Typography variant="h6" gutterBottom>
-            Intent Detail
+            {t('intent_detail')}
           </Typography>
         </Box>
         <Box className={classes.content}>

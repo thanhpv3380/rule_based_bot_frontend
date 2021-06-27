@@ -405,11 +405,11 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
     });
     if (data.status) {
       handleCreate(data.result.action);
-      enqueueSnackbar(textDefault.CREATE_SUCCESS, {
+      enqueueSnackbar(t('create_action_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.CREATE_FAILED, {
+      enqueueSnackbar(t('create_action_failed'), {
         variant: 'error',
       });
     }
@@ -502,17 +502,17 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
 
   const actionsMenu = [
     {
-      heading: 'Text',
+      heading: t('text'),
       icon: '',
       event: handleAddText,
     },
     {
-      heading: 'Image',
+      heading: t('image'),
       icon: '',
       event: handleAddImage,
     },
     {
-      heading: 'Audio',
+      heading: t('audio'),
       icon: '',
       event: handleAddAudio,
     },

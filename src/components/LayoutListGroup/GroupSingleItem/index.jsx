@@ -1,4 +1,5 @@
 import { Card, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
 import {
   MoreVert as MoreVertIcon,
   Notes as NotesIcon,
@@ -15,6 +16,7 @@ const GroupItem = ({
   handleClickItem,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const [hoveringItemId, setHoveringItemId] = useState();
 
   const handleToggleHover = (id) => {
@@ -28,7 +30,7 @@ const GroupItem = ({
 
   const itemMenus = [
     {
-      heading: 'Delete',
+      heading: t('delete'),
       event: handlePrevDeleteItem,
     },
   ];
