@@ -13,6 +13,7 @@ import {
   FormControlLabel,
   Radio,
   Grid,
+  Paper,
 } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import { EntityDefineSynonyms, EntityComplex, EntityRegex } from '../Entities';
@@ -169,7 +170,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   };
 
   return (
-    <>
+    <Paper>
       <ItemInfoHeader
         name={entityData.name}
         groupId={entityData.groupEntity}
@@ -226,7 +227,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
           )}
         </div>
       </div>
-    </>
+    </Paper>
   );
 };
 

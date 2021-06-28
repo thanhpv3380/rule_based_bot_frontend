@@ -10,5 +10,6 @@ export default makeStyles(() => ({
   children: {
     height: '100%',
     minWidth: '100%',
+    backgroundColor: '#f5f5f5',
   },
 }));

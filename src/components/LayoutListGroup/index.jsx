@@ -313,7 +313,9 @@ const LayoutListGroup = ({
         </>
       </Grid>
       <Grid container item xs={12} md={8} lg={8} xl={8}>
-        <Paper className={classes.children}>{children}</Paper>
+        <Paper elevation={0} className={classes.children}>
+          {children}
+        </Paper>
       </Grid>
     </Grid>
   );

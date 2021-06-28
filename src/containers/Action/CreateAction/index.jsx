@@ -539,7 +539,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
   ];
 
   return (
-    <>
+    <Paper>
       <ItemInfoHeader
         name={actionData.name || ''}
         groupId={actionData.groupAction}
@@ -568,7 +568,7 @@ const CreateAction = ({ groupItems, groupId, handleCreate }) => {
           ))}
         </div>
       </div>
-    </>
+    </Paper>
   );
 };
 

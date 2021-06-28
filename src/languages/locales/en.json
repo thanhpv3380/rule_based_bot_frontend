@@ -174,5 +174,9 @@
   "settings": "Settings",
   "dashboard": "Dashboard",
   "create": "Create",
-  "please_turn_off_vietkey_for_enter_parameter_name": "Please turn off vietkey for enter parameter name"
+  "please_turn_off_vietkey_for_enter_parameter_name": "Please turn off vietkey for enter parameter name",
+  "you_have_not_choose_any_workflows": "You have not choose any workflows",
+  "you_have_not_choose_any_entities": "You have not choose any entities",
+  "you_have_not_choose_any_intents": "You have not choose any intents",
+  "you_have_not_choose_any_actions": "You have not choose any actions"
 }

@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/jsx-indent */
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Paper } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import useStyles from './index.style';
@@ -13,7 +13,6 @@ import { generateTitleItem } from '../../../utils/generateTitle';
 import groupConstant from '../../../constants/group';
 
 const CreateWorkFlow = ({ groupItems, groupId, handleCreate }) => {
-  const { t } = useTranslation();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -81,7 +80,7 @@ const CreateWorkFlow = ({ groupItems, groupId, handleCreate }) => {
   };
 
   return (
-    <>
+    <Paper className={classes.root}>
       <ItemInfoHeader
         name={workflowData.name || ''}
         groupId={workflowData.groupWorkflow}
@@ -94,7 +93,7 @@ const CreateWorkFlow = ({ groupItems, groupId, handleCreate }) => {
           Workflow
         </Button> */}
       </div>
-    </>
+    </Paper>
   );
 };
 

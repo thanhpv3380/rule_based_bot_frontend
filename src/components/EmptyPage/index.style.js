@@ -5,7 +5,13 @@ const useStyles = makeStyles(() => ({
     textAlign: 'center',
     fontSize: 25,
     position: 'static',
-    marginTop: '40%',
+    // marginTop: '40%',
+  },
+  text: {
+    paddingTop: '35%',
+  },
+  paper: {
+    height: '100%',
   },
 }));
 

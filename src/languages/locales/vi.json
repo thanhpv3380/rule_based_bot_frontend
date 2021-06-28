@@ -173,5 +173,9 @@
   "settings": "Cài đặt",
   "dashboard": "Thống kê",
   "create": "tạo",
-  "please_turn_off_vietkey_for_enter_parameter_name": "Hãy tắt vietkey để nhập tên tham số"
+  "please_turn_off_vietkey_for_enter_parameter_name": "Hãy tắt vietkey để nhập tên tham số",
+  "you_have_not_choose_any_workflows": "Bạn chưa chọn kịch bản nào",
+  "you_have_not_choose_any_entities": "Bạn chưa chọn thực thể nào",
+  "you_have_not_choose_any_intents": "Bạn chưa chọn ý định nào",
+  "you_have_not_choose_any_actions": "Bạn chưa chọn hành động nào"
 }

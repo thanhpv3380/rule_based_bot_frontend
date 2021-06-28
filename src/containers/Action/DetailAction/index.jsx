@@ -587,7 +587,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
     return <Loading />;
   }
   return (
-    <>
+    <Paper>
       <ItemInfoHeader
         name={actionData && actionData.name}
         groupId={actionData && actionData.groupAction}
@@ -616,7 +616,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
           ))}
         </div>
       </div>
-    </>
+    </Paper>
   );
 };
 

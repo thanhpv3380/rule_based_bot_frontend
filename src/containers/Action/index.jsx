@@ -240,7 +240,7 @@ function Action() {
       handleClickItem={handleClickItem}
     >
       {groupAndItems && (
-        <div>
+        <>
           <Route exact path={routes.ACTION_BOT.DETAIL_ACTION}>
             <ActionDetail
               groupItems={groupAndItems}
@@ -255,7 +255,7 @@ function Action() {
               handleCreate={handleCreateItem}
             />
           </Route>
-        </div>
+        </>
       )}
     </LayoutListGroup>
   );

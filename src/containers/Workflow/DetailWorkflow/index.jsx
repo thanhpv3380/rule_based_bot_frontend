@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
-import { Button, Box } from '@material-ui/core';
+import { Button, Box, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import useStyles from './index.style';
 import apis from '../../../apis';
@@ -111,7 +111,7 @@ const DetailWorkflow = ({ groupItems, handleUpdate }) => {
     return <Loading />;
   }
   return (
-    <>
+    <Paper className={classes.root}>
       <ItemInfoHeader
         name={workflowData.name || ''}
         groupId={workflowData.groupWorkflow}
@@ -153,7 +153,7 @@ const DetailWorkflow = ({ groupItems, handleUpdate }) => {
           </>
         )}
       </div>
-    </>
+    </Paper>
   );
 };
 

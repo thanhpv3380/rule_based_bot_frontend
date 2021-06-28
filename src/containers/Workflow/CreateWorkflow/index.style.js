@@ -4,4 +4,7 @@ export default makeStyles(() => ({
   content: {
     padding: 20,
   },
+  root: {
+    height: '100%',
+  },
 }));
