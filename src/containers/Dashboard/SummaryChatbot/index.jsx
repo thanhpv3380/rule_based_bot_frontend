@@ -110,6 +110,7 @@ const SummaryChatbot = () => {
       answeredUsersay,
       notUnderstandUsersay,
       needConfirmUsersay,
+      silenceUsersay,
       percent,
     } = statistics;
     const dataAnalysts = [
@@ -153,6 +154,14 @@ const SummaryChatbot = () => {
         numberRequest: defaultUsersay,
         percent: Number(percent.defaultUsersay * 100).toFixed(2),
       },
+      {
+        heading: 'Silence',
+        description: 'Silence',
+        color: 'rgb(0 0 0)',
+        key: '',
+        numberRequest: silenceUsersay || 0,
+        percent: Number(percent.silenceUsersay * 100).toFixed(2),
+      },
     ];
     setAnalysts(dataAnalysts);
   };
@@ -189,6 +198,11 @@ const SummaryChatbot = () => {
           name: 'Default reply',
           data: data.map((el) => el.defaultUsersay),
           color: '#9f7aea',
+        },
+        {
+          name: 'Silence',
+          data: data.map((el) => el.silenceUsersay),
+          color: 'rgb(0 0 0)',
         },
       ],
     };
