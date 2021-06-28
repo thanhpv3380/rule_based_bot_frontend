@@ -215,7 +215,7 @@ const LayoutListGroup = ({
   };
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} className={classes.root}>
       <Grid item xs={12} md={4} lg={4} xl={4}>
         <>
           <SearchBox handleSearch={handleSearch} size="medium" />
@@ -312,7 +312,7 @@ const LayoutListGroup = ({
           />
         </>
       </Grid>
-      <Grid item xs={12} md={8} lg={8} xl={8}>
+      <Grid container item xs={12} md={8} lg={8} xl={8}>
         <Paper className={classes.children}>{children}</Paper>
       </Grid>
     </Grid>
