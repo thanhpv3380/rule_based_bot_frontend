@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   frontend:
@@ -11,3 +11,6 @@ services:
     environment:
       - TZ=Asia/Ho_Chi_Minh
       - PORT=${PORT}
+      - REACT_APP_API_DOMAIN=${REACT_APP_API_DOMAIN}
+      - REACT_APP_PORTAL_DOMAIN=${REACT_APP_PORTAL_DOMAIN}
+      - REACT_APP_UPLOAD_FILE_DOMAIN=${REACT_APP_UPLOAD_FILE_DOMAIN}

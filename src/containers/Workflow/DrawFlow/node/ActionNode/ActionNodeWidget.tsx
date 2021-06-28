@@ -44,6 +44,7 @@ import textDefault from '../../../../../constants/textDefault';
 import ActionAskAgain from './ActionAskAgain';
 import { useConfirm } from 'material-ui-confirm';
 import actionsRedux from '../../../../../redux/actions';
+import { NodeState } from '../Node.types';
 
 export interface ActionNodeWidgetProps {
   node: ActionNodeModel;
@@ -71,7 +72,7 @@ const ActionNodeNodeWidget = (props: ActionNodeWidgetProps) => {
 
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [action, setAction] = useState<ActionsResponse>();
-  const { actions } = useSelector((state) => state.action);
+  const { actions } = useSelector((state: NodeState) => state.action);
 
   useEffect(() => {
     if (actions && Array.isArray(actions)) {

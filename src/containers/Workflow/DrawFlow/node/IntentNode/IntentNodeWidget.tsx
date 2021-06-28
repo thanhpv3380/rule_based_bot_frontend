@@ -40,6 +40,7 @@ import { BaseNodeModel } from '../BaseNodeModel';
 import { useConfirm } from 'material-ui-confirm';
 import { ConditionNodeModel } from '../ConditionNode';
 import actionsRedux from '../../../../../redux/actions';
+import { NodeState } from '../Node.types';
 
 export interface IntentNodeWidgetProps {
   node: IntentNodeModel;
@@ -67,7 +68,7 @@ const IntentNodeWidget = (props: IntentNodeWidgetProps) => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [openAutocomplete, setOpenAutocomplete] = useState<boolean>(false);
 
-  const { intents } = useSelector((state) => state.intent);
+  const { intents } = useSelector((state: NodeState) => state.intent);
   const [intent, setIntent] = useState<IntentsResponse>();
   useEffect(() => {
     if (intents && Array.isArray(intents)) {
