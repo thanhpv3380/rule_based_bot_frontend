@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 5,
   },
   messageRight: {
-    background: theme.palette.primary,
+    background: theme.palette.primary.main,
     color: '#fff',
   },
   messageLeft: {
