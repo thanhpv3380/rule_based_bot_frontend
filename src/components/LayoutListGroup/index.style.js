@@ -1,10 +1,14 @@
 import { makeStyles } from '@material-ui/styles';
 
 export default makeStyles(() => ({
+  root: {
+    height: '100%',
+  },
   popper: {
     zIndex: 1,
   },
   children: {
-    minHeight: 500,
+    height: '100%',
+    minWidth: '100%',
   },
 }));
