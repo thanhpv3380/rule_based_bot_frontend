@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
 import {
@@ -64,6 +65,7 @@ interface ConditionNodeDetail {
 }
 
 const ConditionNodeDetail = (props: ConditionNodeDetail) => {
+  const { t } = useTranslation();
   const classes = useStyle();
   const {
     open,
@@ -97,7 +99,7 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
       <Box className={classes.root}>
         <Grid container justify="space-between">
           <Grid item className={classes.gridHeaderTiltle}>
-            <Typography variant="h6">Condition</Typography>
+            <Typography variant="h6">{t('condition')}</Typography>
           </Grid>
           <Grid item className={classes.gridHeaderIcon}>
             <CloseIcon onClick={() => handleCloseEdit()} />
@@ -141,6 +143,7 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                           <InputBase
                             ref={params.InputProps.ref}
                             inputProps={params.inputProps}
+                            placeholder={t('parameter')}
                           />
                         )}
                       />
@@ -179,7 +182,7 @@ const ConditionNodeDetail = (props: ConditionNodeDetail) => {
                     </TableCell>
                     <TableCell align="left" className={classes.tableCellInput}>
                       <InputBase
-                        placeholder="Giá trị"
+                        placeholder={t('value')}
                         name="value"
                         value={el.value}
                         onChange={(e) =>

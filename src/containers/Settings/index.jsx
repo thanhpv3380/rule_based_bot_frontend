@@ -32,21 +32,21 @@ const Dashboard = () => {
 
   const handleSaveBot = async () => {
     if (!bot || bot.name.trim().length <= 0) {
-      enqueueSnackbar('Name must have value', { variant: 'error' });
+      enqueueSnackbar(t('name_must_have_value'), { variant: 'error' });
       return;
     }
-    const botData = {
+    const botDataSave = {
       name: bot.name,
       description: bot.description,
       imageUrl: bot.imageUrl,
     };
-    const data = await apis.bot.updateBot(bot.id, { ...botData });
+    const data = await apis.bot.updateBot(bot.id, { ...botDataSave });
     if (data && data.status) {
       const newBot = data.result.bot;
       dispatch(actions.bot.updateBot({ ...newBot }));
-      enqueueSnackbar('Update bot success', { variant: 'success' });
+      enqueueSnackbar(t('update_bot_success'), { variant: 'success' });
     } else {
-      enqueueSnackbar('Update bot failed', { variant: 'error' });
+      enqueueSnackbar('update_bot_failed', { variant: 'error' });
     }
   };
   if (!bot) {
@@ -56,10 +56,10 @@ const Dashboard = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={12} md={6}>
-        <CardAdvanced title="General Setting" handleSave={handleSaveBot}>
+        <CardAdvanced title={t('general_setting')} handleSave={handleSaveBot}>
           <GeneralSetting bot={bot} handleChangeBotInfo={handleChangeBotInfo} />
         </CardAdvanced>
-        <CardAdvanced title="Export and Import" isNoneSaveBtn="false">
+        <CardAdvanced title={t('export_and_import')} isNoneSaveBtn="false">
           <ExportAndImport />
         </CardAdvanced>
       </Grid>
@@ -67,7 +67,7 @@ const Dashboard = () => {
         <Grid container>
           <Grid item xs={12} sm={12} md={12}>
             <Box>
-              <CardAdvanced title="Share" isNoneSaveBtn="true">
+              <CardAdvanced title={t('share')} isNoneSaveBtn="true">
                 <Share role={role} botId={bot.id} />
               </CardAdvanced>
             </Box>
@@ -75,7 +75,7 @@ const Dashboard = () => {
           {role === roleConstant.ROLE_OWNER && (
             <Grid item xs={12} sm={12} md={12}>
               <Box>
-                <CardAdvanced title="Delete Bot" isNoneSaveBtn="true">
+                <CardAdvanced title={t('delete_bot')} isNoneSaveBtn="true">
                   <DeleteBot bot={bot} />
                 </CardAdvanced>
               </Box>

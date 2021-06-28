@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { Modal, Paper, Typography, Box } from '@material-ui/core';
@@ -6,7 +7,6 @@ import useStyles from './index.style';
 import DetailAction from '../../../../../Action/DetailAction';
 import CreateAction from '../../../../../Action/CreateAction';
 import apis from '../../../../../../apis';
-import textDefault from '../../../../../../constants/textDefault';
 import groupType from '../../../../../../constants/group';
 
 interface ActionNodeDetailProps {
@@ -17,6 +17,7 @@ interface ActionNodeDetailProps {
 }
 
 const ActionNodeDetail = (props: ActionNodeDetailProps) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { open, handleCloseEdit, actionId, handleCreateItem } = props;
@@ -32,7 +33,7 @@ const ActionNodeDetail = (props: ActionNodeDetailProps) => {
       setGroupSingleId(groupSingle?.id);
       setGroupAndItems(data.result.groupActions);
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -70,7 +71,7 @@ const ActionNodeDetail = (props: ActionNodeDetailProps) => {
       <div className={classes.root}>
         <Box>
           <Typography variant="h6" gutterBottom>
-            Action Detail
+            {t('action_detail')}
           </Typography>
         </Box>
         <Box className={classes.content}>

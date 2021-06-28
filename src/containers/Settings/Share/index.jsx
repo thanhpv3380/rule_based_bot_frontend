@@ -19,7 +19,6 @@ import {
 } from '@material-ui/core';
 import { Delete as DeleteIcon } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
-import useStyles from './index.style';
 import apis from '../../../apis';
 import roleConstant from '../../../constants/role';
 import actions from '../../../redux/actions';
@@ -27,7 +26,6 @@ import actions from '../../../redux/actions';
 const ShareBot = ({ role, botId }) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const classes = useStyles();
   const dispatch = useDispatch();
   const [permissions, setPermissions] = useState([]);
   const [accounts, setAccounts] = useState([]);
@@ -54,7 +52,7 @@ const ShareBot = ({ role, botId }) => {
 
   const validateAddPermission = () => {
     if (!accountSelect) {
-      enqueueSnackbar('Nothing is choose', { variant: 'error' });
+      enqueueSnackbar(t('nothing_is_choose'), { variant: 'error' });
       return false;
     }
     const userFind = permissions.find(
@@ -62,7 +60,7 @@ const ShareBot = ({ role, botId }) => {
     );
 
     if (userFind) {
-      enqueueSnackbar('Email does exist', { variant: 'error' });
+      enqueueSnackbar(t('email_does_exist'), { variant: 'error' });
       return false;
     }
     return true;
@@ -113,8 +111,9 @@ const ShareBot = ({ role, botId }) => {
   return (
     <>
       <Typography variant="body1">
-        After you grant or revoke access to your bot, it may take some time for
-        the change to be affected.
+        {t(
+          'after_you_grant_or_revoke_access_to_your_bot,_it_may_take_some_time_for_the_change_to_be_affected',
+        )}
       </Typography>
       <Grid container xs={12} style={{ display: 'flex' }}>
         {role === roleConstant.ROLE_OWNER && (
@@ -132,7 +131,7 @@ const ShareBot = ({ role, botId }) => {
                   <TextField
                     {...params}
                     margin="normal"
-                    placeholder="Enter Email"
+                    placeholder={t('enter_email')}
                     onChange={handleChange}
                   />
                 )}
@@ -157,7 +156,7 @@ const ShareBot = ({ role, botId }) => {
           <TableHead>
             <TableRow>
               <TableCell style={{ borderBottom: 'none' }} align="left">
-                Who has access
+                {t('who_has_access')}
               </TableCell>
               <TableCell style={{ borderBottom: 'none' }} align="left" />
             </TableRow>

@@ -3,6 +3,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Box,
@@ -26,6 +27,7 @@ const ActionSendImage = ({
 }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   const handleUpload = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -36,7 +38,7 @@ const ActionSendImage = ({
       if (data && data.status) {
         handleChangeMediaInfoItem(actionId, 'url', data.result.link);
       } else {
-        enqueueSnackbar('Upload failed', {
+        enqueueSnackbar(t('upload_failed'), {
           variant: 'error',
         });
       }
@@ -53,7 +55,7 @@ const ActionSendImage = ({
             </Box>
             <Box ml={0.5}>
               <Typography variant="button" display="block" gutterBottom>
-                Image
+                {t('image')}
               </Typography>
             </Box>
           </Box>
@@ -68,7 +70,9 @@ const ActionSendImage = ({
           </IconButton>
         </Box>
       </Box>
-      <Typography gutterBottom>Send an image link in the chat.</Typography>{' '}
+      <Typography gutterBottom>
+        {t('send_an_image_link_in_the_chat')}
+      </Typography>{' '}
       <form noValidate autoComplete="off">
         {item.media.url && (
           <Box mb={1.5} mt={1.5}>
@@ -102,7 +106,7 @@ const ActionSendImage = ({
           <TextField
             variant="outlined"
             size="small"
-            label="Enter image URL"
+            label={t('enter_image_url')}
             fullWidth
             name="url"
             value={
@@ -121,7 +125,7 @@ const ActionSendImage = ({
         </Box>
         <Box mb={1.5}>
           <TextField
-            label="Enter description of image"
+            label={t('enter_description_of_image')}
             variant="outlined"
             size="small"
             fullWidth

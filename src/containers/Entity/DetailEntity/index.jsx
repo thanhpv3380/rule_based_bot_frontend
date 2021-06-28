@@ -13,13 +13,12 @@ import {
   FormControlLabel,
   Radio,
   Grid,
+  Paper,
 } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import { EntityDefineSynonyms, EntityComplex, EntityRegex } from '../Entities';
 import useStyles from './index.style';
 import apis from '../../../apis';
-import textDefault from '../../../constants/textDefault';
-import menus from '../../../data/EntityType.json';
 import Loading from '../../../components/Loading';
 
 const DetailEntity = ({ groupItems, handleUpdate }) => {
@@ -38,6 +37,19 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
     patterns: [],
   });
 
+  const menus = [
+    {
+      heading: t('define_synonyms'),
+      icon: '',
+      value: 1,
+    },
+    {
+      heading: 'Regex Entity',
+      icon: '',
+      value: 2,
+    },
+  ];
+
   const fetchEntity = async (id) => {
     const data = await apis.entity.getEntity(id);
     if (data && data.status) {
@@ -49,7 +61,7 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
           : entity.groupEntity,
       );
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -101,11 +113,11 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
     if (data && data.status) {
       handleUpdate(data.result.entity, oldGroupId);
       setOldGroupId(data.result.entity.groupEntity);
-      enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
+      enqueueSnackbar(t('update_entity_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.UPDATE_FAILED, {
+      enqueueSnackbar(t('update_entity_failed'), {
         variant: 'error',
       });
     }
@@ -175,7 +187,7 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
   }
 
   return (
-    <>
+    <Paper>
       <ItemInfoHeader
         name={entityData.name}
         groupId={entityData.groupEntity}
@@ -187,7 +199,7 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Entity Type</FormLabel>
+              <FormLabel component="legend">{t('entity_type')}</FormLabel>
               <RadioGroup
                 aria-label="entity"
                 name="entity1"
@@ -232,7 +244,7 @@ const DetailEntity = ({ groupItems, handleUpdate }) => {
           )}
         </div>
       </div>
-    </>
+    </Paper>
   );
 };
 

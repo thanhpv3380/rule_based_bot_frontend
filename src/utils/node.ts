@@ -50,7 +50,7 @@ export function checkAllowConnect(
     }
   });
 
-  let message: String = 'A node only connect to one type node';
+  let message: String = 'a_node_only_connect_to_one_type_node';
   let status: Boolean = true;
 
   if (nodeTarget instanceof IntentNodeModel) {
@@ -58,8 +58,8 @@ export function checkAllowConnect(
       nodeSource instanceof IntentNodeModel ||
       nodeSource instanceof ConditionNodeModel
     ) {
-      message = ' can\'t connect to Intent Node';
-      message = (nodeSource instanceof IntentNodeModel ? 'Intent Node' : 'Condition Node') + message;
+      message = 'can\'t_connect_to_Intent_Node';
+      message = (nodeSource instanceof IntentNodeModel ? 'intent_Node_' : 'condition_Node_') + message;
       status = false;
 
     } else {
@@ -74,7 +74,7 @@ export function checkAllowConnect(
 
   if (nodeTarget instanceof ActionNodeModel) {
     if (nodeTarget.getArrayLinkIdByPortType('in').length > 0) {
-      message = 'This action node only connect to one parent node';
+      message = 'this_action_node_only_connect_to_one_parent_node';
       status = false;
     } else {
       let typeConnect = nodeConstant.CONNECT_ONE_ONE;
@@ -88,7 +88,7 @@ export function checkAllowConnect(
 
   if (nodeTarget instanceof ConditionNodeModel) {
     if (nodeSource instanceof ConditionNodeModel) {
-      message = 'Condition Node can\'t connect to Condition Node';
+      message = 'condition_Node_can\'t_connect_to_Condition_Node';
       status = false;
     } else {
       let typeConnect = nodeConstant.CONNECT_ONE_MANY;
@@ -113,7 +113,7 @@ export function checkMutualNodeId(
     (el) => listLinkOutSourceNode.indexOf(el) >= 0,
   );
 
-  return !mutualNodeId ? { status: true } : { status: false, message: 'This node has connected' };
+  return !mutualNodeId ? { status: true } : { status: false, message: 'this_node_has_connected' };
 }
 
 export function getRealPosition(engine: AdvancedDiagramEngine, positionX: number, positionY: number): { posX: number, posY: number } {

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 // import { useSelector } from 'react-redux';
 import TranningPhrases from '../components/patterns';
 import Parameters from '../components/parameter';
@@ -15,6 +16,7 @@ import groupConstant from '../../../constants/group';
 function CreateIntent(props) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   // const botId = useSelector((state) => state.bot.bot);
   const { groupItems, groupIntentId, handleCreate } = props;
   const [intent, setIntent] = useState({
@@ -54,15 +56,18 @@ function CreateIntent(props) {
     const data = await apis.intent.createIntent(intent);
     if (data && data.status) {
       handleCreate(data.result);
+      enqueueSnackbar(t('create_intent_success'), {
+        variant: 'success',
+      });
     } else {
       switch (data.code) {
         case 1005:
-          enqueueSnackbar('Intent name existed!', {
+          enqueueSnackbar(t('intent_name_existed'), {
             variant: 'error',
           });
           break;
         default:
-          enqueueSnackbar((data && data.message) || 'Create intent failed', {
+          enqueueSnackbar(t('create_intent_failed'), {
             variant: 'error',
           });
           break;
@@ -119,25 +124,40 @@ function CreateIntent(props) {
       name: intent.name,
       patterns: intent.patterns,
       isMappingAction: intent.isMappingAction,
-      parameters: intent.parameters,
+      parameters: intent.parameters.map((el) => {
+        return {
+          id: el.id,
+          parameterName: el.parameterName,
+          required: el.required || false,
+          entity: el.entity.id,
+          response: {
+            actionAskAgain:
+              el.response &&
+              el.response.actionAskAgain &&
+              el.response.actionAskAgain.id,
+            numberOfLoop: el.response.numberOfLoop,
+            actionBreak: el.response.actionBreak && el.response.actionBreak.id,
+          },
+        };
+      }),
       groupIntent: intent.groupIntent || null,
     };
     const data = await apis.intent.createIntent(newIntent);
     if (data && data.status) {
       handleCreate(data.result);
-      enqueueSnackbar('Create intent success', {
+      enqueueSnackbar(t('create_intent_success'), {
         variant: 'success',
       });
       // history.push(`/intents/${data.result.id}`);
     } else {
       switch (data.code) {
         case 1005:
-          enqueueSnackbar('Intent name existed!', {
+          enqueueSnackbar(t('intent_name_existed'), {
             variant: 'error',
           });
           break;
         default:
-          enqueueSnackbar((data && data.message) || 'Create intent failed', {
+          enqueueSnackbar(t('create_intent_failed'), {
             variant: 'error',
           });
           break;
@@ -161,6 +181,33 @@ function CreateIntent(props) {
 
   const handleAcceptAddParameter = (data) => {
     const newIntent = { ...intent };
+    let checkName = false;
+    let checkEntity = false;
+    if (newIntent.parameters) {
+      for (let i = 0; i < newIntent.parameters.length; i += 1) {
+        const el = newIntent.parameters[i];
+        if (el.parameterName === data.parameterName) {
+          checkName = true;
+        }
+        if (el.entity.id === data.entity.id) {
+          checkEntity = true;
+        }
+      }
+      if (checkName) {
+        enqueueSnackbar(t('parameter_name_existed'), {
+          variant: 'error',
+        });
+      }
+      if (checkEntity) {
+        enqueueSnackbar(t('entity_existed'), {
+          variant: 'error',
+        });
+      }
+      if (checkName || checkEntity) {
+        return false;
+      }
+    }
+
     const newParameter = {
       ...data,
     };
@@ -170,6 +217,7 @@ function CreateIntent(props) {
       newIntent.parameters.push(newParameter);
     }
     setIntent(newIntent);
+    return true;
   };
 
   // Function component actionMapping
@@ -202,6 +250,7 @@ function CreateIntent(props) {
         <Divider />
         <br />
         <Parameters
+          parameters={intent.parameters}
           intent={intent}
           actions={actions}
           handleChange={handleChangeParameter}

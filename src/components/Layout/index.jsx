@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
   Home,
@@ -20,64 +21,59 @@ import Sidebar from './Sidebar';
 import Content from './Content';
 
 const Layout = ({ children, isLayout, isHeader }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const bot = useSelector((state) => state.bot.bot);
   const menu = [
     {
-      heading: 'General',
-      icon: <Home />,
-      subMenus: [
-        {
-          route: `/bot/${bot.id}/dashboard`,
-          icon: <Poll />,
-          heading: 'Dashboard',
-        },
-      ],
+      route: `/bot/${bot.id}/dashboard`,
+      icon: <Poll />,
+      heading: t('dashboard'),
     },
     {
-      heading: 'Data',
+      heading: t('data'),
       icon: <Dns />,
       subMenus: [
         {
           route: `/bot/${bot.id}/entities`,
           icon: <Category />,
-          heading: 'Entities',
+          heading: t('entities'),
         },
         {
           route: `/bot/${bot.id}/intents`,
           icon: <Assignment />,
-          heading: 'Intents',
+          heading: t('intents'),
         },
         {
           route: `/bot/${bot.id}/actions`,
           icon: <Code />,
-          heading: 'Actions',
+          heading: t('actions'),
         },
-        {
-          route: `/bot/${bot.id}/dictionary`,
-          icon: <MenuBook />,
-          heading: 'Dictionary',
-        },
+        // {
+        //   route: `/bot/${bot.id}/dictionary`,
+        //   icon: <MenuBook />,
+        //   heading: 'Dictionary',
+        // },
       ],
     },
     {
-      heading: 'Script',
+      heading: t('script'),
       icon: <Description />,
       subMenus: [
         {
           route: `/bot/${bot.id}/workflows`,
           icon: <CallSplit />,
-          heading: 'Workflow',
+          heading: t('workflow'),
         },
         {
           route: `/bot/${bot.id}/history`,
           icon: <Restore />,
-          heading: 'History',
+          heading: t('history'),
         },
       ],
     },
     {
-      heading: 'Settings',
+      heading: t('settings'),
       icon: <SettingsInputComponent />,
       route: `/bot/${bot.id}/settings`,
     },

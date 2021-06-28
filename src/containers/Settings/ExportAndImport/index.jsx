@@ -32,22 +32,23 @@ const ExportAndImport = () => {
 
   const listBtn = [
     {
-      name: 'Export as Zip',
-      description: 'Create file backup of bot',
+      name: t('export_as_zip'),
+      description: t('create_file_backup_of_bot'),
       action: exportFile,
       type: 'button',
     },
     // {
     //   name: 'restore from zip',
     //   description:
-    //     'Replace the current bot version with a new one. All the intents and entities in the older version will be deleted.',
+    //     'upload_and_import_new_intents_and_entities_where_the_ones_with_the_same_name_will_be_replaced_with_the_newer_version'',
     //   action: '',
     // },
     {
       id: 'uploadFile',
-      name: 'import as zip',
-      description:
-        'Upload and import new intents and entities where the ones with the same name will be replaced with the newer version.',
+      name: t('import_as_zip'),
+      description: t(
+        'replace_the_current_bot_version_with_a_new_one._All_the_intents_and_entities_in_the_older_version_will_be_deleted',
+      ),
       // action: importFile,
       type: 'file',
       component: 'span',

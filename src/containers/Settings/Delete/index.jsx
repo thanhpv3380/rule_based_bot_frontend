@@ -42,17 +42,18 @@ const DeleteBot = ({ bot }) => {
   return (
     <>
       <Typography variant="body1">
-        DANGER ZONE - Are you sure you want to delete this bot? This will
-        destroy the bot with all corresponding data and cannot be undone!
+        {t(
+          'DANGER_ZONE_-_Are_you_sure_you_want_to_delete_this_bot?_This_will_destroy_the_bot_with_all_corresponding_data_and_cannot_be_undone',
+        )}
       </Typography>
       {!isDeleting ? (
         <Button className={classes.dangerButton} onClick={handleDelete}>
           <DeleteIcon fontSize="small" className={classes.dangerIcon} />
-          Delete
+          {t('delete')}
         </Button>
       ) : (
         <Button disabled variant="contained">
-          Waiting
+          {t('waiting')}
         </Button>
       )}
     </>

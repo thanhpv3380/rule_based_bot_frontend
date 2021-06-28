@@ -7,11 +7,10 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
-import { Button, Box } from '@material-ui/core';
+import { Button, Box, Paper } from '@material-ui/core';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import useStyles from './index.style';
 import apis from '../../../apis';
-import textDefault from '../../../constants/textDefault';
 import ParametersModal from './ParametersModal';
 import Loading from '../../../components/Loading';
 
@@ -43,7 +42,7 @@ const DetailWorkflow = ({ groupItems, handleUpdate }) => {
       );
       setIsFetchData(true);
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -84,11 +83,11 @@ const DetailWorkflow = ({ groupItems, handleUpdate }) => {
       handleUpdate(data.result.workflow, oldGroupId);
       setOldGroupId(data.result.workflow.groupWorkflow);
       setWorkflowData(data.result.workflow);
-      enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
+      enqueueSnackbar(t('update_workflow_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar((data && data.message) || textDefault.UPDATE_FAILED, {
+      enqueueSnackbar(t('update_workflow_failed'), {
         variant: 'error',
       });
     }
@@ -112,7 +111,7 @@ const DetailWorkflow = ({ groupItems, handleUpdate }) => {
     return <Loading />;
   }
   return (
-    <>
+    <Paper className={classes.root}>
       <ItemInfoHeader
         name={workflowData.name || ''}
         groupId={workflowData.groupWorkflow}
@@ -132,7 +131,7 @@ const DetailWorkflow = ({ groupItems, handleUpdate }) => {
                   size="large"
                   onClick={handleOpenParametersModal}
                 >
-                  Parameters
+                  {t('parameters')}
                 </Button>
               </Box>
               <Box>
@@ -142,7 +141,7 @@ const DetailWorkflow = ({ groupItems, handleUpdate }) => {
                   size="large"
                   onClick={handleOpenDrawFlow}
                 >
-                  Workflow
+                  {t('workflow')}
                 </Button>
               </Box>
             </Box>
@@ -154,7 +153,7 @@ const DetailWorkflow = ({ groupItems, handleUpdate }) => {
           </>
         )}
       </div>
-    </>
+    </Paper>
   );
 };
 

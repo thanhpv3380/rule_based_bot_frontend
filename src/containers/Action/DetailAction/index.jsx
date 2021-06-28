@@ -439,11 +439,11 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
       setActionData(data.result.action);
       setActions(data.result.action.actions);
       setOldGroupId(data.result.action.groupAction);
-      enqueueSnackbar(textDefault.UPDATE_SUCCESS, {
+      enqueueSnackbar(t('update_action_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar(textDefault.UPDATE_FAILED, {
+      enqueueSnackbar(t('update_action_failed'), {
         variant: 'error',
       });
     }
@@ -547,17 +547,17 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
 
   const actionsMenu = [
     {
-      heading: 'Text',
+      heading: t('text'),
       icon: '',
       event: handleAddText,
     },
     {
-      heading: 'Image',
+      heading: t('image'),
       icon: '',
       event: handleAddImage,
     },
     {
-      heading: 'Audio',
+      heading: t('audio'),
       icon: '',
       event: handleAddAudio,
     },
@@ -587,7 +587,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
     return <Loading />;
   }
   return (
-    <>
+    <Paper>
       <ItemInfoHeader
         name={actionData && actionData.name}
         groupId={actionData && actionData.groupAction}
@@ -616,7 +616,7 @@ const DetailAction = ({ groupItems, handleUpdate, flowActionId }) => {
           ))}
         </div>
       </div>
-    </>
+    </Paper>
   );
 };
 

@@ -5,18 +5,19 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Divider, CardContent } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 import TrainingPhrases from '../components/patterns';
 import Parameters from '../components/parameter';
 import ActionMapping from '../components/actionMapping';
 import ItemInfoHeader from '../../../components/ItemInfoHeader';
 import apis from '../../../apis';
 import useStyles from './index.style';
-import textDefault from '../../../constants/textDefault';
 import Loading from '../../../components/Loading';
 
 function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const [intent, setIntent] = useState({});
   const [patterns, setPatterns] = useState();
   const [actions, setActions] = useState([]);
@@ -35,7 +36,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
           : data.result.groupIntent,
       );
     } else {
-      enqueueSnackbar(textDefault.FETCH_DATA_FAILED, {
+      enqueueSnackbar(t('fetch_data_failed'), {
         variant: 'error',
       });
     }
@@ -97,16 +98,25 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
     const data = await apis.intent.updateIntent(currentIntentId, newIntent);
     if (data.status) {
       const { result } = data;
-      enqueueSnackbar('Update intent success', {
+      enqueueSnackbar(t('update_intent_success'), {
         variant: 'success',
       });
       handleUpdate(result, oldGroupId);
       setOldGroupId(result.groupIntent);
     } else {
       const { code } = data;
-      enqueueSnackbar(`Cannot fetch data  ${code}`, {
-        variant: 'error',
-      });
+      switch (code) {
+        case 1005:
+          enqueueSnackbar(t('intent_name_existed'), {
+            variant: 'error',
+          });
+          break;
+        default:
+          enqueueSnackbar(t('update_intent_failed'), {
+            variant: 'error',
+          });
+          break;
+      }
     }
   };
 
@@ -129,7 +139,7 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   const handleKeyDown = async (value) => {
     const newPatterns = [...patterns];
     if (newPatterns.includes(value)) {
-      enqueueSnackbar('Patterns existed!', {
+      enqueueSnackbar(t('patterns_existed'), {
         variant: 'error',
       });
     } else {
@@ -137,6 +147,20 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       if (data && data.status) {
         newPatterns.push(value);
         setPatterns(newPatterns);
+      } else {
+        const { code } = data;
+        switch (code) {
+          case 1006:
+            enqueueSnackbar(t('intent_not_existed'), {
+              variant: 'error',
+            });
+            break;
+          default:
+            enqueueSnackbar(t('add_pattern_failed'), {
+              variant: 'error',
+            });
+            break;
+        }
       }
     }
   };
@@ -149,13 +173,28 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       newIntent.patterns = newPatterns;
       setIntent(newIntent);
       setPatterns(newPatterns);
-      enqueueSnackbar('Delete usersay success', {
+      enqueueSnackbar(t('delete_pattern_success'), {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar('Cannot fetch data', {
-        variant: 'error',
-      });
+      const { code } = data;
+      switch (code) {
+        case 1006:
+          enqueueSnackbar(t('intent_not_existed'), {
+            variant: 'error',
+          });
+          break;
+        case 404:
+          enqueueSnackbar(t('pattern_not_found'), {
+            variant: 'error',
+          });
+          break;
+        default:
+          enqueueSnackbar(t('add_pattern_failed'), {
+            variant: 'error',
+          });
+          break;
+      }
     }
   };
 
@@ -201,13 +240,13 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       }
     }
     if (checkName) {
-      enqueueSnackbar('Parameter name existed', {
+      enqueueSnackbar(t('parameter_name_existed'), {
         variant: 'error',
       });
       checkExist = true;
     }
     if (checkEntity) {
-      enqueueSnackbar('Entity existed', {
+      enqueueSnackbar(t('entity_existed'), {
         variant: 'error',
       });
       checkExist = true;
@@ -218,13 +257,13 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
   const checkParameterNull = (data) => {
     let checkNull = false;
     if (!data.entity.id) {
-      enqueueSnackbar('Entity can not be empty!', {
+      enqueueSnackbar(t('entity_can_not_be_empty'), {
         variant: 'error',
       });
       checkNull = true;
     }
     if (!data.parameterName) {
-      enqueueSnackbar('Parameter name can not be empty!', {
+      enqueueSnackbar(t('parameter_name_can_not_be_empty'), {
         variant: 'error',
       });
       checkNull = true;
@@ -263,12 +302,12 @@ function IntentDetail({ groupItems, handleUpdate, flowIntentId }) {
       }
     }
     if (checkName) {
-      enqueueSnackbar('Parameter name existed', {
+      enqueueSnackbar(t('parameter_name_existed'), {
         variant: 'error',
       });
     }
     if (checkEntity) {
-      enqueueSnackbar('Entity existed', {
+      enqueueSnackbar(t('entity_existed'), {
         variant: 'error',
       });
     }
